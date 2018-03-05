@@ -55,19 +55,19 @@ public static class MakeUVSphere
 
 		for (int i = 0; i <= sectors; i++)
 		{
-			float longitude = (360.0f * i) / sectors;
+			float longitude = (Mathf.PI * 2 * i) / sectors;
 			for (int j = 0; j <= meridians; j++)
 			{
 				int n = verts.Count;
 
-				float latitude = -90 + (180.0f * j) / meridians;
+				float latitude = (Mathf.PI * j) / meridians - Mathf.PI / 2;
 
 				Vector3 sphericalPoint = new Vector3 (
-					Mathf.Cos (longitude * Mathf.Deg2Rad) *
-						Mathf.Cos( latitude * Mathf.Deg2Rad) * dimensions.x,
-					Mathf.Sin( latitude * Mathf.Deg2Rad) * dimensions.y,
-					Mathf.Sin (longitude * Mathf.Deg2Rad) *
-						Mathf.Cos( latitude * Mathf.Deg2Rad) * dimensions.z);
+					Mathf.Cos (longitude) *
+						Mathf.Cos( latitude) * dimensions.x,
+					Mathf.Sin( latitude) * dimensions.y,
+					Mathf.Sin (longitude) *
+						Mathf.Cos( latitude) * dimensions.z);
 
 				verts.Add (sphericalPoint);
 
