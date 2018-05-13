@@ -47,7 +47,7 @@ public static class MakeUVSphere
 		GameObject go = new GameObject ("MakeUVSphere.Create();");
 
 		MeshFilter mf = go.AddComponent<MeshFilter> ();
-		Mesh mesh = mf.mesh;
+		Mesh mesh = mf.sharedMesh;
 
 		List<Vector3> verts = new List<Vector3> ();
 		List<int> tris = new List<int> ();
