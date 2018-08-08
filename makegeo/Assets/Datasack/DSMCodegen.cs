@@ -4,7 +4,7 @@
 // MACHINE-GENERATED CODE - DO NOT MODIFY BY HAND!
 //
 //
-// To regenerate this file, select a Datasack object, look
+// To regenerate this file, select any Datasack object, look
 // in the custom Inspector window and press the CODEGEN button.
 //
 //

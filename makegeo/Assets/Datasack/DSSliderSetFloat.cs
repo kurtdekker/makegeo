@@ -47,21 +47,30 @@ public class DSSliderSetFloat : MonoBehaviour
 
 	private	Slider slider;
 
-	void	OnChanged( float Value)
+	void	OnSliderChanged( float Value)
 	{
 		dataSack.fValue = Value;
+	}
+
+	void	OnDatasackChanged( Datasack ds)
+	{
+		slider.value = ds.fValue;
 	}
 
 	void	OnEnable()
 	{
 		slider = GetComponent<Slider> ();
 
-		slider.onValueChanged.AddListener (OnChanged);
+		slider.onValueChanged.AddListener (OnSliderChanged);
 
 		slider.value = dataSack.fValue;
+
+		dataSack.OnChanged += OnDatasackChanged;
 	}
 	void	OnDisable()
 	{
-		slider.onValueChanged.RemoveListener (OnChanged);
+		slider.onValueChanged.RemoveListener (OnSliderChanged);
+
+		dataSack.OnChanged -= OnDatasackChanged;
 	}
 }

@@ -61,6 +61,12 @@ public partial class Datasack : ScriptableObject
 
 	void OnEnable()
 	{
+		bool holdBreak = DebugBreak;
+		bool holdLogging = DebugLogging;
+
+		DebugBreak = false;
+		DebugLogging = false;
+
 		Value = InitialValue;
 
 		if (Save)
@@ -68,6 +74,9 @@ public partial class Datasack : ScriptableObject
 			Value = PlayerPrefs.GetString (
 				DSM.s_PlayerPrefsPrefix + name.ToLower(), Value);
 		}
+
+		DebugBreak = holdBreak;
+		DebugLogging = holdLogging;
 	}
 
 	[NonSerialized] private	string	TheData;
@@ -95,6 +104,17 @@ public partial class Datasack : ScriptableObject
 		}
 		set
 		{
+			if (DebugLogging)
+			{
+				Debug.Log( "Datasack " + name + " changed: '" + TheData + "' to '" + value + "'");
+			}
+
+			if (DebugBreak)
+			{
+				Debug.LogWarning( "Datasack " + name + ": set to DebugBreak");
+				Debug.Break();
+			}
+
 			TheData = value;
 
 			Poke();
@@ -108,73 +128,4 @@ public partial class Datasack : ScriptableObject
 			}
 		}
 	}
-
-	public override string ToString ()
-	{
-		return string.Format ("[Datasack: name={0}, Value={1}, iValue={2}, fValue={3}, bValue={4}]", name, Value, iValue, fValue, bValue);
-	}
-
-	#if UNITY_EDITOR
-	[CustomEditor(typeof(Datasack))]
-	public class DatasackEditor : Editor
-	{
-		void AppendGetter( ref string s, Datasack ds)
-		{
-			string safeName = ds.name;
-
-			// Note to future self: don't allow future silliness by putting non-identifier-safe
-			// names into filenames. Tell the user to be thankful we don't enforce 8.3 filenames.
-
-			s += "\tpublic static Datasack " + safeName + " { get { return DSM.I.Get( \"" +
-				safeName  + "\"); } }\n";
-		}
-
-		void GenerateCode()
-		{
-			Debug.Log( "CODEGEN!");
-
-			string s = "//\n//\n//\n" + 
-				"// MACHINE-GENERATED CODE - DO NOT MODIFY BY HAND!\n" +
-				"//\n//\n" +
-				"// To regenerate this file, select a Datasack object, look\n" +
-				"// in the custom Inspector window and press the CODEGEN button.\n" +
-				"//\n//\n//\n";
-
-			s += "public partial class DSM\n{\n";
-
-			Datasack[] sacks = Resources.LoadAll<Datasack>( "Datasacks/");
-			foreach( var ds in sacks)
-			{
-				AppendGetter( ref s, ds);
-			}
-
-			s += "}\n";
-
-			Debug.Log( s);
-
-			string outfile = "Assets/Datasack/DSMCodegen.cs";
-			using( System.IO.StreamWriter sw =
-				new System.IO.StreamWriter(outfile, false))
-			{
-				sw.Write(s);
-			}
-
-			AssetDatabase.Refresh();
-		}
-
-		public override void OnInspectorGUI()
-		{
-			DrawDefaultInspector();
-
-			EditorGUILayout.BeginVertical();
-
-			if (GUILayout.Button( "CODEGEN"))
-			{
-				GenerateCode();
-			}
-
-			EditorGUILayout.EndVertical();
-		}
-	}
-	#endif
 }

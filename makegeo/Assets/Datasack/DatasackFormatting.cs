@@ -65,7 +65,7 @@ public static class DatasackFormatting
 		{
 			return result;
 		}
-		Debug.LogError( "DatasackFormatting.FromHexString(): invalid string (must be 0x12345678 or else 1234.5678[f])");
+		Debug.LogWarning( "DatasackFormatting.FromHexString(): invalid string for float (must be IEEE754-format 0x12345678 or else 1234.5678[f])");
 		return 0.0f;
 	}
 }

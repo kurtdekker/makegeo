@@ -59,7 +59,7 @@ public partial class DSM : MonoBehaviour
 
 				_I.AllSacks = new Dictionary<string, Datasack> ();
 
-				Datasack[] sacks = Resources.LoadAll<Datasack>( "Datasacks/");
+				Datasack[] sacks = Resources.LoadAll<Datasack>( "");
 
 				foreach (var sack in sacks)
 				{
@@ -121,7 +121,7 @@ public partial class DSM : MonoBehaviour
 	{
 		sackname = sackname.ToLower();
 
-		// creating bags on the fly
+		// creating Datasack on the fly
 		if (!AllSacks.ContainsKey( sackname))
 		{
 			if (AutoAdd)
@@ -130,7 +130,7 @@ public partial class DSM : MonoBehaviour
 			}
 			else
 			{
-				Debug.LogError( GetType()+".Get(): datasack '" + sackname + "' does not exist. Set AutoAdd = true to add at runtime.");
+				Debug.LogError( GetType()+".Get(): Datasack '" + sackname + "' does not exist. Set AutoAdd = true to add at runtime.");
 			}
 		}
 		return AllSacks [sackname];
