@@ -47,7 +47,7 @@ public static class MakeUVSphere
 		GameObject go = new GameObject ("MakeUVSphere.Create();");
 
 		MeshFilter mf = go.AddComponent<MeshFilter> ();
-		Mesh mesh = mf.sharedMesh;
+		Mesh mesh = new Mesh();
 
 		List<Vector3> verts = new List<Vector3> ();
 		List<int> tris = new List<int> ();
@@ -93,6 +93,8 @@ public static class MakeUVSphere
 
 		mesh.RecalculateBounds ();
 		mesh.RecalculateNormals ();
+
+		mf.mesh = mesh;
 
 		go.AddComponent<MeshRenderer> ();
 

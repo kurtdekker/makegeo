@@ -44,7 +44,7 @@ public class MakeUVCircle
 		GameObject go = new GameObject ("MakeUVCircle.Create();");
 
 		MeshFilter mf = go.AddComponent<MeshFilter> ();
-		Mesh mesh = mf.sharedMesh;
+		Mesh mesh = new Mesh();
 
 		List<Vector3> verts = new List<Vector3> ();
 		List<int> tris = new List<int> ();
@@ -100,6 +100,8 @@ public class MakeUVCircle
 
 		mesh.RecalculateBounds ();
 		mesh.RecalculateNormals ();
+
+		mf.mesh = mesh;
 
 		go.AddComponent<MeshRenderer> ();
 
