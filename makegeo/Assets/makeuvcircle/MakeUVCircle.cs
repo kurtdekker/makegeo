@@ -39,20 +39,9 @@ using UnityEngine;
 
 public class MakeUVCircle
 {
-	public static GameObject Create( Vector3 dimensions, AxisDirection direction, int sectors)
+	static	void	MakeOneCircleSideHelper( Vector3 dimensions, AxisDirection direction, int sectors,
+		List<Vector3> verts, List<int> tris, List<Vector2> uvs)
 	{
-		GameObject go = new GameObject ("MakeUVCircle.Create();");
-
-		MeshFilter mf = go.AddComponent<MeshFilter> ();
-		Mesh mesh = new Mesh();
-
-		List<Vector3> verts = new List<Vector3> ();
-		List<int> tris = new List<int> ();
-		List<Vector2> uvs = new List<Vector2> ();
-
-		// start by adding the center
-		verts.Add( Vector3.zero);
-		uvs.Add (Vector2.one / 2);
 		bool flipTris = true;
 
 		for (int i = 0; i <= sectors; i++)
@@ -77,6 +66,15 @@ public class MakeUVCircle
 					(1 + Mathf.Cos (angle)) / 2,
 					(1 + Mathf.Sin (angle)) / 2);
 				break;
+			case AxisDirection.YPLUS:		// up in the world
+				sphericalPoint = new Vector3 (
+					Mathf.Cos (angle) * dimensions.x,
+					0,
+					Mathf.Sin (angle) * dimensions.z);
+				uvPoint = new Vector2 (
+					(1 + Mathf.Cos (angle)) / 2,
+					(1 + Mathf.Sin (angle)) / 2);
+				break;
 			default :
 				throw new System.NotImplementedException (
 					"Sorry, I haven't gotten to these axes yet!");
@@ -92,6 +90,39 @@ public class MakeUVCircle
 				tris.Add (flipTris ? n - 1 : n);
 				tris.Add (0);	// center
 			}
+		}
+	}
+
+	public static GameObject Create( Vector3 dimensions, AxisDirection direction, int sectors, bool doubleSided = false)
+	{
+		GameObject go = new GameObject ("MakeUVCircle.Create();");
+
+		MeshFilter mf = go.AddComponent<MeshFilter> ();
+		Mesh mesh = new Mesh();
+
+		List<Vector3> verts = new List<Vector3> ();
+		List<int> tris = new List<int> ();
+		List<Vector2> uvs = new List<Vector2> ();
+
+		// start by adding the center
+		verts.Add( Vector3.zero);
+		uvs.Add (Vector2.one / 2);
+
+		MakeOneCircleSideHelper( dimensions, direction, sectors, verts, tris, uvs);
+
+		if (doubleSided)
+		{
+			AxisDirection oppositeDirection = direction;
+			switch( direction)
+			{
+			case AxisDirection.XMINUS: oppositeDirection = AxisDirection.XPLUS; break;
+			case AxisDirection.XPLUS: oppositeDirection = AxisDirection.XMINUS; break;
+			case AxisDirection.YMINUS: oppositeDirection = AxisDirection.YPLUS; break;
+			case AxisDirection.YPLUS: oppositeDirection = AxisDirection.YMINUS; break;
+			case AxisDirection.ZMINUS: oppositeDirection = AxisDirection.ZPLUS; break;
+			case AxisDirection.ZPLUS: oppositeDirection = AxisDirection.ZMINUS; break;
+			}
+			MakeOneCircleSideHelper( dimensions, oppositeDirection, sectors, verts, tris, uvs);
 		}
 
 		mesh.vertices = verts.ToArray ();
