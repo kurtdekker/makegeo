@@ -65,11 +65,25 @@ public class testmakeuvcircle : MonoBehaviour
 		go.AddComponent<SpinMeY> ();
 		n++;
 
-		// and finally a SUPER-fine one
-		go = MakeUVCircle.Create (Vector3.one, AxisDirection.ZMINUS, 1024);
+		// and finally a SUPER-fine one, coincidentally also double-sided
+		go = MakeUVCircle.Create (Vector3.one, AxisDirection.ZMINUS, 1024, true);
 		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
 		go.transform.position = Vector3.up * 1.4f;
 		go.AddComponent<SpinMeY> ().RateOfSpin *= 0.3f;
+		n++;
+
+		// a flat one, double-sided
+		go = MakeUVCircle.Create (Vector3.one, AxisDirection.YPLUS, 32, true);
+		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
+		go.transform.position = Vector3.down * 1.0f;
+		go.AddComponent<SpinMeZ> ();
+		n++;
+
+		// an inverted one high where we can see it
+		go = MakeUVCircle.Create (Vector3.one, AxisDirection.YMINUS, 32);
+		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
+		go.transform.position = Vector3.up * 4.0f;
+		go.AddComponent<SpinMeY> ();
 		n++;
 	}
 }
