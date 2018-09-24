@@ -72,6 +72,9 @@ public class MakeUVCircle
 					(1 + Mathf.Cos (angle)) / 2,
 					(1 + Mathf.Sin (angle)) / 2);
 				break;
+			case AxisDirection.YMINUS :
+				flipTris = false;
+				goto case AxisDirection.YPLUS;
 			case AxisDirection.YPLUS:		// up in the world
 				sphericalPoint = new Vector3 (
 					Mathf.Cos (angle) * dimensions.x,
