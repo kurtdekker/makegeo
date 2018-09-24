@@ -44,6 +44,12 @@ public class MakeUVCircle
 	{
 		bool flipTris = true;
 
+		int centerN = verts.Count;
+
+		// start by adding the center
+		verts.Add( Vector3.zero);
+		uvs.Add (Vector2.one / 2);
+
 		for (int i = 0; i <= sectors; i++)
 		{
 			int n = verts.Count;
@@ -88,7 +94,7 @@ public class MakeUVCircle
 			{
 				tris.Add (flipTris ? n : n - 1);
 				tris.Add (flipTris ? n - 1 : n);
-				tris.Add (0);	// center
+				tris.Add (centerN);
 			}
 		}
 	}
@@ -103,10 +109,6 @@ public class MakeUVCircle
 		List<Vector3> verts = new List<Vector3> ();
 		List<int> tris = new List<int> ();
 		List<Vector2> uvs = new List<Vector2> ();
-
-		// start by adding the center
-		verts.Add( Vector3.zero);
-		uvs.Add (Vector2.one / 2);
 
 		MakeOneCircleSideHelper( dimensions, direction, sectors, verts, tris, uvs);
 
