@@ -33,61 +33,38 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public partial class Datasack
+public class DSColorizeGetFloat : MonoBehaviour
 {
-	const char ArraySeparatorCharacter = ';';
+	public	Datasack	dataSack;
 
-	static	string[]	ArraySplit( string input)
-	{
-		return input.Split( ArraySeparatorCharacter);
-	}
+	public	Gradient	ColorLookup;
 
-	static	string	ArrayJoin( string[] input)
-	{
-		return String.Join( ArraySeparatorCharacter.ToString(), input);
-	}
+	private DSColorableAbstraction colorable;
 
-	public	string	GetArrayEntry( int index)
+	void	OnChanged( Datasack ds)
 	{
-		if (index >= 0)
+		if (colorable)
 		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
-			{
-				return parts[index];
-			}
+			colorable.SetColor( ColorLookup.Evaluate (ds.fValue));
 		}
-		return "<index out of range>";
 	}
 
-	public	void	SetArrayEntry( string s, int index)
+	void	OnEnable()
 	{
-		if (index >= 0)
+		if (!colorable)
 		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
-			{
-				parts[index] = s;
-				Value = ArrayJoin( parts);
-				return;
-			}
+			colorable = DSColorableAbstraction.Attach( this);
 		}
-		throw new System.ArgumentOutOfRangeException(
-			"Datasack.Vectors.SetArray:" + index.ToString());
+		dataSack.OnChanged += OnChanged;	
+		OnChanged(dataSack);
 	}
-
-	public	void	SetArray( string[] data)
+	void	OnDisable()
 	{
-		Value = ArrayJoin( data);
-	}
-
-	public	string[]	GetArray()
-	{
-		return ArraySplit( Value);
+		dataSack.OnChanged -= OnChanged;	
 	}
 }

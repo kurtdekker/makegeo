@@ -33,61 +33,98 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public partial class Datasack
+public class DSKeycodeInput : MonoBehaviour
 {
-	const char ArraySeparatorCharacter = ';';
+	[Tooltip("Defaults to UISack datavar if none supplied.")]
+	public	Datasack	dataSack;
 
-	static	string[]	ArraySplit( string input)
+	public	enum KeyActivity
 	{
-		return input.Split( ArraySeparatorCharacter);
+		DOWN,
+		UP,
+		HOLD,
 	}
 
-	static	string	ArrayJoin( string[] input)
-	{
-		return String.Join( ArraySeparatorCharacter.ToString(), input);
-	}
+	[Tooltip( "List of keycodes you want tracked.")]
+	public	KeyCode[]	KeysToTrack;
 
-	public	string	GetArrayEntry( int index)
+	[Tooltip( "What type of key activity to track.")]
+	public	KeyActivity	Activity;
+
+	[Tooltip( "Leave blank to send the Keycode.ToString()")]
+	public	string		Output;
+
+	[Tooltip( "Check box to send GameObject.name")]
+	public	bool		SendGameObjectName;
+
+	void	Reset()
 	{
-		if (index >= 0)
+		KeysToTrack = new KeyCode[] {
+			KeyCode.Return,
+			KeyCode.Space,
+		};
+
+		Activity = KeyActivity.DOWN;
+
+		Output = "";
+
+		SendGameObjectName = false;
+
+		if (GetComponent<Button>())
 		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
+			SendGameObjectName = true;
+		}
+	}
+
+	void	Update()
+	{
+		// default is KeyActivity.DOWN
+		System.Func<KeyCode,bool> InputFunction = Input.GetKeyDown;
+
+		switch( Activity)
+		{
+		case KeyActivity.UP :
+			InputFunction = Input.GetKeyUp;
+			break;
+		case KeyActivity.HOLD :
+			InputFunction = Input.GetKey;
+			break;
+		}
+
+		bool triggered = false;
+		string tempOutput = "";
+
+		foreach( var key in KeysToTrack)
+		{
+			if (InputFunction( key))
 			{
-				return parts[index];
+				triggered = true;
+				tempOutput = key.ToString();
+				break;
 			}
 		}
-		return "<index out of range>";
-	}
 
-	public	void	SetArrayEntry( string s, int index)
-	{
-		if (index >= 0)
+		if (triggered)
 		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
+			if (Output != null && Output.Length > 0)
 			{
-				parts[index] = s;
-				Value = ArrayJoin( parts);
-				return;
+				tempOutput = Output;
 			}
+
+			if (SendGameObjectName)
+			{
+				tempOutput = name;
+			}
+
+			var ds = DSM.UserIntent;
+			if (dataSack) ds = dataSack;
+
+			ds.Value = tempOutput;
 		}
-		throw new System.ArgumentOutOfRangeException(
-			"Datasack.Vectors.SetArray:" + index.ToString());
-	}
-
-	public	void	SetArray( string[] data)
-	{
-		Value = ArrayJoin( data);
-	}
-
-	public	string[]	GetArray()
-	{
-		return ArraySplit( Value);
 	}
 }

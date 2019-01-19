@@ -33,61 +33,68 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public partial class Datasack
+[RequireComponent( typeof( InputField))]
+public class DSInputField : MonoBehaviour
 {
-	const char ArraySeparatorCharacter = ';';
+	[Header("The DataSack to signal onEndEdit. Default is UISack.")]
+	public Datasack DSUI;
 
-	static	string[]	ArraySplit( string input)
+	public	bool	SignalPayloadInsteadOfName;
+
+	[Header("The actual text as it is edited, bidirectional connection.")]
+	public Datasack dataSackPayload;
+
+	private	InputField inputField;
+
+	// Data flowing from InputField to the Datasack(s)
+	void	OnValueChanged( string Value)
 	{
-		return input.Split( ArraySeparatorCharacter);
+		dataSackPayload.Value = Value;
+	}
+	public void OnEndEdit( string Value)
+	{
+		Debug.Log( "OnEndEdit(): " + Value);
+
+		dataSackPayload.Value = Value;
+
+		string signalledOutput = name;
+		if (SignalPayloadInsteadOfName) signalledOutput = Value;
+
+		DSUI.Value = signalledOutput;
 	}
 
-	static	string	ArrayJoin( string[] input)
+	// Data flowing from Datasack to InputField
+	void	OnDatasackChanged( Datasack ds)
 	{
-		return String.Join( ArraySeparatorCharacter.ToString(), input);
+		inputField.text = ds.Value;
 	}
 
-	public	string	GetArrayEntry( int index)
+	void	OnEnable()
 	{
-		if (index >= 0)
-		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
-			{
-				return parts[index];
-			}
-		}
-		return "<index out of range>";
-	}
+		if (DSUI == null) DSUI = DSM.UserIntent;
 
-	public	void	SetArrayEntry( string s, int index)
-	{
-		if (index >= 0)
-		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
-			{
-				parts[index] = s;
-				Value = ArrayJoin( parts);
-				return;
-			}
-		}
-		throw new System.ArgumentOutOfRangeException(
-			"Datasack.Vectors.SetArray:" + index.ToString());
-	}
+		inputField = GetComponent<InputField> ();
 
-	public	void	SetArray( string[] data)
-	{
-		Value = ArrayJoin( data);
-	}
+		// to connect data flows from InputField to Datasack(s):
+		inputField.onValueChanged.AddListener (OnValueChanged);
+		inputField.onEndEdit.AddListener( OnEndEdit);
 
-	public	string[]	GetArray()
+		// to connect data flows from Datasack to InputField:
+		dataSackPayload.OnChanged += OnDatasackChanged;
+		inputField.text = dataSackPayload.Value;
+	}
+	void	OnDisable()
 	{
-		return ArraySplit( Value);
+		inputField.onValueChanged.RemoveListener (OnValueChanged);
+
+		inputField.onEndEdit.RemoveListener( OnEndEdit);
+
+		dataSackPayload.OnChanged -= OnDatasackChanged;
 	}
 }

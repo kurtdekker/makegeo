@@ -33,61 +33,24 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public partial class Datasack
 {
-	const char ArraySeparatorCharacter = ';';
+	Stack<OnValueChangedDelegate> OnChangedStack;
 
-	static	string[]	ArraySplit( string input)
+	public void PushOnChanged( OnValueChangedDelegate callback)
 	{
-		return input.Split( ArraySeparatorCharacter);
-	}
-
-	static	string	ArrayJoin( string[] input)
-	{
-		return String.Join( ArraySeparatorCharacter.ToString(), input);
-	}
-
-	public	string	GetArrayEntry( int index)
-	{
-		if (index >= 0)
+		if (OnChangedStack == null)
 		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
-			{
-				return parts[index];
-			}
+			OnChangedStack = new Stack<OnValueChangedDelegate>();
 		}
-		return "<index out of range>";
+		OnChangedStack.Push( OnChanged);
+		OnChanged = callback;
 	}
 
-	public	void	SetArrayEntry( string s, int index)
+	public void PopOnChanged()
 	{
-		if (index >= 0)
-		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
-			{
-				parts[index] = s;
-				Value = ArrayJoin( parts);
-				return;
-			}
-		}
-		throw new System.ArgumentOutOfRangeException(
-			"Datasack.Vectors.SetArray:" + index.ToString());
-	}
-
-	public	void	SetArray( string[] data)
-	{
-		Value = ArrayJoin( data);
-	}
-
-	public	string[]	GetArray()
-	{
-		return ArraySplit( Value);
+		OnChanged = OnChangedStack.Pop();
 	}
 }

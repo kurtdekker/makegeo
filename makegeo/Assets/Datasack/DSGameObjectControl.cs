@@ -33,61 +33,59 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class Datasack
+public class DSGameObjectControl : MonoBehaviour
 {
-	const char ArraySeparatorCharacter = ';';
+	[Tooltip( "Poke this Datasack to enable/disable objects below.")]
+	public	Datasack	dataSack;
 
-	static	string[]	ArraySplit( string input)
-	{
-		return input.Split( ArraySeparatorCharacter);
-	}
+	[Tooltip( "GameObjects to ENABLE when Datasack is poked TRUE.")]
+	public	GameObject[]	ToEnable;
 
-	static	string	ArrayJoin( string[] input)
-	{
-		return String.Join( ArraySeparatorCharacter.ToString(), input);
-	}
+	[Tooltip( "GameObjects to DISABLE when Datasack is poked TRUE.")]
+	public	GameObject[]	ToDisable;
 
-	public	string	GetArrayEntry( int index)
+	[Tooltip( "GameObject array to map to iValue of Datasack")]
+	public	GameObject[]	IndexArray;
+
+	void OnChanged( Datasack ds)
 	{
-		if (index >= 0)
+		bool pokedTrue = ds.bValue;
+
+		foreach( var go in ToEnable)
 		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
+			if (go)
 			{
-				return parts[index];
+				go.SetActive( pokedTrue);
 			}
 		}
-		return "<index out of range>";
-	}
 
-	public	void	SetArrayEntry( string s, int index)
-	{
-		if (index >= 0)
+		foreach( var go in ToDisable)
 		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
+			if (go)
 			{
-				parts[index] = s;
-				Value = ArrayJoin( parts);
-				return;
+				go.SetActive( !pokedTrue);
 			}
 		}
-		throw new System.ArgumentOutOfRangeException(
-			"Datasack.Vectors.SetArray:" + index.ToString());
+
+		for (int i = 0; i < IndexArray.Length; i++)
+		{
+			IndexArray[i].SetActive( i == ds.iValue);
+		}
 	}
 
-	public	void	SetArray( string[] data)
+	void OnEnable()
 	{
-		Value = ArrayJoin( data);
+		dataSack.OnChanged += OnChanged;
+
+		dataSack.Poke();
 	}
 
-	public	string[]	GetArray()
+	void OnDisable()
 	{
-		return ArraySplit( Value);
+		dataSack.OnChanged -= OnChanged;
 	}
 }

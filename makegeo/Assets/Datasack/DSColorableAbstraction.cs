@@ -33,61 +33,59 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public partial class Datasack
+// WARNING! Internal class: other Datasack scripts will add this as needed.
+
+public class DSColorableAbstraction : MonoBehaviour
 {
-	const char ArraySeparatorCharacter = ';';
+	private	Text	text;
+	private Image	image;
 
-	static	string[]	ArraySplit( string input)
+	// <WIP> observe and interoperate with other colorable objects
+
+	public	static	DSColorableAbstraction	Attach( MonoBehaviour script)
 	{
-		return input.Split( ArraySeparatorCharacter);
+		DSColorableAbstraction ca = script.gameObject.AddComponent<DSColorableAbstraction>();
+		return ca;
 	}
 
-	static	string	ArrayJoin( string[] input)
+	void	LazyFinder()
 	{
-		return String.Join( ArraySeparatorCharacter.ToString(), input);
-	}
-
-	public	string	GetArrayEntry( int index)
-	{
-		if (index >= 0)
+		if (!text)
 		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
-			{
-				return parts[index];
-			}
+			text = GetComponent<Text>();
 		}
-		return "<index out of range>";
-	}
-
-	public	void	SetArrayEntry( string s, int index)
-	{
-		if (index >= 0)
+		if (!image)
 		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
-			{
-				parts[index] = s;
-				Value = ArrayJoin( parts);
-				return;
-			}
+			image = GetComponent<Image>();
 		}
-		throw new System.ArgumentOutOfRangeException(
-			"Datasack.Vectors.SetArray:" + index.ToString());
 	}
 
-	public	void	SetArray( string[] data)
+	public	void	SetColor( Color c)
 	{
-		Value = ArrayJoin( data);
-	}
+		LazyFinder();
 
-	public	string[]	GetArray()
-	{
-		return ArraySplit( Value);
+		bool good = false;
+
+		if (text)
+		{
+			text.color = c;
+			good = true;
+		}
+
+		if (image)
+		{
+			image.color = c;
+			good = true;
+		}
+
+		if (!good)
+		{
+			Debug.LogError( GetType() + ".SetColor(): no suitable colorable object found.");
+		}
 	}
 }

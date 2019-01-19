@@ -33,61 +33,50 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public partial class Datasack
+// WARNING! Internal class: other Datasack scripts will add this as needed.
+
+public class DSTextAbstraction : MonoBehaviour
 {
-	const char ArraySeparatorCharacter = ';';
+	private	Text	text;
 
-	static	string[]	ArraySplit( string input)
-	{
-		return input.Split( ArraySeparatorCharacter);
-	}
+	// <WIP> observe and interoperate with other text-type objects
+	// here, such as TextMeshPro or TextMeshProUGUI objects.
 
-	static	string	ArrayJoin( string[] input)
+	public	static	DSTextAbstraction	Attach( MonoBehaviour script)
 	{
-		return String.Join( ArraySeparatorCharacter.ToString(), input);
-	}
-
-	public	string	GetArrayEntry( int index)
-	{
-		if (index >= 0)
+		DSTextAbstraction ta = script.gameObject.GetComponent<DSTextAbstraction>();
+		if (!ta)
 		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
-			{
-				return parts[index];
-			}
+			ta = script.gameObject.AddComponent<DSTextAbstraction>();
 		}
-		return "<index out of range>";
+		return ta;
 	}
 
-	public	void	SetArrayEntry( string s, int index)
+	void	LazyFinder()
 	{
-		if (index >= 0)
+		if (!text)
 		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
-			{
-				parts[index] = s;
-				Value = ArrayJoin( parts);
-				return;
-			}
+			text = GetComponent<Text>();
 		}
-		throw new System.ArgumentOutOfRangeException(
-			"Datasack.Vectors.SetArray:" + index.ToString());
 	}
 
-	public	void	SetArray( string[] data)
+	public	void	SetText( string s)
 	{
-		Value = ArrayJoin( data);
-	}
+		if (!gameObject) return;
 
-	public	string[]	GetArray()
-	{
-		return ArraySplit( Value);
+		LazyFinder();
+
+		if (text)
+		{
+			text.text = s;
+			return;
+		}
+
+		Debug.LogError( GetType() + ".SetText(): no suitable text object found.");
 	}
 }

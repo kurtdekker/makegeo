@@ -33,61 +33,19 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class Datasack
+public class DSSetValueOnStart : MonoBehaviour
 {
-	const char ArraySeparatorCharacter = ';';
+	public Datasack dataSack;
 
-	static	string[]	ArraySplit( string input)
-	{
-		return input.Split( ArraySeparatorCharacter);
-	}
+	public string valueToSet;
 
-	static	string	ArrayJoin( string[] input)
+	void Start()
 	{
-		return String.Join( ArraySeparatorCharacter.ToString(), input);
-	}
-
-	public	string	GetArrayEntry( int index)
-	{
-		if (index >= 0)
-		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
-			{
-				return parts[index];
-			}
-		}
-		return "<index out of range>";
-	}
-
-	public	void	SetArrayEntry( string s, int index)
-	{
-		if (index >= 0)
-		{
-			string[] parts = ArraySplit( Value);
-			if (index < parts.Length)
-			{
-				parts[index] = s;
-				Value = ArrayJoin( parts);
-				return;
-			}
-		}
-		throw new System.ArgumentOutOfRangeException(
-			"Datasack.Vectors.SetArray:" + index.ToString());
-	}
-
-	public	void	SetArray( string[] data)
-	{
-		Value = ArrayJoin( data);
-	}
-
-	public	string[]	GetArray()
-	{
-		return ArraySplit( Value);
+		Debug.Log( GetType() + ".Start(): dataSack = " + dataSack.name + " on GameObject " + name);
+		dataSack.Value = valueToSet;
 	}
 }
