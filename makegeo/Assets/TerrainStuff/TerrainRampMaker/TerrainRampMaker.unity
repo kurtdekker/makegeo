@@ -398,6 +398,7 @@ MonoBehaviour:
   ModelRampEdges: 2.5
   CutOpacity: 1
   OnlyDrawWhenSelected: 1
+  EnableUndoFunctionality: 0
   HeightFollowingMode: 2
 --- !u!1 &1366518380
 GameObject:

@@ -294,6 +294,25 @@ public class TerrainRampMaker : MonoBehaviour
 
 	void CutStraightRamp()
 	{
+		if (!EnableUndoFunctionality)
+		{
+			int result = EditorUtility.DisplayDialogComplex(
+				"Warning! Permanent Terrain Action!",
+				"UNDO functionality is currently OFF. This operation will " +
+				"permanently change your terrain asset to cut the ramp.\n\n" +
+				"You can turn on UNDO functionality on the TerrainRampMaker root instance.\n\n" +
+				"UNDO functionality may cause the terrain ramp cut to be very slow on some versions of Unity3D.\n\n" +
+				"I recommend you use source control at all times to avoid data loss.\n\n" +
+				"Are you sure you want to cut this ramp?",
+				"CUT RAMP", "Cancel", null);
+
+			if (result != 0)
+			{
+				Debug.LogWarning( "Terrain cut cancelled.");
+				return;
+			}
+		}
+
 		// all points in world position
 		Vector3[] WorldPositions = new Vector3[ GetCount()];
 		for (int i = 0; i < GetCount(); i++)
