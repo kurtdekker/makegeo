@@ -1,0 +1,5 @@
+.LOG
+
+1:46 PM 10/16/2018
+
+See here: https://forum.unity.com/threads/terrain-cutout.291836/
