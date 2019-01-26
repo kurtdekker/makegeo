@@ -91,6 +91,11 @@ public class TerrainRampMaker : MonoBehaviour
 
 	public	bool	OnlyDrawWhenSelected = false;
 
+	[Space(20)]
+	[Header( "Warning: enabling this can make ramp cuts SLOW!")]
+	public	bool	EnableUndoFunctionality = true;
+	[Space(50)]
+
 	public	HeightFollowingModeType		HeightFollowingMode = HeightFollowingModeType.ENDPOINTS_RAMP;
 
 	bool AllOnSameTerrain;
@@ -471,9 +476,12 @@ public class TerrainRampMaker : MonoBehaviour
 		}
 
 #if UNITY_EDITOR
-		Undo.RecordObjects( new Object[] {
-			td
-		}, "Terrain Ramp Cut");
+		if (EnableUndoFunctionality)
+		{
+			Undo.RecordObjects( new Object[] {
+				td
+			}, "Terrain Ramp Cut");
+		}
 #endif
 
 		// save the whole heightmap back. CAUTION! This modifies the on-disk terrain asset!
