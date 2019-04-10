@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -42,7 +42,7 @@ using UnityEngine.EventSystems;
 [RequireComponent( typeof( InputField))]
 public class DSInputField : MonoBehaviour
 {
-	[Header("The DataSack to signal onEndEdit. Default is UISack.")]
+	[Header("The DataSack to signal onEndEdit. Default is UserIntent.")]
 	public Datasack DSUI;
 
 	public	bool	SignalPayloadInsteadOfName;
@@ -59,11 +59,11 @@ public class DSInputField : MonoBehaviour
 	}
 	public void OnEndEdit( string Value)
 	{
-		Debug.Log( "OnEndEdit(): " + Value);
+		Debug.Log( GetType() + ".OnEndEdit(): " + Value);
 
 		dataSackPayload.Value = Value;
 
-		string signalledOutput = name;
+		string signalledOutput = gameObject.name;
 		if (SignalPayloadInsteadOfName) signalledOutput = Value;
 
 		DSUI.Value = signalledOutput;

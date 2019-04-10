@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -46,7 +46,8 @@ public partial class Datasack
 {
 	public override string ToString ()
 	{
-		return string.Format ("[Datasack: name={0}, Value={1}, iValue={2}, fValue={3}, bValue={4}]", name, Value, iValue, fValue, bValue);
+		return string.Format ("[Datasack: name={0}, FullName={1}, Value={2}, iValue={3}, fValue={4}, bValue={5}]",
+			name, FullName, Value, iValue, fValue, bValue);
 	}
 
 	bool DebugBreak;
@@ -56,15 +57,20 @@ public partial class Datasack
 	[CustomEditor(typeof(Datasack)), CanEditMultipleObjects]
 	public class DatasackEditor : Editor
 	{
-		void AppendGetter( ref string s, Datasack ds)
+		string IdentifierSafeString( string s)
 		{
-			string safeName = ds.name;
+			s = s.Replace( "_", "_");
+			s = s.Replace( "-", "_");
+			s = s.Replace( "/", "_");
+			s = s.Replace( "\\", "_");
+			return s;
+		}
 
-			// Note to future self: don't allow future silliness by putting non-identifier-safe
-			// names into filenames. Tell the user to be thankful we don't enforce 8.3 filenames.
-
-			s += "\tpublic static Datasack " + safeName + " { get { return DSM.I.Get( \"" +
-				safeName  + "\"); } }\n";
+		void CreateStaticGetterExpression( ref string s, Datasack ds, string variableName)
+		{
+			s += "\tpublic static Datasack " + IdentifierSafeString( ds.name) +
+				" { get { return DSM.I.Get( \"" +
+				variableName  + "\", Load: true); } }\n";
 		}
 
 		void GenerateCode()
@@ -80,10 +86,69 @@ public partial class Datasack
 
 			s += "public partial class DSM\n{\n";
 
+			// TODO: make this ransack the entire project for Datasacks,
+			// not just underneath the Resources directories!
+
 			Datasack[] sacks = Resources.LoadAll<Datasack>( DSM.s_DatasacksDirectoryPrefix);
+
+			Dictionary<string,List<Datasack>> SplitByDirectory = new Dictionary<string, List<Datasack>>();
+
 			foreach( var ds in sacks)
 			{
-				AppendGetter( ref s, ds);
+				string assetPath = AssetDatabase.GetAssetPath( ds.GetInstanceID());
+				string dirName = System.IO.Path.GetDirectoryName( assetPath);
+				if (!SplitByDirectory.ContainsKey( dirName))
+				{
+					SplitByDirectory[dirName] = new List<Datasack>();
+				}
+				SplitByDirectory[dirName].Add( ds);
+			}
+
+			foreach( var dirName in SplitByDirectory.Keys)
+			{
+				string nestedClassName = null;
+				string pathPrefix = "";
+				string indentation = "";
+
+				const string s_DatasacksSearchTarget = "/Datasacks";
+
+				s += "\n";
+				s += "// Datasacks from directory '" + dirName + "'\n";
+
+				// CAUTION: this only handles "nested namespaces"
+				// one class (folder) deep for now. Feel free to improve it
+				// and send me a pull request!
+				if (!dirName.EndsWith( s_DatasacksSearchTarget))
+				{
+					int resourcesOffset = dirName.LastIndexOf( s_DatasacksSearchTarget);
+
+					resourcesOffset += s_DatasacksSearchTarget.Length + 1;
+
+					nestedClassName = dirName.Substring( resourcesOffset);
+
+					pathPrefix = nestedClassName + "/";
+
+					indentation = "\t";
+				}
+
+				if (nestedClassName != null)
+				{
+					s += "\tpublic static class " + IdentifierSafeString( nestedClassName) + "\n";
+					s += "\t{\n";
+				}
+
+				foreach( var ds in SplitByDirectory[dirName])
+				{
+					s += indentation;
+					string variableName = pathPrefix + ds.name;
+					CreateStaticGetterExpression( ref s, ds, variableName);
+					ds.FullName = variableName;
+				}
+
+				if (nestedClassName != null)
+				{
+					s += "\t}\n";
+				}
 			}
 
 			s += "}\n";
@@ -97,13 +162,48 @@ public partial class Datasack
 				sw.Write(s);
 			}
 
+			{
+				bool create = false;
+
+				string assetPath = "Assets/" + DSM.s_AllDatasacksPathPrefix;
+
+				System.IO.Directory.CreateDirectory( assetPath);
+
+				assetPath = assetPath + DSM.s_AllDatasacksAsset + ".asset";
+
+				var dsc = AssetDatabase.LoadAssetAtPath<DatasackCollection>( assetPath);
+				if (!dsc)
+				{
+					create = true;
+					dsc = ScriptableObject.CreateInstance<DatasackCollection>();
+				}
+
+				dsc.Mappings = new DatasackCollection.DatasackMapping[ sacks.Length];
+
+				for (int i = 0; i < sacks.Length; i++)
+				{
+					dsc.Mappings[i] = new DatasackCollection.DatasackMapping();
+					dsc.Mappings[i].Fullname = sacks[i].FullName;
+					dsc.Mappings[i].Datasack = sacks[i];
+				}
+
+				if (create)
+				{
+					AssetDatabase.CreateAsset( dsc, assetPath);
+				}
+
+				EditorUtility.SetDirty(dsc);
+
+				AssetDatabase.SaveAssets();
+			}
+
 			AssetDatabase.Refresh();
 		}
 
 		string PlayerPrefsKey()
 		{
 			Datasack ds = (Datasack)target;
-			return DSM.s_PlayerPrefsPrefix + ds.name.ToLower();
+			return DSM.s_PlayerPrefsPrefix + ds.FullName;
 		}
 
 		public override void OnInspectorGUI()
@@ -132,7 +232,7 @@ public partial class Datasack
 			GUI.color = Color.cyan;
 			if (GUILayout.Button( "OUTPUT CURRENT VALUE"))
 			{
-				string part1 = "Datasack " + ds.name + " is currently: '" + ds.Value + "'";
+				string part1 = "Datasack " + ds.FullName + " is currently: '" + ds.Value + "'";
 				string part2 = " <not parseable as float>";
 				try
 				{
@@ -159,6 +259,7 @@ public partial class Datasack
 			GUI.color = Color.red;
 			if (GUILayout.Button( "DELETE ALL PLAYER PREFS"))
 			{
+				DSM.ResetDictionaryIfRunning();
 				PlayerPrefs.DeleteAll();
 				PlayerPrefs.Save();
 			}

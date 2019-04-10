@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -44,6 +44,7 @@ public class DSTextGetStrArray : MonoBehaviour
 
 	public	Datasack	dataSack;
 
+	[Multiline]
 	public	string		FormatString;
 
 	private DSTextAbstraction ta;

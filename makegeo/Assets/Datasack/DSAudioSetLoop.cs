@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -33,27 +33,38 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
-public partial class Datasack
+public class DSAudioSetLoop : MonoBehaviour
 {
-	Stack<OnValueChangedDelegate> OnChangedStack;
+	public	Datasack	dataSack;
 
-	public void PushOnChanged( OnValueChangedDelegate callback)
+	private AudioSource[] azzs;
+
+	void Start ()
 	{
-		if (OnChangedStack == null)
-		{
-			OnChangedStack = new Stack<OnValueChangedDelegate>();
-		}
-		OnChangedStack.Push( OnChanged);
-		OnChanged = callback;
+		OnChanged (dataSack);
 	}
 
-	public void PopOnChanged()
+	void	OnChanged( Datasack ds)
 	{
-		if (OnChangedStack != null)
+		for (int i = 0; i < azzs.Length; i++)
 		{
-			OnChanged = OnChangedStack.Pop();
+			azzs[i].loop = ds.bValue;
 		}
+	}
+
+	void	OnEnable()
+	{
+		azzs = GetComponents<AudioSource>();
+
+		dataSack.OnChanged += OnChanged;	
+	}
+	void	OnDisable()
+	{
+		dataSack.OnChanged -= OnChanged;	
 	}
 }

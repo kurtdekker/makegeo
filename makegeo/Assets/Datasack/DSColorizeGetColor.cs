@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -33,27 +33,51 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
-public partial class Datasack
+public class DSColorizeGetColor : MonoBehaviour
 {
-	Stack<OnValueChangedDelegate> OnChangedStack;
+	public	Datasack	dataSack;
 
-	public void PushOnChanged( OnValueChangedDelegate callback)
+	public static DSColorizeGetColor Attach( GameObject target, Datasack source)
 	{
-		if (OnChangedStack == null)
-		{
-			OnChangedStack = new Stack<OnValueChangedDelegate>();
-		}
-		OnChangedStack.Push( OnChanged);
-		OnChanged = callback;
+		var dscg = target.GetComponent<DSColorizeGetColor>();
+		if (!dscg) dscg = target.AddComponent<DSColorizeGetColor>();
+
+		dscg.OnDisable();
+		dscg.dataSack = source;
+		dscg.OnEnable();
+
+		return dscg;
 	}
 
-	public void PopOnChanged()
+	private DSColorableAbstraction colorable;
+
+	void	OnChanged( Datasack ds)
 	{
-		if (OnChangedStack != null)
+		colorable.SetColor( ds.colorValue);
+	}
+
+	void	OnEnable()
+	{
+		if (!colorable)
 		{
-			OnChanged = OnChangedStack.Pop();
+			colorable = DSColorableAbstraction.Attach( this);
+		}
+		if (dataSack)
+		{
+			dataSack.OnChanged += OnChanged;	
+			OnChanged(dataSack);
+		}
+	}
+	void	OnDisable()
+	{
+		if (dataSack)
+		{
+			dataSack.OnChanged -= OnChanged;	
 		}
 	}
 }

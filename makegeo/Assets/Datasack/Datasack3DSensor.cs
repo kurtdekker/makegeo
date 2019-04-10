@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -33,27 +33,33 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
-public partial class Datasack
+[RequireComponent(typeof(Collider))]
+public class Datasack3DSensor : MonoBehaviour, IDatasackTouchable
 {
-	Stack<OnValueChangedDelegate> OnChangedStack;
+	[Tooltip("Defaults to UISack datavar if none supplied.")]
+	public Datasack dsUI;
 
-	public void PushOnChanged( OnValueChangedDelegate callback)
+	[Tooltip("Leave blank to set Button GameObject name")]
+	public string ValueToSet;
+
+	public void Touched()
 	{
-		if (OnChangedStack == null)
-		{
-			OnChangedStack = new Stack<OnValueChangedDelegate>();
-		}
-		OnChangedStack.Push( OnChanged);
-		OnChanged = callback;
+		var ds = DSM.UserIntent;
+		if (dsUI) ds = dsUI;
+
+		string signalledOutput = gameObject.name;
+		if (ValueToSet != null && ValueToSet.Length > 0) signalledOutput = ValueToSet;
+
+		ds.Value = signalledOutput;
 	}
 
-	public void PopOnChanged()
+	void OnEnable()
 	{
-		if (OnChangedStack != null)
-		{
-			OnChanged = OnChangedStack.Pop();
-		}
+		Datasack3DManager.Instance.ToString();
 	}
 }

@@ -77,7 +77,7 @@ public class DSUIElementEnabled : MonoBehaviour
 
 		if (!button && !text && !image)
 		{
-			Debug.LogWarning( GetType()+".OnEnable(): no Text or Button or Image on GameObject '" + name + "'");
+			Debug.LogWarning( GetType()+".OnEnable(): no Text or Button or Image on GameObject '" + gameObject.name + "'");
 		}
 
 		dataSack.OnChanged += OnChanged;

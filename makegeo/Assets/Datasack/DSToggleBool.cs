@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -45,24 +45,30 @@ public class DSToggleBool : MonoBehaviour
 
 	private	Toggle toggle;
 
-	void	Start()
-	{
-		toggle.isOn = dataSack.bValue;
-	}
-
-	void	OnChanged( bool bValue)
+	void	OnToggleChanged( bool bValue)
 	{
 		dataSack.bValue = bValue;
+	}
+
+	void	OnDatasackChanged( Datasack ds)
+	{
+		toggle.isOn = ds.bValue;
 	}
 
 	void	OnEnable()
 	{
 		toggle = GetComponent<Toggle> ();
 
-		toggle.onValueChanged.AddListener (OnChanged);
+		toggle.isOn = dataSack.bValue;
+
+		toggle.onValueChanged.AddListener (OnToggleChanged);
+
+		dataSack.OnChanged += OnDatasackChanged;
 	}
 	void	OnDisable()
 	{
-		toggle.onValueChanged.RemoveListener (OnChanged);
+		toggle.onValueChanged.RemoveListener (OnToggleChanged);
+
+		dataSack.OnChanged -= OnDatasackChanged;
 	}
 }

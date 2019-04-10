@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -42,13 +42,13 @@ public class DSGameObjectControl : MonoBehaviour
 	[Tooltip( "Poke this Datasack to enable/disable objects below.")]
 	public	Datasack	dataSack;
 
-	[Tooltip( "GameObjects to ENABLE when Datasack is poked TRUE.")]
+	[Tooltip( "GameObjects to ENABLE when Datasack is poked TRUE (false poke will DISABLE!).")]
 	public	GameObject[]	ToEnable;
 
-	[Tooltip( "GameObjects to DISABLE when Datasack is poked TRUE.")]
+	[Tooltip( "GameObjects to DISABLE when Datasack is poked TRUE (false poke will ENABLE!).")]
 	public	GameObject[]	ToDisable;
 
-	[Tooltip( "GameObject array to map to iValue of Datasack")]
+	[Tooltip( "GameObject array to map to iValue of Datasack (zero-based, can have gaps)")]
 	public	GameObject[]	IndexArray;
 
 	void OnChanged( Datasack ds)
@@ -73,7 +73,10 @@ public class DSGameObjectControl : MonoBehaviour
 
 		for (int i = 0; i < IndexArray.Length; i++)
 		{
-			IndexArray[i].SetActive( i == ds.iValue);
+			if (IndexArray[i])
+			{
+				IndexArray[i].SetActive( i == ds.iValue);
+			}
 		}
 	}
 

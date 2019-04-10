@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -45,17 +45,17 @@ public partial class DSM
 	{
 		get
 		{
-			return I.Get (s_UserIntent, true);
+			return I.Get (s_UserIntent, Add: true);
 		}
 	}
 
-	// obsoleted 1/18/2019 - will be removed after 2/18/2019
-	[System.Obsolete( "Use DSM.UserIntent instead please.")]
+	// obsoleted 1/18/2019 - will be errored after 2/18/2019 and removed in the future
+	[System.Obsolete( "Use DSM.UserIntent instead please.", true)]
 	public	static	Datasack	UISack
 	{
 		get
 		{
-			return I.Get (s_UserIntent, true);
+			return I.Get (s_UserIntent, Add: true);
 		}
 	}
 }

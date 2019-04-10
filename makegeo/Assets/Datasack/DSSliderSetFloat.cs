@@ -59,9 +59,9 @@ public class DSSliderSetFloat : MonoBehaviour
 	{
 		slider = GetComponent<Slider> ();
 
-		slider.onValueChanged.AddListener (OnSliderChanged);
-
 		slider.value = dataSack.fValue;
+
+		slider.onValueChanged.AddListener (OnSliderChanged);
 
 		dataSack.OnChanged += OnDatasackChanged;
 	}

@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -33,27 +33,62 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
-public partial class Datasack
+[RequireComponent( typeof( Button))]
+public class DSButtonIncrement : MonoBehaviour
 {
-	Stack<OnValueChangedDelegate> OnChangedStack;
+	[Tooltip("Datasack to increment.")]
+	public Datasack dataSack;
 
-	public void PushOnChanged( OnValueChangedDelegate callback)
+	[Tooltip("Leave zero to not loop. It will only reach this number minus one.")]
+	public int LimitValue;
+
+	[Tooltip("Like above, leave blank or zero to not loop. It will only reach this number minus one.")]
+	public Datasack dsLimitValue;
+
+	void Reset()
 	{
-		if (OnChangedStack == null)
-		{
-			OnChangedStack = new Stack<OnValueChangedDelegate>();
-		}
-		OnChangedStack.Push( OnChanged);
-		OnChanged = callback;
+		LimitValue = 3;
 	}
 
-	public void PopOnChanged()
+	private	Button button;
+
+	void	OnChanged()
 	{
-		if (OnChangedStack != null)
+		int i = dataSack.iValue;
+
+		i++;
+
+		int Limit = LimitValue;
+
+		if (dsLimitValue)
 		{
-			OnChanged = OnChangedStack.Pop();
+			Limit = dsLimitValue.iValue;
 		}
+
+		if (Limit > 0)
+		{
+			if (i >= Limit)
+			{
+				i = 0;
+			}
+		}
+
+		dataSack.iValue = i;
+	}
+
+	void	OnEnable()
+	{
+		button = GetComponent<Button> ();
+
+		button.onClick.AddListener (OnChanged);
+	}
+	void	OnDisable()
+	{
+		button.onClick.RemoveListener (OnChanged);
 	}
 }

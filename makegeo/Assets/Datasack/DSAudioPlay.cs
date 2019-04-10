@@ -48,7 +48,8 @@ public class DSAudioPlay : MonoBehaviour
 	{
 		RANDOM,
 		SEQUENCE,
-		ALL,
+		ALLATONCE,
+		SHUFFLE,
 	}
 	public PlayStrategy Strategy;
 
@@ -56,7 +57,7 @@ public class DSAudioPlay : MonoBehaviour
 
 	void	OnChanged( Datasack ds)
 	{
-		if (Strategy == PlayStrategy.ALL)
+		if (Strategy == PlayStrategy.ALLATONCE)
 		{
 			foreach( var az in azzs)
 			{
@@ -73,12 +74,31 @@ public class DSAudioPlay : MonoBehaviour
 		azzs[lastPlayed].Play();
 
 		// done after the .Play() so we get 0 played first
-		if (Strategy == PlayStrategy.SEQUENCE)
+		if ((Strategy == PlayStrategy.SEQUENCE) ||
+			(Strategy == PlayStrategy.SHUFFLE))
 		{
 			lastPlayed++;
 			if (lastPlayed >= azzs.Length)
 			{
 				lastPlayed = 0;
+				if (Strategy == PlayStrategy.SHUFFLE)
+				{
+					Shuffle();
+				}
+			}
+		}
+	}
+
+	void	Shuffle()
+	{
+		for (int i = 0; i < azzs.Length; i++)
+		{
+			int j = Random.Range( i, azzs.Length);
+			if (i != j)
+			{
+				var t = azzs[i];
+				azzs[i] = azzs[j];
+				azzs[j] = t;
 			}
 		}
 	}
@@ -86,7 +106,12 @@ public class DSAudioPlay : MonoBehaviour
 	void	OnEnable()
 	{
 		azzs = GetComponents<AudioSource>();
-		dataSack.OnChanged += OnChanged;	
+		dataSack.OnChanged += OnChanged;
+
+		if (Strategy == PlayStrategy.SHUFFLE)
+		{
+			Shuffle();
+		}
 	}
 	void	OnDisable()
 	{

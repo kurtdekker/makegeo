@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -33,27 +33,21 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System.Collections.Generic;
+using UnityEngine;
 
 public partial class Datasack
 {
-	Stack<OnValueChangedDelegate> OnChangedStack;
-
-	public void PushOnChanged( OnValueChangedDelegate callback)
+	// If you are constantly setting a .Value field, use this
+	// if you can tolerate signalling / breaking / saving to
+	// only perform action when the value is different.
+	public string ValueIfDifferent
 	{
-		if (OnChangedStack == null)
+		set
 		{
-			OnChangedStack = new Stack<OnValueChangedDelegate>();
-		}
-		OnChangedStack.Push( OnChanged);
-		OnChanged = callback;
-	}
-
-	public void PopOnChanged()
-	{
-		if (OnChangedStack != null)
-		{
-			OnChanged = OnChangedStack.Pop();
+			if (TheData != value)
+			{
+				Value = value;
+			}
 		}
 	}
 }

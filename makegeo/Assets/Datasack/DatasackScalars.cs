@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -78,7 +78,7 @@ public partial class Datasack
 		}
 	}
 
-	// CAUTION: nonzero integer is true... a string "true" doesn't cut it!
+	// CAUTION: nonzero integer is true... a string "true" does NOT count as true!!!
 	public	bool	bValue
 	{
 		get

@@ -40,7 +40,7 @@ using UnityEngine.UI;
 
 public class DSKeycodeInput : MonoBehaviour
 {
-	[Tooltip("Defaults to UISack datavar if none supplied.")]
+	[Tooltip("Defaults to UserIntent datasack if none supplied.")]
 	public	Datasack	dataSack;
 
 	public	enum KeyActivity
@@ -118,7 +118,7 @@ public class DSKeycodeInput : MonoBehaviour
 
 			if (SendGameObjectName)
 			{
-				tempOutput = name;
+				tempOutput = gameObject.name;
 			}
 
 			var ds = DSM.UserIntent;

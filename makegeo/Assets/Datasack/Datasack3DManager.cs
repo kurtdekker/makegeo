@@ -36,39 +36,87 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class DSTextGetString : MonoBehaviour
+// If you don't provide one of these in your scene, the activation of any
+// script that implements the IDatasack3DSensor to your scene should
+// automatically add one of these and default it to Camera.main.
+
+public class Datasack3DManager : MonoBehaviour
 {
-	public	Datasack	dataSack;
+	[Tooltip( "You may override this or it will presume Camera.main at runtime.")]
+	public Camera cam;
 
-	[Multiline]
-	public	string		FormatString;
+	static Datasack3DManager _Instance;
 
-	private DSTextAbstraction ta;
-
-	void	OnChanged( Datasack ds)
+	void Awake()
 	{
-		if (FormatString.Length > 0)
+		if (_Instance)
 		{
-			ta.SetText( System.String.Format (FormatString, ds.Value));
-			return;
+			if (this != _Instance)
+			{
+				Destroy( this);
+				return;
+			}
 		}
-		ta.SetText( ds.Value);
+		_Instance = this;
+
+		if (cam == null)
+		{
+			cam = Camera.main;
+		}
 	}
 
-	void	OnEnable()
+	public static Datasack3DManager Instance
 	{
-		if (!ta)
+		get
 		{
-			ta = DSTextAbstraction.Attach( this);
+			if (!_Instance)
+			{
+				_Instance = new GameObject( "Datasack3DManager.Create();").AddComponent<Datasack3DManager>();
+			}
+			return _Instance;
+		}
+	}
+
+	void UpdateSimpleMouseInput()
+	{
+		bool clicked = false;
+		Vector3 position = Vector3.zero;
+
+		if (Input.GetMouseButtonDown(0))
+		{
+			clicked = true;
 		}
 
-		dataSack.OnChanged += OnChanged;
-		OnChanged( dataSack);
+		// <WIP> option to handle Input.GetMouseButtonDown(0) instead?
+		// <WIP> handle must-touch--first-then-release enforcement
+		// <WIP> these choices might likely want to come from the specific
+		// objects we touched, which means we need to get them first before
+		// we even know if we care about them... It's complicated.
+
+		if (clicked)
+		{
+			position = Input.mousePosition;
+
+			Ray ray = cam.ScreenPointToRay( position);
+			RaycastHit rch;
+			if (Physics.Raycast( ray, out rch))
+			{
+				MonoBehaviour[] allBehaviors = rch.collider.gameObject.GetComponents<MonoBehaviour>();
+				foreach( var mb in allBehaviors)
+				{
+					IDatasackTouchable sensor = mb as IDatasackTouchable;
+					if (sensor != null)
+					{
+						sensor.Touched();
+					}
+				}
+			}
+		}
 	}
-	void	OnDisable()
+
+	void Update ()
 	{
-		dataSack.OnChanged -= OnChanged;	
+		UpdateSimpleMouseInput();
 	}
 }

@@ -45,7 +45,7 @@ public class DSSetValueOnStart : MonoBehaviour
 
 	void Start()
 	{
-		Debug.Log( GetType() + ".Start(): dataSack = " + dataSack.name + " on GameObject " + name);
+		Debug.Log( GetType() + ".Start(): dataSack = " + dataSack.FullName + " on GameObject " + gameObject.name);
 		dataSack.Value = valueToSet;
 	}
 }

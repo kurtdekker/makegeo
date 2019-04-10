@@ -11,9 +11,11 @@
 //
 public partial class DSM
 {
-	public static Datasack PerlinVerticalScale { get { return DSM.I.Get( "PerlinVerticalScale"); } }
-	public static Datasack PerlinXFrequency { get { return DSM.I.Get( "PerlinXFrequency"); } }
-	public static Datasack PerlinXOffset { get { return DSM.I.Get( "PerlinXOffset"); } }
-	public static Datasack PerlinYFrequency { get { return DSM.I.Get( "PerlinYFrequency"); } }
-	public static Datasack PerlinYOffset { get { return DSM.I.Get( "PerlinYOffset"); } }
+
+// Datasacks from directory 'Assets/Datasack/Resources/Datasacks'
+	public static Datasack PerlinVerticalScale { get { return DSM.I.Get( "PerlinVerticalScale", Load: true); } }
+	public static Datasack PerlinXFrequency { get { return DSM.I.Get( "PerlinXFrequency", Load: true); } }
+	public static Datasack PerlinXOffset { get { return DSM.I.Get( "PerlinXOffset", Load: true); } }
+	public static Datasack PerlinYFrequency { get { return DSM.I.Get( "PerlinYFrequency", Load: true); } }
+	public static Datasack PerlinYOffset { get { return DSM.I.Get( "PerlinYOffset", Load: true); } }
 }

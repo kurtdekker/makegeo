@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -33,27 +33,14 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
-public partial class Datasack
+// NOTE: at present this is only used for scripts to accept touch
+// input from non-UI touchable objects.
+
+public interface IDatasackTouchable
 {
-	Stack<OnValueChangedDelegate> OnChangedStack;
-
-	public void PushOnChanged( OnValueChangedDelegate callback)
-	{
-		if (OnChangedStack == null)
-		{
-			OnChangedStack = new Stack<OnValueChangedDelegate>();
-		}
-		OnChangedStack.Push( OnChanged);
-		OnChanged = callback;
-	}
-
-	public void PopOnChanged()
-	{
-		if (OnChangedStack != null)
-		{
-			OnChanged = OnChangedStack.Pop();
-		}
-	}
+	void Touched();
 }

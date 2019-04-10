@@ -39,8 +39,8 @@ using UnityEngine;
 
 public partial class DSM : MonoBehaviour
 {
-	// You can make this "", but then the Resources.LoadAll<Datasack>()
-	// call below may load ALL Resources/ assets into RAM at once.
+	public const string s_AllDatasacksAsset = "AllDatasacks";
+	public const string s_AllDatasacksPathPrefix = "Datasack/Resources/";
 	public const string s_DatasacksDirectoryPrefix = "Datasacks/";
 
 	public static bool shuttingDown { get; private set; }
@@ -48,6 +48,14 @@ public partial class DSM : MonoBehaviour
 	static	DSM	_I;
 
 	public	const	string	s_PlayerPrefsPrefix = "DataBag_";
+
+	public static void ResetDictionaryIfRunning()
+	{
+		if (_I)
+		{
+			_I.AllSacks = new Dictionary<string, Datasack> ();
+		}
+	}
 
 	public	static	DSM I
 	{
@@ -59,13 +67,12 @@ public partial class DSM : MonoBehaviour
 
 				DontDestroyOnLoad (_I.gameObject);
 
-				_I.AllSacks = new Dictionary<string, Datasack> ();
+				ResetDictionaryIfRunning();
 
-				Datasack[] sacks = Resources.LoadAll<Datasack>( s_DatasacksDirectoryPrefix);
-
-				foreach (var sack in sacks)
+				var dsc = Resources.Load<DatasackCollection>( s_AllDatasacksAsset);
+				foreach( var dm in dsc.Mappings)
 				{
-					_I.AllSacks [sack.name.ToLower()] = sack;
+					DSM.I.Get( dm.Fullname, Load: true);
 				}
 			}
 			return _I;
@@ -80,7 +87,8 @@ public partial class DSM : MonoBehaviour
 			{
 				if (kvp.Value.Save)
 				{
-					PlayerPrefs.SetString (s_PlayerPrefsPrefix + kvp.Key.ToLower(), kvp.Value.Value);
+					string s_PrefsKey = s_PlayerPrefsPrefix + kvp.Key;
+					PlayerPrefs.SetString (s_PrefsKey, kvp.Value.Value);
 				}
 			}
 			PlayerPrefs.Save();
@@ -119,22 +127,38 @@ public partial class DSM : MonoBehaviour
 
 	Dictionary<string,Datasack> AllSacks;
 
-	public	Datasack	Get( string sackname, bool AutoAdd = false)
-	{
-		sackname = sackname.ToLower();
+	const string s_ReminderToCodegen = "(Perhaps you need to select a Datasack and do 'CODEGEN' from its inspector panel?)";
 
-		// creating Datasack on the fly
+	public	Datasack	Get( string sackname, bool Add = false, bool Load = false)
+	{
 		if (!AllSacks.ContainsKey( sackname))
 		{
-			if (AutoAdd)
+			Datasack ds = null;
+			if (Load)
 			{
-				var ds = ScriptableObject.CreateInstance<Datasack> ();
-				ds.name = sackname;
+				string finalName = s_DatasacksDirectoryPrefix + sackname;
+				ds = Resources.Load<Datasack>( finalName);
+				if (!ds)
+				{
+					Debug.LogError( GetType()+".Get(): Failed to load datasack '" + finalName + "'. Set AutoAdd = true to add at runtime.");
+					Debug.LogWarning( s_ReminderToCodegen);
+				}
+			}
+			if (Add)
+			{
+				ds = ScriptableObject.CreateInstance<Datasack> ();
+				ds.FullName = sackname;
+			}
+			if (ds)
+			{
+				ds.FullName = sackname;
+				ds.LoadPersistent();
 				AllSacks [sackname] = ds;
 			}
 			else
 			{
 				Debug.LogError( GetType()+".Get(): Datasack '" + sackname + "' does not exist. Set AutoAdd = true to add at runtime.");
+					Debug.LogWarning( s_ReminderToCodegen);
 			}
 		}
 		return AllSacks [sackname];
