@@ -1,0 +1,18 @@
+MakeGeo is presently hosted at these locations:
+
+https://bitbucket.org/kurtdekker/makegeo
+
+https://github.com/kurtdekker/makegeo
+
+https://gitlab.com/kurtdekker/makegeo
+
+
+A frozen copy of Datasacks is present in this repo.
+
+The live Datasacks is presently hosted at these locations:
+
+https://bitbucket.org/kurtdekker/datasacks
+
+https://github.com/kurtdekker/datasacks
+
+https://gitlab.com/kurtdekker/datasacks
