@@ -8,7 +8,9 @@ public class QuadPlaneDef
     public int zCells;
 
     // caution: x controls x dimension, y controls scaling of height, and z controls z direction
-    public Vector3 WorldSize;
+    public Vector3 WorldSize = Vector3.one;
+
+    public Vector2 UVScale = Vector2.one;
 
     public System.Func<Vector2, float> HeightFunction;  // optional
 

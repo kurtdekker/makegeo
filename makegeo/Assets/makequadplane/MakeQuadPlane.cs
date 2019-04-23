@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// MASTER CAUTION: this uses Vector3 objects and winds a plane facing Y+
+// It interleaves Vector2 objects for UV purposes, and Vector3 objects for
+// positional spaces. Be careful with your Y vs Z selections!!!
+
 public static class MakeQuadPlane
 {
     public static GameObject Create( QuadPlaneDef qpd)
@@ -34,8 +38,8 @@ public static class MakeQuadPlane
                     vtx.position = new Vector3(pos.x, height, pos.y);
 
                     vtx.uv0 = new Vector2(
-                        i / (qpd.xCells - 1.0f),
-                        j / (qpd.zCells - 1.0f));
+                        (i / (qpd.xCells - 1.0f)) * qpd.UVScale.x,
+                        (j / (qpd.zCells - 1.0f)) * qpd.UVScale.y);
 
                     vh.AddVert(vtx);
                 }
