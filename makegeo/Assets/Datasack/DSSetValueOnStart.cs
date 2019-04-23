@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -45,7 +45,8 @@ public class DSSetValueOnStart : MonoBehaviour
 
 	void Start()
 	{
-		Debug.Log( GetType() + ".Start(): dataSack = " + dataSack.FullName + " on GameObject " + gameObject.name);
+//		Debug.Log( GetType() + ".Start(): dataSack = " + dataSack.FullName +
+//			" on GameObject " + gameObject.name + " is set to " + valueToSet);
 		dataSack.Value = valueToSet;
 	}
 }
