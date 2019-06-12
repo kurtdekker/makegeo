@@ -24,8 +24,8 @@ public class TerrainByPerlinNoise : MonoBehaviour
 		// <WIP> stack of noise inserts here...
 
 		// we'll shuffle up position
-		DSM.PerlinXOffset.fValue = Random.Range( -1000.0f, 1000.0f);
-		DSM.PerlinYOffset.fValue = Random.Range( -1000.0f, 1000.0f);
+		DSM.Perlin.XOffset.fValue = Random.Range( -1000.0f, 1000.0f);
+		DSM.Perlin.YOffset.fValue = Random.Range( -1000.0f, 1000.0f);
 
 		float[,] heightmap = terrainData.GetHeights( 0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
 
@@ -34,10 +34,10 @@ public class TerrainByPerlinNoise : MonoBehaviour
 			for (int i = 0; i < heightmap.GetLength(0); i++)
 			{
 				// choose the frequency of the noise by scaling these
-				float x = DSM.PerlinXOffset.fValue + i * DSM.PerlinXFrequency.fValue;
-				float y = DSM.PerlinYOffset.fValue + j * DSM.PerlinYFrequency.fValue;
+				float x = DSM.Perlin.XOffset.fValue + i * DSM.Perlin.XFrequency.fValue;
+				float y = DSM.Perlin.YOffset.fValue + j * DSM.Perlin.YFrequency.fValue;
 
-				float height = Mathf.PerlinNoise( x, y) * DSM.PerlinVerticalScale.fValue;
+				float height = Mathf.PerlinNoise( x, y) * DSM.Perlin.VerticalScale.fValue;
 
 				heightmap[i,j] += height;
 			}
