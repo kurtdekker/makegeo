@@ -14,9 +14,6 @@
 public partial class DSM
 {
 
-// Datasacks from directory 'Assets/Datasacks'
-	public static Datasack UserIntent { get { return DSM.I.Get( "UserIntent"); } }
-
 // Datasacks from directory 'Assets/TerrainStuff/TerrainByPerlinNoise/Datasacks/Perlin'
 	public static partial class Perlin
 	{
@@ -28,4 +25,4 @@ public partial class DSM
 	}
 }
 
-// Total of 6 datasacks found and processed.
+// Total of 5 datasacks found and processed.

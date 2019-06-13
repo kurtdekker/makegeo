@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Name: AllDatasacks
   m_EditorClassIdentifier: 
   Mappings:
-  - Fullname: UserIntent
-    Datasack: {fileID: 11400000, guid: c9b0e398c99544d1fbde03c09a232243, type: 2}
   - Fullname: Perlin/VerticalScale
     Datasack: {fileID: 11400000, guid: 91d8b94a1e45b41fbbee3a28485630d8, type: 2}
   - Fullname: Perlin/XFrequency
