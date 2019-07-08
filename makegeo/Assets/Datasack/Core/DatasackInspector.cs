@@ -60,9 +60,21 @@ public partial class Datasack
 		string IdentifierSafeString( string s)
 		{
 			s = s.Replace( "_", "_");
-			s = s.Replace( "-", "_");
 			s = s.Replace( "/", "_");
 			s = s.Replace( "\\", "_");
+
+			s = s.Replace( " ", "_");
+
+			s = s.Replace( "-", "_");
+			s = s.Replace( "+", "_");
+
+			s = s.Replace( "(", "_");
+			s = s.Replace( ")", "_");
+
+			s = s.Replace( ";", "_");
+			s = s.Replace( "&", "_");
+			s = s.Replace( "$", "_");
+
 			return s;
 		}
 
@@ -88,8 +100,8 @@ public partial class Datasack
 
 			s += "public partial class DSM\n{\n";
 
-			// TODO: make this ransack the entire project for Datasacks,
-			// not just underneath the Resources directories!
+			// This now scans the entire project for Datasacks,
+			// not just underneath the Resources directories.
 
 			string[] datasackGUIDs = AssetDatabase.FindAssets( "t:Datasack");
 			int numDatasacks = datasackGUIDs.Length;
