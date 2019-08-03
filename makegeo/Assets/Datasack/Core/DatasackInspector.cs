@@ -288,6 +288,13 @@ public partial class Datasack
 
 			GUILayout.Space(20);
 
+			if (GUILayout.Button( "RUNTIME TOGGLE"))
+			{
+				ds.bValue = !ds.bValue;
+			}
+
+			GUILayout.Space(20);
+
 			GUI.color = Color.green;
 			if (GUILayout.Button( "RESET TO INITIAL VALUE"))
 			{
@@ -326,9 +333,14 @@ public partial class Datasack
 			GUI.color = Color.red;
 			if (GUILayout.Button( "DELETE ALL PLAYER PREFS"))
 			{
-				DSM.ResetDictionaryIfRunning();
-				PlayerPrefs.DeleteAll();
-				PlayerPrefs.Save();
+				if (EditorUtility.DisplayDialog( "CONFIRM!",
+					"Confirm DELETE all PlayerPrefs stored settings?\n\n" +
+					"(THIS ACTION CANNOT BE UNDONE!)", "DELETE ALL PREFS", "Cancel"))
+				{
+					DSM.ResetDictionaryIfRunning();
+					PlayerPrefs.DeleteAll();
+					PlayerPrefs.Save();
+				}
 			}
 
 			GUILayout.Space(20);

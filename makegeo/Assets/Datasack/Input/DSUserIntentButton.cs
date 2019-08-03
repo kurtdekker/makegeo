@@ -49,7 +49,7 @@ public class DSUserIntentButton : MonoBehaviour
 
 	private	Button button;
 
-	void	OnChanged()
+	void	OnButtonClick()
 	{
 		var ds = DSM.UserIntent;
 		if (dsUI) ds = dsUI;
@@ -64,10 +64,10 @@ public class DSUserIntentButton : MonoBehaviour
 	{
 		button = GetComponent<Button> ();
 
-		button.onClick.AddListener (OnChanged);
+		button.onClick.AddListener (OnButtonClick);
 	}
 	void	OnDisable()
 	{
-		button.onClick.RemoveListener (OnChanged);
+		button.onClick.RemoveListener (OnButtonClick);
 	}
 }
