@@ -1,9 +1,9 @@
 ﻿/*
-    The following license supersedes all notices in the source code.
-*/
+	The following license supersedes all notices in the source code.
 
-/*
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+
+	http://www.twitter.com/kurtdekker
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are
