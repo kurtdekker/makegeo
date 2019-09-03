@@ -33,113 +33,68 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// Uncomment this #define if you want TextMeshPro support.
-//#define USING_TEXTMESHPRO
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-#if USING_TEXTMESHPRO
-	using TMPro;
-#endif
-
-// WARNING! Internal class: other Datasack scripts will add this as needed.
-
-public class DSTextAbstraction : MonoBehaviour
+public class DSCameraControl : MonoBehaviour
 {
-	private	Text	text;
+	[Header( "Only supply the Camera properties you want to control:")]
+	public	Datasack	DataSackFOV;
+	public	Datasack	DataSackOrthoSize;
+	public	Datasack	DataSackRect;
 
-#if USING_TEXTMESHPRO
-	private	TextMeshPro	tmptext;
-	private	TextMeshProUGUI	tmptextugui;
-#endif
+	Camera cam;
 
-	// <WIP> observe and interoperate with other text-type objects here.
-
-	public	static	DSTextAbstraction	Attach( MonoBehaviour script)
+	void	OnChangedFOV( Datasack ds)
 	{
-		DSTextAbstraction ta = script.gameObject.GetComponent<DSTextAbstraction>();
-		if (!ta)
-		{
-			ta = script.gameObject.AddComponent<DSTextAbstraction>();
-		}
-		return ta;
+		cam.fieldOfView = ds.fValue;
 	}
 
-	void	LazyFinder()
+	void	OnChangedOrthoSize( Datasack ds)
 	{
-		if (!text)
-		{
-			text = GetComponent<Text>();
-		}
-#if USING_TEXTMESHPRO
-		if (!tmptext)
-		{
-			tmptext = GetComponent<TextMeshPro>();
-		}
-		if (!tmptextugui)
-		{
-			tmptextugui = GetComponent<TextMeshProUGUI>();
-		}
-#endif
+		cam.orthographicSize = ds.fValue;
 	}
 
-	public	string	GetText()
+	void	OnChangedRect( Datasack ds)
 	{
-		if (!gameObject) return "";
-
-		LazyFinder();
-
-		if (text)
-		{
-			return text.text;
-		}
-
-#if USING_TEXTMESHPRO
-		if (tmptext)
-		{
-			return tmptext.text;
-		}
-
-		if (tmptextugui)
-		{
-			return tmptextugui.text;
-		}
-#endif
-
-		Debug.LogError( name + "." + GetType() + ".GetText(): no suitable text object found.");
-
-		return "";
+		cam.rect = ds.rValue;
 	}
 
-	public	void	SetText( string s)
+	void	OnEnable()
 	{
-		if (!gameObject) return;
+		cam = GetComponent<Camera>();
 
-		LazyFinder();
-
-		if (text)
+		if (DataSackFOV)
 		{
-			text.text = s;
-			return;
+			DataSackFOV.OnChanged += OnChangedFOV;	
+			OnChangedFOV(DataSackFOV);
 		}
-
-#if USING_TEXTMESHPRO
-		if (tmptext)
+		if (DataSackOrthoSize)
 		{
-			tmptext.text = s;
-			return;
+			DataSackOrthoSize.OnChanged += OnChangedOrthoSize;	
+			OnChangedOrthoSize(DataSackOrthoSize);
 		}
-
-		if (tmptextugui)
+		if (DataSackRect)
 		{
-			tmptextugui.text = s;
-			return;
+			DataSackRect.OnChanged += OnChangedRect;	
+			OnChangedRect(DataSackRect);
 		}
-#endif
-
-		Debug.LogError( name + "." + GetType() + ".SetText(): no suitable text object found.");
+	}
+	void	OnDisable()
+	{
+		if (DataSackFOV)
+		{
+			DataSackFOV.OnChanged -= OnChangedFOV;
+		}
+		if (DataSackOrthoSize)
+		{
+			DataSackOrthoSize.OnChanged -= OnChangedOrthoSize;
+		}
+		if (DataSackRect)
+		{
+			DataSackRect.OnChanged -= OnChangedRect;
+		}
 	}
 }

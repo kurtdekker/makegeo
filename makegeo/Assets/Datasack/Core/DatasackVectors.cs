@@ -119,6 +119,13 @@ public partial class Datasack
 					DatasackFormatting.FloatFromHexString( parts[2]),
 					DatasackFormatting.FloatFromHexString( parts[3]));
 			}
+			if (parts.Length == 3)
+			{
+				return new Color(
+					DatasackFormatting.FloatFromHexString( parts[0]),
+					DatasackFormatting.FloatFromHexString( parts[1]),
+					DatasackFormatting.FloatFromHexString( parts[2]));
+			}
 			return Color.magenta;
 		}
 		set
@@ -127,6 +134,30 @@ public partial class Datasack
 				DatasackFormatting.FloatToHexString( value.g) + "," +
 				DatasackFormatting.FloatToHexString( value.b) + "," +
 				DatasackFormatting.FloatToHexString( value.a);
+		}
+	}
+
+	public	Rect rValue
+	{
+		get
+		{
+			string[] parts = Value.Split( ',');
+			if (parts.Length == 4)
+			{
+				return new Rect(
+					DatasackFormatting.FloatFromHexString( parts[0]),
+					DatasackFormatting.FloatFromHexString( parts[1]),
+					DatasackFormatting.FloatFromHexString( parts[2]),
+					DatasackFormatting.FloatFromHexString( parts[3]));
+			}
+			return new Rect();
+		}
+		set
+		{
+			Value = DatasackFormatting.FloatToHexString( value.x) + "," +
+				DatasackFormatting.FloatToHexString( value.y) + "," +
+				DatasackFormatting.FloatToHexString( value.width) + "," +
+				DatasackFormatting.FloatToHexString( value.height);
 		}
 	}
 }
