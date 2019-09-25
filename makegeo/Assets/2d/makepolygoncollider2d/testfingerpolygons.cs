@@ -121,20 +121,24 @@ public class testfingerpolygons : MonoBehaviour
 					lastWorldPosition = fingerPos;
 				}
 			}
-
-			if (Input.GetMouseButtonUp(0))
+			else
 			{
-				if (Points.Count > 2)
+				if (Input.GetMouseButtonUp(0))
 				{
-					var go = MakeCollider2D.Create( Points.ToArray(), DoubleSided: true);
+					if (Points.Count > 2)
+					{
+						Points.Add( worldFingerPosition);
 
-					go.GetComponent<Renderer>().material = mtlPolygon;
+						var go = MakeCollider2D.Create( Points.ToArray(), DoubleSided: true);
 
-					go.AddComponent<Rigidbody2D>();
+						go.GetComponent<Renderer>().material = mtlPolygon;
+
+						go.AddComponent<Rigidbody2D>();
+					}
+
+					fingerDown = false;
+					Points = null;
 				}
-
-				fingerDown = false;
-				Points = null;
 			}
 		}
 	}

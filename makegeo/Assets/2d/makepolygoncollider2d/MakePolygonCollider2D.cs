@@ -72,6 +72,8 @@ public static class MakeCollider2D
 
 		using (var vh = new VertexHelper())
 		{
+			int vertCounter = 0;
+
 			for (int sideNo = 0; sideNo < numSides; sideNo++)
 			{
 				for (int i = 0; i < Points.Length; i++)
@@ -89,11 +91,21 @@ public static class MakeCollider2D
 
 					vh.AddVert(vtx);
 
-					if (i > 1)
+					if (((i > 1) && (i < Points.Length)) ||
+						(i > Points.Length + 1))
 					{
 						// topology is a fan
-						vh.AddTriangle( 0, i - 1, i);
+						if (sideNo == 0)
+						{
+							vh.AddTriangle( 0, vertCounter - 1, vertCounter);
+						}
+						if (sideNo == 1)
+						{
+							vh.AddTriangle( Points.Length, vertCounter - 1, vertCounter);
+						}
 					}
+
+					vertCounter++;
 				}
 			}
 
