@@ -41,17 +41,37 @@ using UnityEngine.UI;
 public static class MakeCollider2D
 {
 	// Supply the verts in clockwise order, convex polys only please.
-	public static GameObject Create( Vector2[] Verts)
+	// It's up to you to supply at least three points.
+	public static GameObject Create( Vector2[] SourcePoints)
 	{
+		Vector2[] Points = new Vector2[ SourcePoints.Length];
+		System.Array.Copy( SourcePoints, Points, SourcePoints.Length);
+
 		GameObject go = new GameObject("MakeCollider2D");
 
 		Mesh mesh = new Mesh();
 
+		Vector2 centroid = Vector3.zero;
+
+		for (int i = 0; i < Points.Length; i++)
+		{
+			centroid += Points[i];
+		}
+
+		centroid /= Points.Length;
+
+		for (int i = 0; i < Points.Length; i++)
+		{
+			Points[i] -= centroid;
+		}
+
+		go.transform.position = centroid;
+
 		using (var vh = new VertexHelper())
 		{
-			for (int i = 0; i < Verts.Length; i++)
+			for (int i = 0; i < Points.Length; i++)
 			{
-				Vector2 vert = Verts[i];
+				Vector2 vert = Points[i];
 
 				UIVertex vtx = new UIVertex();
 
@@ -72,7 +92,7 @@ public static class MakeCollider2D
 		}
 
 		var pc2d = go.AddComponent<PolygonCollider2D>();
-		pc2d.points = Verts;
+		pc2d.points = Points;
 
 		mesh.RecalculateBounds();
 		mesh.RecalculateNormals();
