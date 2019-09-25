@@ -40,9 +40,10 @@ using UnityEngine.UI;
 
 public static class MakeCollider2D
 {
-	// Supply the verts in clockwise order, convex polys only please.
+	// Supply the verts in go-around-the-edge order. Unity winds clockwise.
 	// It's up to you to supply at least three points.
-	public static GameObject Create( Vector2[] SourcePoints)
+	// No idea what Physics2D might do with whacky interleaved colliders... try it!!
+	public static GameObject Create( Vector2[] SourcePoints, bool DoubleSided = false)
 	{
 		Vector2[] Points = new Vector2[ SourcePoints.Length];
 		System.Array.Copy( SourcePoints, Points, SourcePoints.Length);
@@ -67,24 +68,32 @@ public static class MakeCollider2D
 
 		go.transform.position = centroid;
 
+		int numSides = DoubleSided ? 2 : 1;
+
 		using (var vh = new VertexHelper())
 		{
-			for (int i = 0; i < Points.Length; i++)
+			for (int sideNo = 0; sideNo < numSides; sideNo++)
 			{
-				Vector2 vert = Points[i];
-
-				UIVertex vtx = new UIVertex();
-
-				vtx.position =  new Vector3( vert.x, vert.y, 0);
-
-				vtx.uv0 = new Vector2( vert.x, vert.y);
-
-				vh.AddVert(vtx);
-
-				if (i > 1)
+				for (int i = 0; i < Points.Length; i++)
 				{
-					// topology is a fan
-					vh.AddTriangle( 0, i - 1, i);
+					// second side just considers the points in reverse
+					int iMapped = (sideNo == 0) ? i : ((Points.Length - 1) - i);
+
+					Vector2 vert = Points[iMapped];
+
+					UIVertex vtx = new UIVertex();
+
+					vtx.position =  new Vector3( vert.x, vert.y, 0);
+
+					vtx.uv0 = new Vector2( vert.x, vert.y);
+
+					vh.AddVert(vtx);
+
+					if (i > 1)
+					{
+						// topology is a fan
+						vh.AddTriangle( 0, i - 1, i);
+					}
 				}
 			}
 

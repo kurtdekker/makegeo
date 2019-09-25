@@ -126,7 +126,7 @@ public class testfingerpolygons : MonoBehaviour
 			{
 				if (Points.Count > 2)
 				{
-					var go = MakeCollider2D.Create( Points.ToArray());
+					var go = MakeCollider2D.Create( Points.ToArray(), DoubleSided: true);
 
 					go.GetComponent<Renderer>().material = mtlPolygon;
 
