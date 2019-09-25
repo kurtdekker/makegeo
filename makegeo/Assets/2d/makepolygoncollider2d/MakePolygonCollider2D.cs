@@ -57,9 +57,7 @@ public static class MakeCollider2D
 
 				vtx.position =  new Vector3( vert.x, vert.y, 0);
 
-//				vtx.uv0 = new Vector2(
-//					(i / (qpd.xCells - 1.0f)) * qpd.UVScale.x,
-//					(j / (qpd.zCells - 1.0f)) * qpd.UVScale.y);
+				vtx.uv0 = new Vector2( vert.x, vert.y);
 
 				vh.AddVert(vtx);
 
@@ -72,6 +70,9 @@ public static class MakeCollider2D
 
 			vh.FillMesh(mesh);
 		}
+
+		var pc2d = go.AddComponent<PolygonCollider2D>();
+		pc2d.points = Verts;
 
 		mesh.RecalculateBounds();
 		mesh.RecalculateNormals();
