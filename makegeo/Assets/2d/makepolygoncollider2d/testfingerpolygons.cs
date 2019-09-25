@@ -42,11 +42,14 @@ using UnityEngine;
 
 public class testfingerpolygons : MonoBehaviour
 {
-	public Material mtl1;
+	public Material mtlPolygon;
+
+	public LineRenderer LR;
 
 	bool fingerDown;
 
-	Vector2 lastPoint;
+	Vector2 lastWorldPosition;
+	Vector2 worldFingerPosition;
 
 	List<Vector2> Points;
 
@@ -93,29 +96,29 @@ public class testfingerpolygons : MonoBehaviour
 		// to where your zero plane is and get the position that way.
 
 		fingerPos -= ScreenCenter;
-		Vector2 worldPos = (fingerPos * CameraOrthoSize) / (Screen.height / 2);
-		worldPos += CameraCenterAxis;
+		worldFingerPosition = (fingerPos * CameraOrthoSize) / (Screen.height / 2);
+		worldFingerPosition += CameraCenterAxis;
 
 		if (Input.GetMouseButtonDown(0))
 		{
 			fingerDown = true;
-			lastPoint = worldPos;
+			lastWorldPosition = worldFingerPosition;
 
 			Points = new List<Vector2>();
 
-			Points.Add( worldPos);
+			Points.Add( worldFingerPosition);
 		}
 
 		if (fingerDown)
 		{
 			if (Input.GetMouseButton(0))
 			{
-				float distance = Vector2.Distance( fingerPos, lastPoint);
+				float distance = Vector2.Distance( fingerPos, lastWorldPosition);
 
 				if (distance > MinDistanceToConsiderAnEdge)
 				{
-					Points.Add( worldPos);
-					lastPoint = fingerPos;
+					Points.Add( worldFingerPosition);
+					lastWorldPosition = fingerPos;
 				}
 			}
 
@@ -125,7 +128,7 @@ public class testfingerpolygons : MonoBehaviour
 				{
 					var go = MakeCollider2D.Create( Points.ToArray());
 
-					go.GetComponent<Renderer>().material = mtl1;
+					go.GetComponent<Renderer>().material = mtlPolygon;
 
 					go.AddComponent<Rigidbody2D>();
 				}
@@ -136,13 +139,42 @@ public class testfingerpolygons : MonoBehaviour
 		}
 	}
 
+	List<Vector2> LRPoints;
+
+	void UpdateDriveLineRenderer()
+	{
+		if (Points == null)
+		{
+			LR.positionCount = 0;
+			LR.enabled = false;
+			return;
+		}
+
+		LR.enabled = true;
+
+		// what we have so far plus your finger
+		int numPoints = Points.Count + 1;
+
+		if (numPoints != LR.positionCount)
+		{
+			LRPoints = new List<Vector2>( Points);
+			LRPoints.Add( worldFingerPosition);
+		}
+
+		LR.positionCount = numPoints;
+
+		LRPoints[ LRPoints.Count - 1] = worldFingerPosition;
+
+		for (int i = 0; i < LRPoints.Count; i++)
+		{
+			LR.SetPosition( i, LRPoints[i]);
+		}
+	}
+
 	void Update()
 	{
 		UpdateReadFingerCreatePoints();
 
-		if (Points != null)
-		{
-			Debug.Log( "yag:" + Points + " -----> " + Points.Count.ToString());
-		}
+		UpdateDriveLineRenderer();
 	}
 }
