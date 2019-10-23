@@ -40,75 +40,79 @@ using UnityEngine.UI;
 
 // WARNING! Internal class: other Datasack scripts will add this as needed.
 
-public class DSColorableAbstraction : MonoBehaviour
+// NOTE: Presently there are no uses for this within Datasacks module since
+// the Datasacks do not support Texture2D or sprite storage.
+
+public class DSSkinnableAbstraction : MonoBehaviour
 {
-	private	Text	text;
 	private Image	image;
 
-	// <WIP> observe and interoperate with other types of colorable objects
+	// <WIP> observe and interoperate with other types of skinnable objects
 
-	public	static	DSColorableAbstraction	Attach( GameObject go)
+	public	static	DSSkinnableAbstraction	Attach( GameObject go)
 	{
-		DSColorableAbstraction ca = go.AddComponent<DSColorableAbstraction>();
-		return ca;
+		DSSkinnableAbstraction sa = go.AddComponent<DSSkinnableAbstraction>();
+		return sa;
 	}
-	public	static	DSColorableAbstraction	Attach( MonoBehaviour script)
+	public	static	DSSkinnableAbstraction	Attach( MonoBehaviour script)
 	{
 		return Attach( script.gameObject);
 	}
 
 	void	LazyFinder()
 	{
-		if (!text)
-		{
-			text = GetComponent<Text>();
-		}
 		if (!image)
 		{
 			image = GetComponent<Image>();
 		}
 	}
 
-	public void SetColor(Color c)
+	public void SetSprite( Sprite sprite)
 	{
+		if (!sprite)
+		{
+			SetEnabled(false);
+			return;
+		}
+
 		LazyFinder();
 
 		bool good = false;
 
-		if (text)
-		{
-			text.color = c;
-			good = true;
-		}
-
 		if (image)
 		{
-			image.color = c;
+			image.sprite = sprite;
 			good = true;
 		}
 
 		if (!good)
 		{
-			Debug.LogError(GetType() + ".SetColor(): no suitable colorable object found.");
+			Debug.LogError(GetType() + ".SetSprite(): no suitable skinnable object found.");
 		}
 	}
 
-	public Color GetColor()
+	public void SetTexture2D( Texture2D t2d)
+	{
+		if (!t2d)
+		{
+			SetEnabled(false);
+			return;
+		}
+
+		Rect r = new Rect( 0, 0, t2d.width, t2d.height);
+
+		var sprite = Sprite.Create( t2d, r, Vector2.one * 0.5f);
+
+		SetSprite( sprite);
+	}
+
+	public void SetEnabled( bool ena)
 	{
 		LazyFinder();
 
-		if (text)
-		{
-			return text.color;
-		}
-
 		if (image)
 		{
-			return image.color;
+			image.enabled = ena;
 		}
-
-		Debug.LogError(GetType() + ".GetColor(): no suitable colorable object found.");
-
-		return Color.magenta;
 	}
 }

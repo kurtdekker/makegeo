@@ -95,10 +95,17 @@ public class DSSetValue : MonoBehaviour
 		}
 	}
 
+	string GetValueToSet()
+	{
+		if (sourceDatasack)
+		{
+			return sourceDatasack.Value;
+		}
+		return valueToSet;
+	}
+
 	void DoTheSet()
 	{
-//		Debug.Log( GetType() + ".Start(): dataSack = " + dataSack.FullName +
-//			" on GameObject " + gameObject.name + " is set to " + valueToSet);
-		targetDatasack.Value = valueToSet;
+		targetDatasack.Value = GetValueToSet();
 	}
 }

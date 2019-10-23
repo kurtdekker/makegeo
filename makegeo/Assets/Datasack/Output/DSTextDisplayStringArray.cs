@@ -60,7 +60,8 @@ public class DSTextDisplayStringArray : MonoBehaviour
 	void	OnChanged( Datasack ds)
 	{
 		string display = ds.GetArrayEntry( index);
-		if (FormatString.Length > 0)
+
+		if (!System.String.IsNullOrEmpty(FormatString))
 		{
 			textAbstraction.SetText( System.String.Format (FormatString, display));
 			return;

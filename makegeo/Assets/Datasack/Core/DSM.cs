@@ -73,6 +73,8 @@ public partial class DSM : MonoBehaviour
 				foreach( var dm in dsc.Mappings)
 				{
 					_I.AllSacks[dm.Fullname] = dm.Datasack;
+					// If you get a null reference here, you probably need to select
+					// any Datasack in your project and hit the CODEGEN button.
 					dm.Datasack.FullName = dm.Fullname;
 					dm.Datasack.LoadPersistent();
 				}
@@ -149,8 +151,8 @@ public partial class DSM : MonoBehaviour
 			}
 			else
 			{
-				Debug.LogError( GetType()+".Get(): Datasack '" + sackname + "' does not exist. Set Add = true to add at runtime.");
-				Debug.LogWarning( s_ReminderToCodegen);
+				UnityEngine.Debug.LogError( GetType()+".Get(): Datasack '" + sackname + "' does not exist. Set Add = true to add at runtime.");
+				UnityEngine.Debug.LogWarning( s_ReminderToCodegen);
 			}
 		}
 		return AllSacks [sackname];

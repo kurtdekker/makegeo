@@ -106,9 +106,16 @@ public partial class Datasack : ScriptableObject
 		}
 	}
 
+	// Clears it to blank / zero / false
 	public	void	Clear()
 	{
 		Value = "";
+	}
+
+	// Resets it to the specified InitialValue
+	public	void	Reset()
+	{
+		Value = InitialValue;
 	}
 
 	public	string	Value

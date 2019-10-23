@@ -57,7 +57,7 @@ public class DSTextDisplayInt : MonoBehaviour
 
 	void	OnChanged( Datasack ds)
 	{
-		if (FormatString.Length > 0)
+		if (!System.String.IsNullOrEmpty(FormatString))
 		{
 			textAbstraction.SetText( System.String.Format (FormatString, ds.iValue));
 			return;

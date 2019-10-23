@@ -38,77 +38,55 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// WARNING! Internal class: other Datasack scripts will add this as needed.
-
-public class DSColorableAbstraction : MonoBehaviour
+public class DSTextSelectInt : MonoBehaviour
 {
-	private	Text	text;
-	private Image	image;
+	public	Datasack	dataSack;
 
-	// <WIP> observe and interoperate with other types of colorable objects
+	public	string[]	TextTable;
 
-	public	static	DSColorableAbstraction	Attach( GameObject go)
-	{
-		DSColorableAbstraction ca = go.AddComponent<DSColorableAbstraction>();
-		return ca;
-	}
-	public	static	DSColorableAbstraction	Attach( MonoBehaviour script)
-	{
-		return Attach( script.gameObject);
-	}
+	[Multiline]
+	public	string		FormatString;
 
-	void	LazyFinder()
+	private DSTextAbstraction _textAbstraction;
+	private DSTextAbstraction textAbstraction
 	{
-		if (!text)
+		get
 		{
-			text = GetComponent<Text>();
-		}
-		if (!image)
-		{
-			image = GetComponent<Image>();
+			if (!_textAbstraction) _textAbstraction = DSTextAbstraction.Attach(this);
+			return _textAbstraction;
 		}
 	}
 
-	public void SetColor(Color c)
+	void	Reset()
 	{
-		LazyFinder();
-
-		bool good = false;
-
-		if (text)
-		{
-			text.color = c;
-			good = true;
-		}
-
-		if (image)
-		{
-			image.color = c;
-			good = true;
-		}
-
-		if (!good)
-		{
-			Debug.LogError(GetType() + ".SetColor(): no suitable colorable object found.");
-		}
+		TextTable = new string[] { "Option 0", "Option 1" };
 	}
 
-	public Color GetColor()
+	void	OnChanged( Datasack ds)
 	{
-		LazyFinder();
+		int n = ds.iValue;
 
-		if (text)
+		string text = "";
+		if (n >= 0 && n < TextTable.Length)
 		{
-			return text.color;
+			text = TextTable[n];
 		}
 
-		if (image)
+		if (!System.String.IsNullOrEmpty(FormatString))
 		{
-			return image.color;
+			textAbstraction.SetText( System.String.Format (FormatString, text));
+			return;
 		}
+		textAbstraction.SetText( text);
+	}
 
-		Debug.LogError(GetType() + ".GetColor(): no suitable colorable object found.");
-
-		return Color.magenta;
+	void	OnEnable()
+	{
+		dataSack.OnChanged += OnChanged;
+		OnChanged( dataSack);
+	}
+	void	OnDisable()
+	{
+		dataSack.OnChanged -= OnChanged;	
 	}
 }
