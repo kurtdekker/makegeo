@@ -146,7 +146,7 @@ public partial class Datasack : ScriptableObject
 				#if UNITY_EDITOR
 				if (EditorApplication.isPlaying)
 				#endif
-					DSM.I.SetDirty();
+					DSM.SetDirty();
 			}
 		}
 	}

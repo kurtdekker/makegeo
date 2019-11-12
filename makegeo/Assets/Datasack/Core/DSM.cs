@@ -114,12 +114,12 @@ public partial class DSM : MonoBehaviour
 		}
 	}
 
-	public	void	SetDirty()
+	public	static	void	SetDirty()
 	{
 		dirty = true;
 	}
 
-	bool	dirty;
+	static bool	dirty;
 	void	Update()
 	{
 		if (dirty)
