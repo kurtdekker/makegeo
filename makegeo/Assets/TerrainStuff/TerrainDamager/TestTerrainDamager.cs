@@ -37,50 +37,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TerrainDamager : MonoBehaviour
+public class TestTerrainDamager : MonoBehaviour
 {
-	float[,] heightmap;
-	TerrainData terrainData;
+	public TerrainDamager Damager;
 
-	float TerrainVerticalScale
+	public TerrainDamageConfig DamageConfig;
+
+	void Update ()
 	{
-		get
+		//if (Input.GetKeyDown( KeyCode.Space))
 		{
-			return terrainData.size.y;
-		}
-	}
+			Vector3 position = new Vector3( Random.Range( 10, 20), 0, Random.Range( 10, 200));
 
-	void Start()
-	{
-		var terrain = GetComponent<Terrain>();
-
-		terrainData = Instantiate<TerrainData>( terrain.terrainData);
-
-		terrain.terrainData = terrainData;
-
-		heightmap = terrainData.GetHeights( 0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
-	}
-
-	public void ApplyDamage( Vector3 position, TerrainDamageConfig config, float severity = 1.0f)
-	{
-		int i = (int)position.x;
-		int j = (int)position.z;
-
-		float holeDepth = Random.Range( config.MinDepth, config.MaxDepth);
-		float holeRadius = Random.Range( config.MinRadius, config.MaxRadius);
-
-		holeDepth *= severity;
-		holeRadius *= severity;
-
-		if (config.RemoveEarth) holeDepth = -holeDepth;
-
-		float adjustment = holeDepth / TerrainVerticalScale;
-
-		heightmap[j,i] += adjustment;
-
-		// <WIP> future optimization: pull out just the sub-region that
-		// gets modified and only update those heights. It might not matter...
-
-		terrainData.SetHeights( 0, 0, heightmap);
+			Damager.ApplyDamage( position, DamageConfig);
+		}	
 	}
 }

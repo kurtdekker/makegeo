@@ -15,3 +15,4 @@ MonoBehaviour:
   MaxRadius: 3
   MinDepth: 0.5
   MaxDepth: 0.8
+  RemoveEarth: 1
