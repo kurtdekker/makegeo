@@ -40,11 +40,20 @@ using UnityEngine;
 [CreateAssetMenu]
 public class TerrainDamageConfig : ScriptableObject
 {
+	[Header( "Randomly chosen radius:")]
 	public float MinRadius;
 	public float MaxRadius;
 
+	[Header( "Randomly chosen depth:")]
 	public float MinDepth;
 	public float MaxDepth;
+
+	[Header( "Set false to make terrain bumps instead of pits.")]
+	public bool RemoveEarth;
+
+	// future ideas:
+	//	___	support for predetermined geometric shapes: flat depressions, bowls, V-ditches
+	//	___	support a grayscale heightmap texture as the shape of the dent
 
 	void Reset()
 	{
@@ -53,5 +62,7 @@ public class TerrainDamageConfig : ScriptableObject
 
 		MinDepth = 0.5f;
 		MaxDepth = 0.8f;
+
+		RemoveEarth = true;
 	}
 }
