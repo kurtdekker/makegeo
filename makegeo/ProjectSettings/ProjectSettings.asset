@@ -142,7 +142,7 @@ PlayerSettings:
   useHDRDisplay: 0
   applicationIdentifier:
     Android: com.plbm.makegeo
-    Standalone: unity.PLBM Games.makegeo
+    Standalone: com.plbm.makegeo
     Tizen: com.plbm.makegeo
     iOS: com.plbm.makegeo
     tvOS: com.plbm.makegeo
