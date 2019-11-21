@@ -59,6 +59,8 @@ public class TerrainDamager : MonoBehaviour
 		terrain.terrainData = terrainData;
 
 		heightmap = terrainData.GetHeights( 0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
+
+		CheeseWASDMover.Create( Camera.main, new Vector3( 10, 0, 10), 30);
 	}
 
 	public void ApplyDamage( Vector3 position, TerrainDamageConfig config, float severity = 1.0f)
