@@ -63,10 +63,18 @@ public class TerrainDamager : MonoBehaviour
 		CheeseWASDMover.Create( Camera.main, new Vector3( 10, 0, 10), 30);
 	}
 
+	// ignores the Y coordinate of position
 	public void ApplyDamage( Vector3 position, TerrainDamageConfig config, float severity = 1.0f)
 	{
-		int i = (int)position.x;
-		int j = (int)position.z;
+		Vector3 terrainCell = position;
+
+		terrainCell -= transform.position;
+
+		terrainCell.x *= (position.x * terrainData.heightmapResolution) / terrainData.size.x;
+		terrainCell.z *= (position.z * terrainData.heightmapResolution) / terrainData.size.z;
+
+		int i = (int)terrainCell.x;
+		int j = (int)terrainCell.z;
 
 		float holeDepth = Random.Range( config.MinDepth, config.MaxDepth);
 		float holeRadius = Random.Range( config.MinRadius, config.MaxRadius);
