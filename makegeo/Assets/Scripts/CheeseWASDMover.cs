@@ -46,7 +46,7 @@ public class CheeseWASDMover : MonoBehaviour
 	const float UpDownLimit = 60.0f;
 
 	const float LateralMouse = 500.0f;
-	const float VerticalMouse = 200.0f;
+	const float VerticalMouse = 400.0f;
 
 	Camera cam;
 	float heading;
@@ -54,6 +54,9 @@ public class CheeseWASDMover : MonoBehaviour
 	float UpDown;
 
 	Transform CamAnchor;
+
+	// in case anyone wants to know how we're moving, such as for tossing weapons
+	public Vector3 LastVelocity { get; private set; }
 
 	public static CheeseWASDMover Create( Camera cam, Vector3 position, float heading)
 	{
@@ -98,15 +101,17 @@ public class CheeseWASDMover : MonoBehaviour
 
 		movement = Quaternion.Euler( 0, heading, 0) * movement;
 
-		transform.position += movement * MoveSpeed * Time.deltaTime;
+		movement *= MoveSpeed;
+
+		LastVelocity = movement;
+
+		transform.position += movement * Time.deltaTime;
 
 		Ray ray = new Ray( transform.position + Vector3.up * 2.0f, Vector3.down);
 		RaycastHit rch;
 		if (Physics.Raycast( ray, out rch, 100))
 		{
 			float yHeight = rch.point.y;
-
-			Debug.Log( rch.collider.name);
 
 			Vector3 position = transform.position;
 			//position.y = Mathf.Lerp( position.y, yHeight, Time.deltaTime * 10);
@@ -120,8 +125,16 @@ public class CheeseWASDMover : MonoBehaviour
 		cam.transform.localRotation = Quaternion.Euler( UpDown, heading, 0);
 	}
 
+	int dropFrames = 1;
+
 	void Update()
 	{
+		if (dropFrames > 0)
+		{
+			dropFrames--;
+			return;
+		}
+
 		UpdateMouse();
 
 		UpdateMotion();

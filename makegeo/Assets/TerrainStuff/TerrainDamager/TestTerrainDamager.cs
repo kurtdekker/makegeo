@@ -41,16 +41,29 @@ public class TestTerrainDamager : MonoBehaviour
 {
 	public TerrainDamager Damager;
 
+	public GameObject GrenadePrefab;
+	public GameObject ExplosionPrefab;
 	public TerrainDamageConfig DamageConfig;
 
 	void Start()
 	{
-		CheeseWASDMover.Create( Camera.main, new Vector3( 10, 0, 10), 30);
+		var camToUse = Camera.main;
+
+		var mover = CheeseWASDMover.Create( camToUse, new Vector3( 10, 0, 10), 50);
+
+		var wgt = WeaponGrenadeTosser.Attach( camToUse.gameObject,
+			() => {
+				return mover.LastVelocity * 0.9f;
+			}
+		);
+		wgt.DamageConfig = DamageConfig;
+		wgt.GrenadePrefab = GrenadePrefab;
+		wgt.ExplosionPrefab = ExplosionPrefab;
 	}
 
 	void Update ()
 	{
-		//if (Input.GetKeyDown( KeyCode.Space))
+		if (Input.GetKeyDown( KeyCode.BackQuote))
 		{
 			Vector3 position = new Vector3( Random.Range( 10, 20), 0, Random.Range( 10, 200));
 

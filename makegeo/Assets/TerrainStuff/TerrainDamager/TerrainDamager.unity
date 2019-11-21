@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4465934, g: 0.49642956, b: 0.5748249, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -299,6 +299,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damager: {fileID: 261891574}
+  GrenadePrefab: {fileID: 1545249842869300, guid: d68dbea43b9ab4428ab28d8b38409adc,
+    type: 2}
+  ExplosionPrefab: {fileID: 1014344580700568, guid: ab745bf244c43416ba812d97aeac6f0d,
+    type: 2}
   DamageConfig: {fileID: 11400000, guid: c77b92091e8f7499684eebcb95400a3b, type: 2}
 --- !u!4 &1224338632
 Transform:
