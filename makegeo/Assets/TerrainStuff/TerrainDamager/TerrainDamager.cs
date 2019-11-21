@@ -37,6 +37,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: support for adjusting splatmap to show damage texture
+
 public class TerrainDamager : MonoBehaviour
 {
 	float[,] originalHeightmap;
