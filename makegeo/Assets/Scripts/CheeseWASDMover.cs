@@ -41,11 +41,11 @@ public class CheeseWASDMover : MonoBehaviour
 {
 	const float EyeHeight = 1.5f;
 
-	const float MoveSpeed = 10.0f;
+	const float MoveSpeed = 30.0f;
 
 	const float UpDownLimit = 60.0f;
 
-	const float LateralMouse = 300.0f;
+	const float LateralMouse = 500.0f;
 	const float VerticalMouse = 200.0f;
 
 	Camera cam;
@@ -98,7 +98,21 @@ public class CheeseWASDMover : MonoBehaviour
 
 		movement = Quaternion.Euler( 0, heading, 0) * movement;
 
-		transform.position += movement * MoveSpeed * Time.deltaTime;;
+		transform.position += movement * MoveSpeed * Time.deltaTime;
+
+		Ray ray = new Ray( transform.position + Vector3.up * 2.0f, Vector3.down);
+		RaycastHit rch;
+		if (Physics.Raycast( ray, out rch, 100))
+		{
+			float yHeight = rch.point.y;
+
+			Debug.Log( rch.collider.name);
+
+			Vector3 position = transform.position;
+			//position.y = Mathf.Lerp( position.y, yHeight, Time.deltaTime * 10);
+			position.y = yHeight;
+			transform.position = position;
+		}
 	}
 
 	void UpdateCameraFacing()
