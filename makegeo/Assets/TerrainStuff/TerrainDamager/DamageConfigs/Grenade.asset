@@ -11,8 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edc2d51d9c5f34aeb9e6b10dae222470, type: 3}
   m_Name: Grenade
   m_EditorClassIdentifier: 
-  MinRadius: 2
-  MaxRadius: 3
+  MinRadius: 1.5
+  MaxRadius: 2.2
   MinDepth: 0.5
   MaxDepth: 0.8
   RemoveEarth: 1
