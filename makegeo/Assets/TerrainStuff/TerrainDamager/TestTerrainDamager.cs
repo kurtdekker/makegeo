@@ -43,6 +43,11 @@ public class TestTerrainDamager : MonoBehaviour
 
 	public TerrainDamageConfig DamageConfig;
 
+	void Start()
+	{
+		CheeseWASDMover.Create( Camera.main, new Vector3( 10, 0, 10), 30);
+	}
+
 	void Update ()
 	{
 		//if (Input.GetKeyDown( KeyCode.Space))
