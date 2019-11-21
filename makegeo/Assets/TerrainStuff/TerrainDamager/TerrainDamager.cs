@@ -71,8 +71,8 @@ public class TerrainDamager : MonoBehaviour
 
 		terrainCell -= transform.position;
 
-		terrainCell.x *= (position.x * terrainData.heightmapResolution) / terrainData.size.x;
-		terrainCell.z *= (position.z * terrainData.heightmapResolution) / terrainData.size.z;
+		terrainCell.x = (terrainCell.x * terrainData.heightmapResolution) / terrainData.size.x;
+		terrainCell.z = (terrainCell.z * terrainData.heightmapResolution) / terrainData.size.z;
 
 		int i = (int)terrainCell.x;
 		int j = (int)terrainCell.z;
