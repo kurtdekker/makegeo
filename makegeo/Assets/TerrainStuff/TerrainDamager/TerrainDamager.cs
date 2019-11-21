@@ -60,7 +60,8 @@ public class TerrainDamager : MonoBehaviour
 
 		heightmap = terrainData.GetHeights( 0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
 
-		CheeseWASDMover.Create( Camera.main, new Vector3( 10, 0, 10), 30);
+		TerrainCollider terrainCollider = GetComponent<TerrainCollider>();
+		terrainCollider.terrainData = terrainData;
 	}
 
 	// ignores the Y coordinate of position
@@ -76,21 +77,27 @@ public class TerrainDamager : MonoBehaviour
 		int i = (int)terrainCell.x;
 		int j = (int)terrainCell.z;
 
-		float holeDepth = Random.Range( config.MinDepth, config.MaxDepth);
-		float holeRadius = Random.Range( config.MinRadius, config.MaxRadius);
+		if (j >= 0 && j < heightmap.GetLength(0))
+		{
+			if (i >= 0 && i < heightmap.GetLength(1))
+			{
+				float holeDepth = Random.Range( config.MinDepth, config.MaxDepth);
+				float holeRadius = Random.Range( config.MinRadius, config.MaxRadius);
 
-		holeDepth *= severity;
-		holeRadius *= severity;
+				holeDepth *= severity;
+				holeRadius *= severity;
 
-		if (config.RemoveEarth) holeDepth = -holeDepth;
+				if (config.RemoveEarth) holeDepth = -holeDepth;
 
-		float adjustment = holeDepth / TerrainVerticalScale;
+				float adjustment = holeDepth / TerrainVerticalScale;
 
-		heightmap[j,i] += adjustment;
+				heightmap[j,i] += adjustment;
 
-		// <WIP> future optimization: pull out just the sub-region that
-		// gets modified and only update those heights. It might not matter...
+				// <WIP> future optimization: pull out just the sub-region that
+				// gets modified and only update those heights. It might not matter...
 
-		terrainData.SetHeights( 0, 0, heightmap);
+				terrainData.SetHeights( 0, 0, heightmap);
+			}
+		}
 	}
 }
