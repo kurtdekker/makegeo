@@ -39,6 +39,11 @@ using UnityEngine;
 
 public class TerrainDamager : MonoBehaviour
 {
+	float[,] originalHeightmap;
+
+	// world coordinates
+	public float MaxDeformation = 1.0f;
+
 	float[,] heightmap;
 	TerrainData terrainData;
 
@@ -60,6 +65,8 @@ public class TerrainDamager : MonoBehaviour
 
 		heightmap = terrainData.GetHeights( 0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
 
+		originalHeightmap = heightmap.Clone() as float[,];
+
 		TerrainCollider terrainCollider = GetComponent<TerrainCollider>();
 		terrainCollider.terrainData = terrainData;
 	}
@@ -74,30 +81,55 @@ public class TerrainDamager : MonoBehaviour
 		terrainCell.x = (terrainCell.x * terrainData.heightmapResolution) / terrainData.size.x;
 		terrainCell.z = (terrainCell.z * terrainData.heightmapResolution) / terrainData.size.z;
 
-		int i = (int)terrainCell.x;
-		int j = (int)terrainCell.z;
+//		int iCenter = (int)terrainCell.x;
+//		int jCenter = (int)terrainCell.z;
 
-		if (j >= 0 && j < heightmap.GetLength(0))
+		// choose what this particular hole is going to look like
+		float holeDepth = Random.Range( config.MinDepth, config.MaxDepth);
+		float holeRadius = Random.Range( config.MinRadius, config.MaxRadius);
+
+		holeDepth *= severity;
+		holeRadius *= severity;
+
+		if (config.RemoveEarth) holeDepth = -holeDepth;
+
+		float adjustment = holeDepth / TerrainVerticalScale;
+
+		float maxHeightmapAdjustment = MaxDeformation / TerrainVerticalScale;
+
+		int xMin = (int)(terrainCell.x - holeRadius);
+		int xMax = (int)(terrainCell.x + holeRadius);
+		int zMin = (int)(terrainCell.z - holeRadius);
+		int zMax = (int)(terrainCell.z + holeRadius);
+
+		// <WIP> future optimization: pull out just the sub-region that
+		// gets modified and only update those heights rather than all.
+
+		for (int z = zMin; z <= zMax; z++)
 		{
-			if (i >= 0 && i < heightmap.GetLength(1))
+			for (int x = xMin; x < xMax; x++)
 			{
-				float holeDepth = Random.Range( config.MinDepth, config.MaxDepth);
-				float holeRadius = Random.Range( config.MinRadius, config.MaxRadius);
+				if (z >= 0 && z < heightmap.GetLength(0))
+				{
+					if (x >= 0 && x < heightmap.GetLength(1))
+					{
+						var heightSample = heightmap[z,x] + adjustment;
 
-				holeDepth *= severity;
-				holeRadius *= severity;
+						if (heightSample < originalHeightmap[z,x] - maxHeightmapAdjustment)
+						{
+							heightSample = originalHeightmap[z,x] - maxHeightmapAdjustment;
+						}
+						if (heightSample > originalHeightmap[z,x] + maxHeightmapAdjustment)
+						{
+							heightSample = originalHeightmap[z,x] + maxHeightmapAdjustment;
+						}
 
-				if (config.RemoveEarth) holeDepth = -holeDepth;
-
-				float adjustment = holeDepth / TerrainVerticalScale;
-
-				heightmap[j,i] += adjustment;
-
-				// <WIP> future optimization: pull out just the sub-region that
-				// gets modified and only update those heights. It might not matter...
-
-				terrainData.SetHeights( 0, 0, heightmap);
+						heightmap[z,x] = heightSample;
+					}
+				}
 			}
 		}
+
+		terrainData.SetHeights( 0, 0, heightmap);
 	}
 }
