@@ -22,3 +22,5 @@ MonoBehaviour:
     Datasack: {fileID: 11400000, guid: 7062e7bb5f1ce41a2abe784741c0324a, type: 2}
   - Fullname: Perlin/YOffset
     Datasack: {fileID: 11400000, guid: 7c2d0c088229b43b78e88d8b049f7382, type: 2}
+  - Fullname: SelectedWeapon
+    Datasack: {fileID: 11400000, guid: 338ec2e123e434fd3b35be0816761e53, type: 2}

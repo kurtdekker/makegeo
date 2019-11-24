@@ -42,8 +42,14 @@ public class TestTerrainDamager : MonoBehaviour
 	public TerrainDamager Damager;
 
 	public GameObject GrenadePrefab;
+	public TerrainDamageConfig GrenadeDamageConfig;
+
+	public GameObject CherryBombPrefab;
+	public TerrainDamageConfig CherryBombDamageConfig;
+
 	public GameObject ExplosionPrefab;
-	public TerrainDamageConfig DamageConfig;
+
+	WeaponGrenadeTosser wgt;
 
 	void Start()
 	{
@@ -51,23 +57,38 @@ public class TestTerrainDamager : MonoBehaviour
 
 		var mover = CheeseWASDMover.Create( camToUse, new Vector3( 10, 0, 10), 50);
 
-		var wgt = WeaponGrenadeTosser.Attach( camToUse.gameObject,
+		wgt = WeaponGrenadeTosser.Attach( camToUse.gameObject,
 			() => {
 				return mover.LastVelocity * 0.9f;
 			}
 		);
-		wgt.DamageConfig = DamageConfig;
-		wgt.GrenadePrefab = GrenadePrefab;
 		wgt.ExplosionPrefab = ExplosionPrefab;
 	}
 
 	void Update ()
 	{
+		switch( DSM.SelectedWeapon.iValue)
+		{
+		default :
+		case 0 :
+			wgt.DamageConfig = GrenadeDamageConfig;
+			wgt.ProjectilePrefab = GrenadePrefab;
+			wgt.RelativeMotion = new Vector3( 0, 5.0f, 15.0f);
+			wgt.GravityForThisWeapon = Vector3.up * -20.0f;
+			break;
+		case 1 :
+			wgt.DamageConfig = CherryBombDamageConfig;
+			wgt.ProjectilePrefab = CherryBombPrefab;
+			wgt.RelativeMotion = new Vector3( 0, 10.0f, 25.0f);
+			wgt.GravityForThisWeapon = Vector3.up * -10.0f;
+			break;
+		}
+
 		if (Input.GetKeyDown( KeyCode.BackQuote))
 		{
 			Vector3 position = new Vector3( Random.Range( 10, 20), 0, Random.Range( 10, 200));
 
-			Damager.ApplyDamage( position, DamageConfig);
+			Damager.ApplyDamage( position, GrenadeDamageConfig);
 		}	
 	}
 }

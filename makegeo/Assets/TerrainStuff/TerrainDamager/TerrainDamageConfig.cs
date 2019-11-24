@@ -40,6 +40,12 @@ using UnityEngine;
 [CreateAssetMenu]
 public class TerrainDamageConfig : ScriptableObject
 {
+	public enum ProceduralHoleShape
+	{
+		RECTANGULAR,
+		INVERTEDCONE,
+	}
+
 	[Header( "Randomly chosen radius:")]
 	public float MinRadius;
 	public float MaxRadius;
@@ -50,6 +56,9 @@ public class TerrainDamageConfig : ScriptableObject
 
 	[Header( "Set false to make terrain bumps instead of pits.")]
 	public bool RemoveEarth;
+
+	[Header( "Choose the procedural shape of the hole.")]
+	public ProceduralHoleShape HoleShape;
 
 	// future ideas:
 	//	___	support for predetermined geometric shapes: flat depressions, bowls, V-ditches
@@ -64,5 +73,7 @@ public class TerrainDamageConfig : ScriptableObject
 		MaxDepth = 0.8f;
 
 		RemoveEarth = true;
+
+		HoleShape = ProceduralHoleShape.INVERTEDCONE;
 	}
 }

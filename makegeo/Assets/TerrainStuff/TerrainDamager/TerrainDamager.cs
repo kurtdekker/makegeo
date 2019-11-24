@@ -95,7 +95,7 @@ public class TerrainDamager : MonoBehaviour
 
 		if (config.RemoveEarth) holeDepth = -holeDepth;
 
-		float adjustment = holeDepth / TerrainVerticalScale;
+		float baseAdjustment = holeDepth / TerrainVerticalScale;
 
 		float maxHeightmapAdjustment = MaxDeformation / TerrainVerticalScale;
 
@@ -104,17 +104,38 @@ public class TerrainDamager : MonoBehaviour
 		int zMin = (int)(terrainCell.z - holeRadius);
 		int zMax = (int)(terrainCell.z + holeRadius);
 
+		int iHoleRadius = (int)holeRadius;
+		if (iHoleRadius < 1) iHoleRadius = 1;
+
+		int iHoleRadiusSquaredDivider = iHoleRadius * iHoleRadius * 2;
+
 		// <WIP> future optimization: pull out just the sub-region that
 		// gets modified and only update those heights rather than all.
 
-		for (int z = zMin; z <= zMax; z++)
+		int dz = -iHoleRadius;
+		for (int z = zMin; z <= zMax; z++, dz++)
 		{
-			for (int x = xMin; x < xMax; x++)
+			int dx = -iHoleRadius;
+			for (int x = xMin; x < xMax; x++, dx++)
 			{
 				if (z >= 0 && z < heightmap.GetLength(0))
 				{
 					if (x >= 0 && x < heightmap.GetLength(1))
 					{
+						float adjustment = baseAdjustment;
+
+						switch( config.HoleShape)
+						{
+						default :
+						case TerrainDamageConfig.ProceduralHoleShape.RECTANGULAR :
+							break;
+						case TerrainDamageConfig.ProceduralHoleShape.INVERTEDCONE :
+							int offCenter = dx * dx + dz * dz;
+							if (offCenter >= iHoleRadiusSquaredDivider) offCenter = iHoleRadiusSquaredDivider;
+							adjustment = (baseAdjustment * (iHoleRadiusSquaredDivider - offCenter)) / iHoleRadiusSquaredDivider;
+							break;
+						}
+
 						var heightSample = heightmap[z,x] + adjustment;
 
 						if (heightSample < originalHeightmap[z,x] - maxHeightmapAdjustment)

@@ -9,11 +9,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: edc2d51d9c5f34aeb9e6b10dae222470, type: 3}
-  m_Name: Grenade
+  m_Name: CherryBomb
   m_EditorClassIdentifier: 
-  MinRadius: 1.5
-  MaxRadius: 2.2
-  MinDepth: 0.5
-  MaxDepth: 0.8
+  MinRadius: 3
+  MaxRadius: 5
+  MinDepth: 2
+  MaxDepth: 3
   RemoveEarth: 1
-  HoleShape: 0
+  HoleShape: 1

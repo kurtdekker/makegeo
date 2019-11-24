@@ -23,6 +23,9 @@ public partial class DSM
 		public static Datasack YFrequency { get { return DSM.I.Get( "Perlin/YFrequency"); } }
 		public static Datasack YOffset { get { return DSM.I.Get( "Perlin/YOffset"); } }
 	}
+
+// Datasacks from directory 'Assets/TerrainStuff/TerrainDamager/UI/Datasacks'
+	public static Datasack SelectedWeapon { get { return DSM.I.Get( "SelectedWeapon"); } }
 }
 
-// Total of 5 datasacks found and processed.
+// Total of 6 datasacks found and processed.

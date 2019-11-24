@@ -41,10 +41,13 @@ using UnityEngine;
 
 public class WeaponGrenadeTosser : MonoBehaviour
 {
-	public GameObject GrenadePrefab;
+	public GameObject ProjectilePrefab;
 	public TerrainDamageConfig DamageConfig;
 
 	public GameObject ExplosionPrefab;
+
+	public Vector3 RelativeMotion;
+	public Vector3 GravityForThisWeapon;
 
 	System.Func<Vector3> GetTosserMotion;
 
@@ -52,6 +55,8 @@ public class WeaponGrenadeTosser : MonoBehaviour
 	{
 		var wgt = go.AddComponent<WeaponGrenadeTosser>();
 		wgt.GetTosserMotion = GetTosserMotion;
+		wgt.RelativeMotion = new Vector3( 0, 5.0f, 15.0f);
+		wgt.GravityForThisWeapon = Vector3.up * -20.0f;
 		return wgt;
 	}
 
@@ -70,21 +75,21 @@ public class WeaponGrenadeTosser : MonoBehaviour
 			var go = new GameObject( "Grenade Out!");
 			go.transform.position = transform.position + transform.right * 0.5f + transform.up * 0.5f;
 
-			var visible = Instantiate<GameObject>( GrenadePrefab, go.transform);
+			var visible = Instantiate<GameObject>( ProjectilePrefab, go.transform);
 			foreach( var collider in new List<Collider>( visible.GetComponentsInChildren<Collider>()))
 			{
 				Destroy( collider);
 			}
 
 			// initial toss motion
-			Vector3 tossVelocity = transform.forward * 15.0f + transform.up * 5.0f;
+			Vector3 tossVelocity = transform.forward * RelativeMotion.z + transform.up * RelativeMotion.y;
 			// maybe add in user motion
 			if (GetTosserMotion != null)
 			{
 				tossVelocity += GetTosserMotion();
 			}
 			// parabolic motion
-			Ballistic3D.Attach( go, tossVelocity, Vector3.up * -20.0f);
+			Ballistic3D.Attach( go, tossVelocity, GravityForThisWeapon);
 
 			// this gets called when the RaycastSensor notices you hit something
 			System.Action<Vector3> OnHit = (pos) => {
@@ -97,7 +102,7 @@ public class WeaponGrenadeTosser : MonoBehaviour
 			RaycastSensor.Attach( go, OnHit);
 
 			// death sentence
-			TTL.Attach( go, 3.0f);
+			TTL.Attach( go, 10.0f);
 
 			// make it tumble
 			var spinner = go.AddComponent<SpinMeAllAxes>();
