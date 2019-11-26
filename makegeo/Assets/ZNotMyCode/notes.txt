@@ -1,0 +1,7 @@
+.LOG
+
+2:37 PM 11/26/2019
+
+This directory contains code snippets I found elsewhere that I believe
+are "okay" to include here, as they also include original attribution
+where possible.
