@@ -48,6 +48,9 @@ public class TerrainDamager : MonoBehaviour
 
 	float[,] heightmap;
 	TerrainData terrainData;
+	float[,,] splatMaps;
+
+	int colorForDamage = 0;		// index into your terrain's textures; which one is "damage"
 
 	float TerrainVerticalScale
 	{
@@ -61,13 +64,17 @@ public class TerrainDamager : MonoBehaviour
 	{
 		var terrain = GetComponent<Terrain>();
 
-		terrainData = Instantiate<TerrainData>( terrain.terrainData);
+		// Warning: this does NOT do a complete terrain clone!
+//		terrainData = Instantiate<TerrainData>( terrain.terrainData);
+		terrainData = TerrainDataCloner.Clone( terrain.terrainData);
 
 		terrain.terrainData = terrainData;
 
 		heightmap = terrainData.GetHeights( 0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
 
 		originalHeightmap = heightmap.Clone() as float[,];
+
+		splatMaps = terrainData.GetAlphamaps( 0, 0, terrainData.alphamapWidth, terrainData.alphamapHeight);
 
 		TerrainCollider terrainCollider = GetComponent<TerrainCollider>();
 		terrainCollider.terrainData = terrainData;
@@ -122,7 +129,7 @@ public class TerrainDamager : MonoBehaviour
 				{
 					if (x >= 0 && x < heightmap.GetLength(1))
 					{
-						float adjustment = baseAdjustment;
+						float fraction = 1.0f;
 
 						switch( config.HoleShape)
 						{
@@ -132,9 +139,11 @@ public class TerrainDamager : MonoBehaviour
 						case TerrainDamageConfig.ProceduralHoleShape.INVERTEDCONE :
 							int offCenter = dx * dx + dz * dz;
 							if (offCenter >= iHoleRadiusSquaredDivider) offCenter = iHoleRadiusSquaredDivider;
-							adjustment = (baseAdjustment * (iHoleRadiusSquaredDivider - offCenter)) / iHoleRadiusSquaredDivider;
+							fraction = (iHoleRadiusSquaredDivider - offCenter) / (float)iHoleRadiusSquaredDivider;
 							break;
 						}
+
+						float adjustment = baseAdjustment * fraction;
 
 						var heightSample = heightmap[z,x] + adjustment;
 
@@ -148,11 +157,23 @@ public class TerrainDamager : MonoBehaviour
 						}
 
 						heightmap[z,x] = heightSample;
+
+						if (z < splatMaps.GetLength(0))
+						{
+							if (x < splatMaps.GetLength(1))
+							{
+								for (int k = 0; k < splatMaps.GetLength(2); k++)
+								{
+									splatMaps[z,x,k] = (k == colorForDamage) ? 1.0f : 0.0f;
+								}
+							}
+						}
 					}
 				}
 			}
 		}
 
 		terrainData.SetHeights( 0, 0, heightmap);
+		terrainData.SetAlphamaps( 0, 0, splatMaps);
 	}
 }
