@@ -69,8 +69,6 @@ public class MakeRoads
 			Vector3 position = pt.Position;
 			float heading = pt.Heading;
 
-			Vector3 along = prevPosition - pt.Position;
-
 			Vector3 leftFlatLateral = Quaternion.Euler( 0, heading - 90, 0) * Vector3.forward * HalfWidth;
 			Vector3 rightFlatLateral = Quaternion.Euler( 0, heading + 90, 0) * Vector3.forward * HalfWidth;;
 
