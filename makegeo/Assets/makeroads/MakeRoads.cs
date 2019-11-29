@@ -208,13 +208,13 @@ public class MakeRoads
 
 					if (!first)
 					{
-						tris0.Add( prevNTopLeft + 1);
-						tris0.Add( nEdgeRight);
-						tris0.Add( prevNEdgeRight);
+						tris1.Add( prevNEdgeRight + 1);
+						tris1.Add( prevNEdgeRight);
+						tris1.Add( nEdgeRight);
 
-						tris0.Add( prevNTopLeft + 1);
-						tris0.Add( nTopLeft + 1);
-						tris0.Add( nEdgeRight);
+						tris1.Add( prevNEdgeRight + 1);
+						tris1.Add( nEdgeRight);
+						tris1.Add( nEdgeRight + 1);
 					}
 
 					prevNEdgeRight = nEdgeRight;
