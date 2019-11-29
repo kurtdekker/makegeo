@@ -57,6 +57,9 @@ public class MakeRoads
 
 		float HalfWidth = Config.Width / 2;
 
+		int prevNTopLeft = -1;
+		int prevNEdgeLeft = -1;
+
 		foreach( var pt in PointProvider)
 		{
 			Vector3 position = pt.Position;
@@ -68,26 +71,32 @@ public class MakeRoads
 			Vector3 left = position + Quaternion.Euler( 0, heading - 90, 0) * Vector3.forward * HalfWidth;
 			Vector3 right = position + Quaternion.Euler( 0, heading + 90, 0) * Vector3.forward * HalfWidth;
 
-			Ray rayLeft = new Ray( left + Vector3.up * CastPullUp, Vector3.down);
-			Ray rayRight = new Ray( right + Vector3.up * CastPullUp, Vector3.down);
-			RaycastHit rchLeft, rchRight;
-			bool hitLeft = Physics.Raycast( rayLeft, out rchLeft, CastRayDown);
-			bool hitRight = Physics.Raycast( rayRight, out rchRight, CastRayDown);
+			Vector3 leftEdgeBottom = left;
+			Vector3 rightEdgeBottom = right;
 
-			if (hitLeft && hitRight)
+			if (Config.FollowUnderlyingSurface)
 			{
-				left = rchLeft.point;
-				right = rchRight.point;
+				Ray rayLeft = new Ray( left + Vector3.up * CastPullUp, Vector3.down);
+				Ray rayRight = new Ray( right + Vector3.up * CastPullUp, Vector3.down);
+				RaycastHit rchLeft, rchRight;
+				bool hitLeft = Physics.Raycast( rayLeft, out rchLeft, CastRayDown);
+				bool hitRight = Physics.Raycast( rayRight, out rchRight, CastRayDown);
 
-				if (!Config.TiltWithUnderlyingSurface)
+				if (hitLeft && hitRight)
 				{
-					if (left.y > right.y)
+					left = rchLeft.point;
+					right = rchRight.point;
+
+					if (!Config.TiltWithUnderlyingSurface)
 					{
-						right.y = left.y;
-					}
-					if (right.y > left.y)
-					{
-						left.y = right.y;
+						if (left.y > right.y)
+						{
+							right.y = left.y;
+						}
+						if (right.y > left.y)
+						{
+							left.y = right.y;
+						}
 					}
 				}
 			}
@@ -95,7 +104,7 @@ public class MakeRoads
 			left += Vector3.up * Config.Height;
 			right += Vector3.up * Config.Height;
 			 
-			int n = verts.Count;
+			int nTopLeft = verts.Count;
 
 			verts.Add( left);
 			verts.Add( right);
@@ -105,16 +114,47 @@ public class MakeRoads
 
 			if (!first)
 			{
-				tris.Add( n - 2);
-				tris.Add( n);
-				tris.Add( n - 1);
+				tris.Add( prevNTopLeft);
+				tris.Add( nTopLeft);
+				tris.Add( prevNTopLeft + 1);
 
-				tris.Add( n);
-				tris.Add( n + 1);
-				tris.Add( n - 1);
+				tris.Add( nTopLeft);
+				tris.Add( nTopLeft + 1);
+				tris.Add( prevNTopLeft + 1);
+			}
+
+			if (Config.MakeEdges)
+			{
+				leftEdgeBottom += Vector3.down * Config.EdgeExtraHeight;
+				rightEdgeBottom += Vector3.down * Config.EdgeExtraHeight;
+
+				// <WIP> adjust it "outwards" by the Config.EdgeAngle
+
+				int nEdgeLeft = verts.Count;
+
+				verts.Add( leftEdgeBottom);
+				verts.Add( rightEdgeBottom);
+
+				uvs.Add( Vector2.zero);
+				uvs.Add( Vector2.zero);
+
+				if (!first)
+				{
+					tris.Add( prevNTopLeft);
+					tris.Add( prevNEdgeLeft);
+					tris.Add( nEdgeLeft);
+
+					tris.Add( nEdgeLeft);
+					tris.Add( nTopLeft);
+					tris.Add( prevNTopLeft);
+				}
+
+				prevNEdgeLeft = nEdgeLeft;
 			}
 
 			first = false;
+			prevNTopLeft = nTopLeft;
+
 
 			var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			cube.transform.position = position;

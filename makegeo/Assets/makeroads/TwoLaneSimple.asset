@@ -15,5 +15,7 @@ MonoBehaviour:
   Width: 6
   Height: 0.1
   FollowUnderlyingSurface: 1
-  TiltWithUnderlyingSurface: 1
-  EdgeAngle: 0
+  TiltWithUnderlyingSurface: 0
+  MakeEdges: 1
+  EdgeAngle: 60
+  BankingFactor: 1

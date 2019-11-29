@@ -48,7 +48,13 @@ public class RoadConfiguration : ScriptableObject
 	public	bool	FollowUnderlyingSurface;
 	public	bool	TiltWithUnderlyingSurface;
 
+	// future (not implemented yet)
+	public	bool	MakeEdges;
+	public	float	EdgeExtraHeight;
 	public	float	EdgeAngle;
+
+	// probably something like degrees of tilt per degree of turn per meter... not sure yet!
+	public	float	BankingFactor;
 
 	void Reset()
 	{
@@ -57,6 +63,11 @@ public class RoadConfiguration : ScriptableObject
 
 		FollowUnderlyingSurface = true;
 		TiltWithUnderlyingSurface = true;
+
+		MakeEdges = true;
 		EdgeAngle = 60.0f;
+		EdgeExtraHeight = 1.0f;
+
+		BankingFactor = 1.0f;
 	}
 }
