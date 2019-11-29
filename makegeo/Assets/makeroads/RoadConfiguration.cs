@@ -47,12 +47,15 @@ public class RoadConfiguration : ScriptableObject
 
 	[Header("----- APPEARANCE -----")]
 
-	public	Material	RoadMaterial;
+	public	Material	RoadSurfaceMaterial;
+	public	Material	RoadEdgeMaterial;
 
 	[Header("----- CONTOURS -----")]
 
 	public	bool	FollowUnderlyingSurface;
 	public	bool	TiltWithUnderlyingSurface;
+	[Tooltip( "How many extra height checks to do span-wise. Only valid if NOT tilting with underlying surface.")]
+	public	int		ExtraSpanWiseHeightSamples;
 
 	[Header("----- EDGES -----")]
 
@@ -73,6 +76,7 @@ public class RoadConfiguration : ScriptableObject
 
 		FollowUnderlyingSurface = true;
 		TiltWithUnderlyingSurface = true;
+		ExtraSpanWiseHeightSamples = 1;
 
 		MakeEdges = true;
 		EdgeAngle = 60.0f;

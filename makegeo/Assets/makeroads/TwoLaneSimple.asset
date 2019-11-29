@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Name: TwoLaneSimple
   m_EditorClassIdentifier: 
   Width: 6
-  Height: 0.5
-  RoadMaterial: {fileID: 2100000, guid: 0d8240e8a417c4efbba51ee0b9b2d3a8, type: 2}
+  Height: 0.1
+  RoadSurfaceMaterial: {fileID: 2100000, guid: 0d8240e8a417c4efbba51ee0b9b2d3a8, type: 2}
+  RoadEdgeMaterial: {fileID: 2100000, guid: 58c73d26872be44789cd6120ef20c25b, type: 2}
   FollowUnderlyingSurface: 1
-  TiltWithUnderlyingSurface: 1
+  TiltWithUnderlyingSurface: 0
+  ExtraSpanWiseHeightSamples: 4
   MakeEdges: 1
   EdgeExtraHeight: 1
   EdgeAngle: 60

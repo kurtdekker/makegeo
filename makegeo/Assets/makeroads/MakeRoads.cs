@@ -64,6 +64,8 @@ public class MakeRoads
 
 		Vector3 prevPosition = Vector3.zero;
 
+		float u = 0.0f;
+
 		foreach( var pt in PointProvider)
 		{
 			Vector3 position = pt.Position;
@@ -91,6 +93,35 @@ public class MakeRoads
 					left = rchLeft.point;
 					right = rchRight.point;
 
+					// to make sure we don't have ground poking through
+					if (!Config.TiltWithUnderlyingSurface)
+					{
+						float highestPoint = Mathf.Max( left.y, right.y);
+
+						float originalHighestPoint = highestPoint;
+
+						for (int spanWiseCheckNo = 0; spanWiseCheckNo < Config.ExtraSpanWiseHeightSamples; spanWiseCheckNo++)
+						{
+							int n = spanWiseCheckNo + 1;
+
+							float fraction = (float)n / (Config.ExtraSpanWiseHeightSamples + 2);
+
+							Ray rayCenter = new Ray( Vector3.Lerp( left, right, fraction) + Vector3.up * CastPullUp, Vector3.down);
+							RaycastHit rch;
+							if (Physics.Raycast( rayCenter, out rch, CastRayDown))
+							{
+								if (rch.point.y > highestPoint)
+								{
+									highestPoint = rch.point.y;
+								}
+							}
+						}
+
+						left.y += highestPoint - originalHighestPoint;
+						right.y += highestPoint - originalHighestPoint;
+					}
+
+					// keep roadway flat?
 					if (!Config.TiltWithUnderlyingSurface)
 					{
 						if (left.y > right.y)
@@ -113,8 +144,8 @@ public class MakeRoads
 			verts.Add( left);
 			verts.Add( right);
 
-			uvs.Add( Vector2.zero);
-			uvs.Add( Vector2.zero);
+			uvs.Add( new Vector2( u, 0));
+			uvs.Add( new Vector2( u, 1));
 
 			if (!first)
 			{
@@ -211,7 +242,10 @@ public class MakeRoads
 		mf.mesh = mesh;
 
 		var mr = go.AddComponent<MeshRenderer> ();
-		mr.material = Config.RoadMaterial;
+		mr.materials = new Material[] {
+			Config.RoadSurfaceMaterial,
+			Config.RoadEdgeMaterial,
+		};
 
 		return go;
 	}
