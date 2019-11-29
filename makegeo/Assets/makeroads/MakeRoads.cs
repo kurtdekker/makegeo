@@ -50,7 +50,8 @@ public class MakeRoads
 		Mesh mesh = new Mesh();
 
 		List<Vector3> verts = new List<Vector3> ();
-		List<int> tris = new List<int> ();
+		List<int> tris0 = new List<int> ();
+		List<int> tris1 = new List<int> ();
 		List<Vector2> uvs = new List<Vector2> ();
 
 		bool first = true;
@@ -149,13 +150,13 @@ public class MakeRoads
 
 			if (!first)
 			{
-				tris.Add( prevNTopLeft);
-				tris.Add( nTopLeft);
-				tris.Add( prevNTopLeft + 1);
+				tris0.Add( prevNTopLeft);
+				tris0.Add( nTopLeft);
+				tris0.Add( prevNTopLeft + 1);
 
-				tris.Add( nTopLeft);
-				tris.Add( nTopLeft + 1);
-				tris.Add( prevNTopLeft + 1);
+				tris0.Add( nTopLeft);
+				tris0.Add( nTopLeft + 1);
+				tris0.Add( prevNTopLeft + 1);
 			}
 
 			if (Config.MakeEdges)
@@ -177,18 +178,20 @@ public class MakeRoads
 					int nEdgeLeft = verts.Count;
 
 					verts.Add( leftEdgeBottom);
+					verts.Add( left);
 
+					uvs.Add( Vector2.zero);
 					uvs.Add( Vector2.zero);
 
 					if (!first)
 					{
-						tris.Add( prevNTopLeft);
-						tris.Add( prevNEdgeLeft);
-						tris.Add( nEdgeLeft);
+						tris1.Add( prevNEdgeLeft + 1);
+						tris1.Add( prevNEdgeLeft);
+						tris1.Add( nEdgeLeft);
 
-						tris.Add( nEdgeLeft);
-						tris.Add( nTopLeft);
-						tris.Add( prevNTopLeft);
+						tris1.Add( prevNEdgeLeft + 1);
+						tris1.Add( nEdgeLeft);
+						tris1.Add( nEdgeLeft + 1);
 					}
 
 					prevNEdgeLeft = nEdgeLeft;
@@ -197,19 +200,21 @@ public class MakeRoads
 				{
 					int nEdgeRight = verts.Count;
 
+					verts.Add( right);
 					verts.Add( rightEdgeBottom);
 
+					uvs.Add( Vector2.zero);
 					uvs.Add( Vector2.zero);
 
 					if (!first)
 					{
-						tris.Add( prevNTopLeft + 1);
-						tris.Add( nEdgeRight);
-						tris.Add( prevNEdgeRight);
+						tris0.Add( prevNTopLeft + 1);
+						tris0.Add( nEdgeRight);
+						tris0.Add( prevNEdgeRight);
 
-						tris.Add( prevNTopLeft + 1);
-						tris.Add( nTopLeft + 1);
-						tris.Add( nEdgeRight);
+						tris0.Add( prevNTopLeft + 1);
+						tris0.Add( nTopLeft + 1);
+						tris0.Add( nEdgeRight);
 					}
 
 					prevNEdgeRight = nEdgeRight;
@@ -232,9 +237,13 @@ public class MakeRoads
 //			cylinder.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);
 		}
 
+		mesh.subMeshCount = 2;
+
 		mesh.vertices = verts.ToArray ();
-		mesh.triangles = tris.ToArray ();
 		mesh.uv = uvs.ToArray ();
+
+		mesh.SetTriangles( tris0.ToArray (), 0);
+		mesh.SetTriangles( tris1.ToArray (), 1);
 
 		mesh.RecalculateBounds ();
 		mesh.RecalculateNormals ();
