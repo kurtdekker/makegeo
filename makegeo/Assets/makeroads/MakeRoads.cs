@@ -188,7 +188,7 @@ public class MakeRoads
 
 					float v = uAdvance * Vector3.Distance( leftEdgeBottom, left) / Vector3.Distance( prevLeft, left);
 
-					uvs.Add( new Vector2( u, v));
+					uvs.Add( new Vector2( u, -v));
 					uvs.Add( new Vector2( u, 0));
 
 					if (!first)
@@ -213,8 +213,8 @@ public class MakeRoads
 
 					float v = uAdvance * Vector3.Distance( rightEdgeBottom, right) / Vector3.Distance( prevRight, right);
 
-					uvs.Add( new Vector2( u, 0));
-					uvs.Add( new Vector2( u, v));
+					uvs.Add( new Vector2( -u, 0));
+					uvs.Add( new Vector2( -u, -v));
 
 					if (!first)
 					{
