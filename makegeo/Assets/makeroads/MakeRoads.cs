@@ -162,6 +162,9 @@ public class MakeRoads
 				tris0.Add( prevNTopLeft + 1);
 			}
 
+			// we need this early so we can scale the edge UVs properly and keep them nearly square
+			float uAdvance = Vector3.Distance( position, prevPosition) / Config.Width;
+
 			if (Config.MakeEdges)
 			{
 				leftEdgeBottom += Vector3.down * Config.EdgeExtraHeight;
@@ -183,7 +186,7 @@ public class MakeRoads
 					verts.Add( leftEdgeBottom);
 					verts.Add( left);
 
-					float v = Vector3.Distance( leftEdgeBottom, left) / Vector3.Distance( prevLeft, left);
+					float v = uAdvance * Vector3.Distance( leftEdgeBottom, left) / Vector3.Distance( prevLeft, left);
 
 					uvs.Add( new Vector2( u, v));
 					uvs.Add( new Vector2( u, 0));
@@ -208,7 +211,7 @@ public class MakeRoads
 					verts.Add( right);
 					verts.Add( rightEdgeBottom);
 
-					float v = Vector3.Distance( rightEdgeBottom, right) / Vector3.Distance( prevRight, right);
+					float v = uAdvance * Vector3.Distance( rightEdgeBottom, right) / Vector3.Distance( prevRight, right);
 
 					uvs.Add( new Vector2( u, 0));
 					uvs.Add( new Vector2( u, v));
@@ -228,7 +231,7 @@ public class MakeRoads
 				}
 			}
 
-			u += Vector3.Distance( position, prevPosition) / Config.Width;
+			u -= uAdvance;
 
 			prevPosition = position;
 
