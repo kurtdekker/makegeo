@@ -78,6 +78,18 @@ public class MakeRoads
 			{
 				left = rchLeft.point;
 				right = rchRight.point;
+
+				if (!Config.TiltWithUnderlyingSurface)
+				{
+					if (left.y > right.y)
+					{
+						right.y = left.y;
+					}
+					if (right.y > left.y)
+					{
+						left.y = right.y;
+					}
+				}
 			}
 
 			left += Vector3.up * Config.Height;

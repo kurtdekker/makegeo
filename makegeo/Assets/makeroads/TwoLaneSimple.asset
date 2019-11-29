@@ -14,5 +14,6 @@ MonoBehaviour:
   RoadMaterial: {fileID: 2100000, guid: 0d8240e8a417c4efbba51ee0b9b2d3a8, type: 2}
   Width: 6
   Height: 0.1
-  TiltWithUnderlyingSurface: 0
+  FollowUnderlyingSurface: 1
+  TiltWithUnderlyingSurface: 1
   EdgeAngle: 0

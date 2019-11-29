@@ -45,7 +45,9 @@ public class RoadConfiguration : ScriptableObject
 	public	float	Width;
 	public	float	Height;
 
+	public	bool	FollowUnderlyingSurface;
 	public	bool	TiltWithUnderlyingSurface;
+
 	public	float	EdgeAngle;
 
 	void Reset()
@@ -53,6 +55,7 @@ public class RoadConfiguration : ScriptableObject
 		Width = 6.0f;
 		Height = 0.1f;
 
+		FollowUnderlyingSurface = true;
 		TiltWithUnderlyingSurface = true;
 		EdgeAngle = 60.0f;
 	}
