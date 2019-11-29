@@ -52,13 +52,30 @@ public class MakeRoads
 
 		bool first = true;
 
+		float HalfWidth = Config.Width / 2;
+
 		foreach( var pt in PointProvider)
 		{
-			var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			cube.transform.position = pt.Position;
-			cube.transform.rotation = Quaternion.Euler( 0, pt.Heading, 0);
+			Vector3 position = pt.Position;
+			float heading = pt.Heading;
 
+// placeholder test/debugging to make sure we're getting good points
 			Debug.Log( pt);
+
+			var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			cube.transform.position = position;
+			cube.transform.rotation = Quaternion.Euler( 0, heading, 0);
+
+			Vector3 left = position + Quaternion.Euler( 0, heading - 90, 0) * Vector3.forward * HalfWidth;
+			Vector3 right = position + Quaternion.Euler( 0, heading + 90, 0) * Vector3.forward * HalfWidth;
+
+			var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+			capsule.transform.position = left;
+			capsule.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);
+
+			var cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+			cylinder.transform.position = right;
+			cylinder.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);;
 		}
 
 		mesh.vertices = verts.ToArray ();

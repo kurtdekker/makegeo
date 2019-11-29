@@ -40,14 +40,20 @@ using UnityEngine;
 [CreateAssetMenu]
 public class RoadConfiguration : ScriptableObject
 {
-	public	Texture2D	Texture;
+	public	Material	RoadMaterial;
 
 	public	float	Width;
 	public	float	Height;
+
+	public	bool	TiltWithUnderlyingSurface;
+	public	float	EdgeAngle;
 
 	void Reset()
 	{
 		Width = 6.0f;
 		Height = 0.1f;
+
+		TiltWithUnderlyingSurface = true;
+		EdgeAngle = 60.0f;
 	}
 }
