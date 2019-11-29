@@ -58,18 +58,24 @@ public class MakeRoads
 		float HalfWidth = Config.Width / 2;
 
 		int prevNTopLeft = -1;
+
 		int prevNEdgeLeft = -1;
+		int prevNEdgeRight = -1;
+
+		Vector3 prevPosition = Vector3.zero;
 
 		foreach( var pt in PointProvider)
 		{
 			Vector3 position = pt.Position;
 			float heading = pt.Heading;
 
-// placeholder test/debugging to make sure we're getting good points
-			Debug.Log( pt);
+			Vector3 along = prevPosition - pt.Position;
 
-			Vector3 left = position + Quaternion.Euler( 0, heading - 90, 0) * Vector3.forward * HalfWidth;
-			Vector3 right = position + Quaternion.Euler( 0, heading + 90, 0) * Vector3.forward * HalfWidth;
+			Vector3 leftFlatLateral = Quaternion.Euler( 0, heading - 90, 0) * Vector3.forward * HalfWidth;
+			Vector3 rightFlatLateral = Quaternion.Euler( 0, heading + 90, 0) * Vector3.forward * HalfWidth;;
+
+			Vector3 left = position + leftFlatLateral;
+			Vector3 right = position + rightFlatLateral;
 
 			Vector3 leftEdgeBottom = left;
 			Vector3 rightEdgeBottom = right;
@@ -128,45 +134,73 @@ public class MakeRoads
 				leftEdgeBottom += Vector3.down * Config.EdgeExtraHeight;
 				rightEdgeBottom += Vector3.down * Config.EdgeExtraHeight;
 
-				// <WIP> adjust it "outwards" by the Config.EdgeAngle
+				float leftRaise = left.y - leftEdgeBottom.y;
+				float rightRaise = right.y - rightEdgeBottom.y;
 
-				int nEdgeLeft = verts.Count;
+				float EdgeTangentOutwards = Mathf.Tan( (90 - Config.EdgeAngle) * Mathf.Deg2Rad);
+				float leftOutward = leftRaise * EdgeTangentOutwards;
+				float rightOutward = rightRaise * EdgeTangentOutwards;
 
-				verts.Add( leftEdgeBottom);
-				verts.Add( rightEdgeBottom);
+				leftEdgeBottom += leftFlatLateral.normalized * leftOutward;
+				rightEdgeBottom += rightFlatLateral.normalized * rightOutward;
 
-				uvs.Add( Vector2.zero);
-				uvs.Add( Vector2.zero);
-
-				if (!first)
 				{
-					tris.Add( prevNTopLeft);
-					tris.Add( prevNEdgeLeft);
-					tris.Add( nEdgeLeft);
+					int nEdgeLeft = verts.Count;
 
-					tris.Add( nEdgeLeft);
-					tris.Add( nTopLeft);
-					tris.Add( prevNTopLeft);
+					verts.Add( leftEdgeBottom);
+
+					uvs.Add( Vector2.zero);
+
+					if (!first)
+					{
+						tris.Add( prevNTopLeft);
+						tris.Add( prevNEdgeLeft);
+						tris.Add( nEdgeLeft);
+
+						tris.Add( nEdgeLeft);
+						tris.Add( nTopLeft);
+						tris.Add( prevNTopLeft);
+					}
+
+					prevNEdgeLeft = nEdgeLeft;
 				}
 
-				prevNEdgeLeft = nEdgeLeft;
+				{
+					int nEdgeRight = verts.Count;
+
+					verts.Add( rightEdgeBottom);
+
+					uvs.Add( Vector2.zero);
+
+					if (!first)
+					{
+						tris.Add( prevNTopLeft + 1);
+						tris.Add( nEdgeRight);
+						tris.Add( prevNEdgeRight);
+
+						tris.Add( prevNTopLeft + 1);
+						tris.Add( nTopLeft + 1);
+						tris.Add( nEdgeRight);
+					}
+
+					prevNEdgeRight = nEdgeRight;
+				}
 			}
 
 			first = false;
 			prevNTopLeft = nTopLeft;
 
-
-			var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			cube.transform.position = position;
-			cube.transform.rotation = Quaternion.Euler( 0, heading, 0);
-
-			var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-			capsule.transform.position = left;
-			capsule.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);
-
-			var cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-			cylinder.transform.position = right;
-			cylinder.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);
+//			var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+//			cube.transform.position = position;
+//			cube.transform.rotation = Quaternion.Euler( 0, heading, 0);
+//
+//			var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+//			capsule.transform.position = left;
+//			capsule.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);
+//
+//			var cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+//			cylinder.transform.position = right;
+//			cylinder.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);
 		}
 
 		mesh.vertices = verts.ToArray ();

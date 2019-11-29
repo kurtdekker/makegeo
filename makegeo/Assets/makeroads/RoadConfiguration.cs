@@ -40,19 +40,29 @@ using UnityEngine;
 [CreateAssetMenu]
 public class RoadConfiguration : ScriptableObject
 {
-	public	Material	RoadMaterial;
+	[Header("----- DIMENSIONS -----")]
 
 	public	float	Width;
 	public	float	Height;
 
+	[Header("----- APPEARANCE -----")]
+
+	public	Material	RoadMaterial;
+
+	[Header("----- CONTOURS -----")]
+
 	public	bool	FollowUnderlyingSurface;
 	public	bool	TiltWithUnderlyingSurface;
 
-	// future (not implemented yet)
+	[Header("----- EDGES -----")]
+
 	public	bool	MakeEdges;
+	[Tooltip( "Extra distance to go into ground.")]
 	public	float	EdgeExtraHeight;
+	[Tooltip("Vertical is 90 degrees.")]
 	public	float	EdgeAngle;
 
+	[Header( "----- FUTURE (NOT READY YET) -----")]
 	// probably something like degrees of tilt per degree of turn per meter... not sure yet!
 	public	float	BankingFactor;
 
