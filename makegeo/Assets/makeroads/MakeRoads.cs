@@ -39,6 +39,9 @@ using UnityEngine;
 
 public class MakeRoads
 {
+	const float CastPullUp = 25.0f;
+	const float CastRayDown = 50.0f;
+
 	public static GameObject Create( RoadConfiguration Config, IEnumerable<PositionAndHeading> PointProvider)
 	{
 		GameObject go = new GameObject ("MakeRoad1.Create();");
@@ -62,24 +65,24 @@ public class MakeRoads
 // placeholder test/debugging to make sure we're getting good points
 			Debug.Log( pt);
 
-			var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			cube.transform.position = position;
-			cube.transform.rotation = Quaternion.Euler( 0, heading, 0);
-
 			Vector3 left = position + Quaternion.Euler( 0, heading - 90, 0) * Vector3.forward * HalfWidth;
 			Vector3 right = position + Quaternion.Euler( 0, heading + 90, 0) * Vector3.forward * HalfWidth;
 
-			var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-			capsule.transform.position = left;
-			capsule.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);
+			Ray rayLeft = new Ray( left + Vector3.up * CastPullUp, Vector3.down);
+			Ray rayRight = new Ray( right + Vector3.up * CastPullUp, Vector3.down);
+			RaycastHit rchLeft, rchRight;
+			bool hitLeft = Physics.Raycast( rayLeft, out rchLeft, CastRayDown);
+			bool hitRight = Physics.Raycast( rayRight, out rchRight, CastRayDown);
 
-			var cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-			cylinder.transform.position = right;
-			cylinder.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);
+			if (hitLeft && hitRight)
+			{
+				left = rchLeft.point;
+				right = rchRight.point;
+			}
 
 			left += Vector3.up * Config.Height;
 			right += Vector3.up * Config.Height;
-
+			 
 			int n = verts.Count;
 
 			verts.Add( left);
@@ -100,6 +103,18 @@ public class MakeRoads
 			}
 
 			first = false;
+
+			var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			cube.transform.position = position;
+			cube.transform.rotation = Quaternion.Euler( 0, heading, 0);
+
+			var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+			capsule.transform.position = left;
+			capsule.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);
+
+			var cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+			cylinder.transform.position = right;
+			cylinder.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);
 		}
 
 		mesh.vertices = verts.ToArray ();
