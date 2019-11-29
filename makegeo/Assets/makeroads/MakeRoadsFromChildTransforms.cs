@@ -51,7 +51,6 @@ public class MakeRoadsFromChildTransforms : MonoBehaviour
 		}
 
 		int point = 0;
-		float along = 0.0f;
 
 		while( point < children.Length)
 		{
@@ -87,6 +86,6 @@ public class MakeRoadsFromChildTransforms : MonoBehaviour
 
 	void Start()
 	{
-		var road = MakeRoads.Create( Config, PointFeeder( 2.0f));
+		MakeRoads.Create( Config, PointFeeder( 2.0f));
 	}
 }
