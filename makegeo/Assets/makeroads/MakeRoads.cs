@@ -75,7 +75,31 @@ public class MakeRoads
 
 			var cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
 			cylinder.transform.position = right;
-			cylinder.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);;
+			cylinder.transform.rotation = Quaternion.Euler( 0, heading, 0) * Quaternion.Euler( 90, 0, 0);
+
+			left += Vector3.up * Config.Height;
+			right += Vector3.up * Config.Height;
+
+			int n = verts.Count;
+
+			verts.Add( left);
+			verts.Add( right);
+
+			uvs.Add( Vector2.zero);
+			uvs.Add( Vector2.zero);
+
+			if (!first)
+			{
+				tris.Add( n - 2);
+				tris.Add( n);
+				tris.Add( n - 1);
+
+				tris.Add( n);
+				tris.Add( n + 1);
+				tris.Add( n - 1);
+			}
+
+			first = false;
 		}
 
 		mesh.vertices = verts.ToArray ();
@@ -87,7 +111,8 @@ public class MakeRoads
 
 		mf.mesh = mesh;
 
-		go.AddComponent<MeshRenderer> ();
+		var mr = go.AddComponent<MeshRenderer> ();
+		mr.material = Config.RoadMaterial;
 
 		return go;
 	}
