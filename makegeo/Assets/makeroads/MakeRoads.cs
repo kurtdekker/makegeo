@@ -58,6 +58,9 @@ public class MakeRoads
 
 		float HalfWidth = Config.Width / 2;
 
+		Vector3 prevLeft = Vector3.zero;
+		Vector3 prevRight = Vector3.zero;
+
 		int prevNTopLeft = -1;
 
 		int prevNEdgeLeft = -1;
@@ -180,8 +183,10 @@ public class MakeRoads
 					verts.Add( leftEdgeBottom);
 					verts.Add( left);
 
-					uvs.Add( Vector2.zero);
-					uvs.Add( Vector2.zero);
+					float v = Vector3.Distance( leftEdgeBottom, left) / Vector3.Distance( prevLeft, left);
+
+					uvs.Add( new Vector2( u, v));
+					uvs.Add( new Vector2( u, 0));
 
 					if (!first)
 					{
@@ -203,8 +208,10 @@ public class MakeRoads
 					verts.Add( right);
 					verts.Add( rightEdgeBottom);
 
-					uvs.Add( Vector2.zero);
-					uvs.Add( Vector2.zero);
+					float v = Vector3.Distance( rightEdgeBottom, right) / Vector3.Distance( prevRight, right);
+
+					uvs.Add( new Vector2( u, 0));
+					uvs.Add( new Vector2( u, v));
 
 					if (!first)
 					{
@@ -220,6 +227,13 @@ public class MakeRoads
 					prevNEdgeRight = nEdgeRight;
 				}
 			}
+
+			u += Vector3.Distance( position, prevPosition) / Config.Width;
+
+			prevPosition = position;
+
+			prevLeft = left;
+			prevRight = right;
 
 			first = false;
 			prevNTopLeft = nTopLeft;
