@@ -39,6 +39,9 @@ using UnityEngine;
 
 public class MakeRoads
 {
+	// How high to lift up so we can raycast down, and how far to cast down.
+	// If your point provider gives results that are close to the surface,
+	// these can be made smaller.
 	const float CastPullUp = 25.0f;
 	const float CastRayDown = 50.0f;
 
@@ -97,13 +100,14 @@ public class MakeRoads
 					left = rchLeft.point;
 					right = rchRight.point;
 
-					// to make sure we don't have ground poking through
 					if (!Config.TiltWithUnderlyingSurface)
 					{
 						float highestPoint = Mathf.Max( left.y, right.y);
 
 						float originalHighestPoint = highestPoint;
 
+						// To make sure we don't have ground poking through, we can
+						// check spanwise going across, and adjust upwards more.
 						for (int spanWiseCheckNo = 0; spanWiseCheckNo < Config.ExtraSpanWiseHeightSamples; spanWiseCheckNo++)
 						{
 							int n = spanWiseCheckNo + 1;
