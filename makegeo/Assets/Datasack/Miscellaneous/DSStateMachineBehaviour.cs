@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -36,79 +36,46 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-// WARNING! Internal class: other Datasack scripts will add this as needed.
-
-public class DSColorableAbstraction : MonoBehaviour
+public class DSStateMachineBehaviour : StateMachineBehaviour
 {
-	private	Text	text;
-	private Image	image;
+	[Tooltip("Defaults to UserIntent datasack if none supplied.")]
+	public Datasack dsOnStateEnter;
+	[Tooltip("Leave blank to ignore OnStateEnter signal.")]
+	public string valueOnStateEnter;
 
-	// <WIP> observe and interoperate with other types of colorable objects
+	[Tooltip("Defaults to UserIntent datasack if none supplied.")]
+	public Datasack dsOnStateExit;
+	[Tooltip("Leave blank to ignore OnStateExit signal.")]
+	public string valueOnStateExit;
 
-	public	static	DSColorableAbstraction	Attach( GameObject go)
+	void Reset()
 	{
-		DSColorableAbstraction ca = go.AddComponent<DSColorableAbstraction>();
-		return ca;
-	}
-	public	static	DSColorableAbstraction	Attach( MonoBehaviour script)
-	{
-		return Attach( script.gameObject);
-	}
-
-	void	LazyFinder()
-	{
-		if (!text)
-		{
-			text = GetComponent<Text>();
-		}
-		if (!image)
-		{
-			image = GetComponent<Image>();
-		}
+		valueOnStateEnter = "";
+		valueOnStateExit = name + "OnStateExit";
 	}
 
-	public void SetColor(Color c)
+	private void SignalEvent(Datasack ds, string signallingValue)
 	{
-		LazyFinder();
-
-		bool good = false;
-
-		if (text)
+		if (!string.IsNullOrEmpty( signallingValue))
 		{
-			text.color = c;
-			good = true;
-		}
+			if (!ds) ds = DSM.UserIntent;
 
-		if (image)
-		{
-			image.color = c;
-			good = true;
-		}
-
-		if (!good)
-		{
-			Debug.LogError( name + "." + GetType() + ".SetColor(): no suitable colorable object found.", gameObject);
+			ds.Value = signallingValue;
 		}
 	}
 
-	public Color GetColor()
+	public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
-		LazyFinder();
+		base.OnStateEnter(animator, stateInfo, layerIndex);
 
-		if (text)
-		{
-			return text.color;
-		}
+		SignalEvent(dsOnStateEnter, valueOnStateEnter);
+	}
 
-		if (image)
-		{
-			return image.color;
-		}
+	public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+	{
+		base.OnStateExit(animator, stateInfo, layerIndex);
 
-		Debug.LogError( name + "." + GetType() + ".GetColor(): no suitable colorable object found.", gameObject);
-
-		return Color.magenta;
+		SignalEvent(dsOnStateExit, valueOnStateExit);
 	}
 }

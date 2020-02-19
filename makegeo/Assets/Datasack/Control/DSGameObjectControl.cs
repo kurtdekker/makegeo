@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -50,15 +50,20 @@ public class DSGameObjectControl : MonoBehaviour
 	[Tooltip( "GameObjects to DISABLE when Datasack is poked TRUE (false poke will ENABLE!).")]
 	public	GameObject[]	ToDisable;
 
-	[Header( "For .iValue control of lists, or .Value control of GameObjects by their name")]
-	[Tooltip( "GameObject array to map to iValue of Datasack (zero-based, can have gaps)")]
+	[Header( "For .iValue numeric control of GameObjects (by int), OR")]
+	[Header( "for .Value name control of GameObjects (by string):")]
+	[Tooltip( "GameObject array to map to .iValue or .Value of Datasack. " +
+				"Zero-based, may safely have null gaps.")]
 	public	GameObject[]	IndexArray;
 
 	[Tooltip( "Auto-populates above array based on transform children.")]
 	public	bool			OperateOnChildren;
 
-	[Tooltip( "Selection strategy for list of items.")]
+	[Tooltip( "Selection strategy for Index Array items.")]
 	public	SelectionStrategy	selectionStrategy;
+
+	[Tooltip( "Invert Selection Strategy for Index Array operations)")]
+	public	bool				InvertSelectionStrategy;
 
 	public enum SelectionStrategy
 	{
@@ -120,6 +125,11 @@ public class DSGameObjectControl : MonoBehaviour
 				case SelectionStrategy.SELECT_BY_GAMEOBJECT_NAME :
 					onoff = (ds.Value == currentGameObject.name);
 					break;
+				}
+
+				if (InvertSelectionStrategy)
+				{
+					onoff = !onoff;
 				}
 
 				currentGameObject.SetActive( onoff);

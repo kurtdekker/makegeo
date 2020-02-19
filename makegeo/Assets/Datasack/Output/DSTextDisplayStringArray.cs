@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -59,7 +59,7 @@ public class DSTextDisplayStringArray : MonoBehaviour
 
 	void	OnChanged( Datasack ds)
 	{
-		string display = ds.GetArrayEntry( index);
+		string display = ds.GetArrayValue( index);
 
 		if (!System.String.IsNullOrEmpty(FormatString))
 		{

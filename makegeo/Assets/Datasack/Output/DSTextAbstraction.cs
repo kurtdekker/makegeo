@@ -109,7 +109,7 @@ public class DSTextAbstraction : MonoBehaviour
 		}
 #endif
 
-		Debug.LogError( name + "." + GetType() + ".GetText(): no suitable text object found.");
+		Debug.LogError( name + "." + GetType() + ".GetText(): no suitable text object found.", gameObject);
 
 		return "";
 	}
@@ -140,6 +140,6 @@ public class DSTextAbstraction : MonoBehaviour
 		}
 #endif
 
-		Debug.LogError( name + "." + GetType() + ".SetText(): no suitable text object found.");
+		Debug.LogError( name + "." + GetType() + ".SetText(): no suitable text object found.", gameObject);
 	}
 }

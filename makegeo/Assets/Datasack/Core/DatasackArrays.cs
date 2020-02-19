@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -44,6 +44,10 @@ public partial class Datasack
 
 	static	string[]	ArraySplit( string input)
 	{
+		if (string.IsNullOrEmpty(input))
+		{
+			return new string[0];
+		}
 		return input.Split( ArraySeparatorCharacter);
 	}
 
@@ -52,7 +56,12 @@ public partial class Datasack
 		return String.Join( ArraySeparatorCharacter.ToString(), input);
 	}
 
-	public	string	GetArrayEntry( int index)
+	static	string	ArrayAppend( string original, string entry)
+	{
+		return original + ArraySeparatorCharacter.ToString() + entry;
+	}
+
+	public	string	GetArrayValue( int index)
 	{
 		if (index >= 0)
 		{
@@ -62,14 +71,21 @@ public partial class Datasack
 				return parts[index];
 			}
 		}
-		return "<index out of range>";
+		// array requests outside the valid return empty string
+		return "";
 	}
 
-	public	void	SetArrayEntry( string s, int index)
+	public	void	SetArrayValue( string s, int index)
 	{
 		if (index >= 0)
 		{
-			string[] parts = ArraySplit( Value);
+			// arrays auto-expand to the highest-set value
+			if (index >= GetArrayLength())
+			{
+				SetArrayLength(index + 1);
+			}
+
+			var parts = ArraySplit(Value);
 			if (index < parts.Length)
 			{
 				parts[index] = s;
@@ -77,8 +93,17 @@ public partial class Datasack
 				return;
 			}
 		}
-		throw new System.ArgumentOutOfRangeException(
-			"Datasack.Vectors.SetArray:" + index.ToString());
+	}
+
+	public	int		GetArrayiValue( int index)
+	{
+		int i = 0;
+		int.TryParse( GetArrayValue( index), out i);
+		return i;
+	}
+	public	void	SetArrayiValue( int i, int index)
+	{
+		SetArrayValue( i.ToString(), index);
 	}
 
 	public	void	SetArray( string[] data)
@@ -89,5 +114,52 @@ public partial class Datasack
 	public	string[]	GetArray()
 	{
 		return ArraySplit( Value);
+	}
+
+	public int GetArrayLength()
+	{
+		return GetArray().Length;
+	}
+
+	public void SetArrayLength( int DesiredArrayLength)
+	{
+		int CurrentLength = GetArrayLength();
+
+		// must expand?
+		if (DesiredArrayLength > CurrentLength)
+		{
+			string[] CurrentParts = ArraySplit( Value);
+
+			string[] TempArray = new string[DesiredArrayLength];
+
+			System.Array.Copy(CurrentParts, TempArray, CurrentParts.Length);
+
+			for (int i = CurrentLength; i < DesiredArrayLength; i++)
+			{
+				TempArray[i] = "";
+			}
+
+			// we transact directly against TheData beacuse we
+			// are not ready to signal a change in data to listeners.
+			TheData = ArrayJoin(TempArray);
+
+			return;
+		}
+
+		// must contract?
+		if (DesiredArrayLength < CurrentLength)
+		{
+			string[] CurrentParts = ArraySplit(Value);
+
+			string[] TempArray = new string[DesiredArrayLength];
+
+			System.Array.Copy(CurrentParts, TempArray, DesiredArrayLength);
+
+			// we transact directly against TheData beacuse we
+			// are not ready to signal a change in data to listeners.
+			TheData = ArrayJoin(TempArray);
+
+			return;
+		}
 	}
 }

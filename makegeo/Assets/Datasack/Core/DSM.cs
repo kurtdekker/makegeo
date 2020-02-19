@@ -70,13 +70,16 @@ public partial class DSM : MonoBehaviour
 				ResetDictionaryIfRunning();
 
 				var dsc = Resources.Load<DatasackCollection>( s_AllDatasacksAsset);
-				foreach( var dm in dsc.Mappings)
+				if (dsc)
 				{
-					_I.AllSacks[dm.Fullname] = dm.Datasack;
-					// If you get a null reference here, you probably need to select
-					// any Datasack in your project and hit the CODEGEN button.
-					dm.Datasack.FullName = dm.Fullname;
-					dm.Datasack.LoadPersistent();
+					foreach( var dm in dsc.Mappings)
+					{
+						_I.AllSacks[dm.Fullname] = dm.Datasack;
+						// If you get a null reference here, you probably need to select
+						// any Datasack in your project and hit the CODEGEN button.
+						dm.Datasack.FullName = dm.Fullname;
+						dm.Datasack.LoadPersistent();
+					}
 				}
 			}
 			return _I;

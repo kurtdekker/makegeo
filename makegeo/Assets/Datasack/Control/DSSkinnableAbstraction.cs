@@ -87,7 +87,7 @@ public class DSSkinnableAbstraction : MonoBehaviour
 
 		if (!good)
 		{
-			Debug.LogError(GetType() + ".SetSprite(): no suitable skinnable object found.");
+			Debug.LogError( name + "." + GetType() + ".SetSprite(): no suitable skinnable object found.", gameObject);
 		}
 	}
 
