@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -40,7 +40,7 @@ using UnityEngine;
 public class MakeUVCircle
 {
 	static	void	MakeOneCircleSideHelper( Vector3 dimensions, AxisDirection direction, int sectors,
-		List<Vector3> verts, List<int> tris, List<Vector2> uvs)
+		List<Vector3> verts, List<int> tris, List<Vector2> uvs, float[] CyclicRadiusModifiers = null)
 	{
 		bool flipTris = true;
 
@@ -49,6 +49,23 @@ public class MakeUVCircle
 		// start by adding the center
 		verts.Add( Vector3.zero);
 		uvs.Add (Vector2.one / 2);
+
+		System.Func<float,int,float> Cosine = (a,n) => {
+			float value = Mathf.Cos(a);
+			if (CyclicRadiusModifiers != null)
+			{
+				value *= CyclicRadiusModifiers[ n % CyclicRadiusModifiers.Length];
+			}
+			return value;
+		};
+		System.Func<float,int,float> Sine = (a,n) => {
+			float value = Mathf.Sin(a);
+			if (CyclicRadiusModifiers != null)
+			{
+				value *= CyclicRadiusModifiers[ n % CyclicRadiusModifiers.Length];
+			}
+			return value;
+		};
 
 		for (int i = 0; i <= sectors; i++)
 		{
@@ -64,25 +81,28 @@ public class MakeUVCircle
 			case AxisDirection.ZPLUS:		// facing away from the default Unity camera
 				flipTris = false;
 				goto case AxisDirection.ZMINUS;
+			
 			case AxisDirection.ZMINUS:		// facing back at the default Unity camera
 				sphericalPoint = new Vector3 (
-					Mathf.Cos (angle) * dimensions.x,
-					Mathf.Sin (angle) * dimensions.y);
+					Cosine (angle, i) * dimensions.x,
+					Sine (angle, i) * dimensions.y);
 				uvPoint = new Vector2 (
-					(1 + Mathf.Cos (angle)) / 2,
-					(1 + Mathf.Sin (angle)) / 2);
+					(1 + Cosine (angle, i)) / 2,
+					(1 + Sine (angle, i)) / 2);
 				break;
+			
 			case AxisDirection.YMINUS :
 				flipTris = false;
 				goto case AxisDirection.YPLUS;
+
 			case AxisDirection.YPLUS:		// up in the world
 				sphericalPoint = new Vector3 (
-					Mathf.Cos (angle) * dimensions.x,
+					Cosine (angle, i) * dimensions.x,
 					0,
-					Mathf.Sin (angle) * dimensions.z);
+					Sine (angle, i) * dimensions.z);
 				uvPoint = new Vector2 (
-					(1 + Mathf.Cos (angle)) / 2,
-					(1 + Mathf.Sin (angle)) / 2);
+					(1 + Cosine (angle, i)) / 2,
+					(1 + Sine (angle, i)) / 2);
 				break;
 			default :
 				throw new System.NotImplementedException (
@@ -102,7 +122,7 @@ public class MakeUVCircle
 		}
 	}
 
-	public static GameObject Create( Vector3 dimensions, AxisDirection direction, int sectors, bool doubleSided = false)
+	public static GameObject Create( Vector3 dimensions, AxisDirection direction, int sectors, bool doubleSided = false, float[] CyclicRadiusModifiers = null)
 	{
 		GameObject go = new GameObject ("MakeUVCircle.Create();");
 
@@ -113,7 +133,7 @@ public class MakeUVCircle
 		List<int> tris = new List<int> ();
 		List<Vector2> uvs = new List<Vector2> ();
 
-		MakeOneCircleSideHelper( dimensions, direction, sectors, verts, tris, uvs);
+		MakeOneCircleSideHelper( dimensions, direction, sectors, verts, tris, uvs, CyclicRadiusModifiers);
 
 		if (doubleSided)
 		{
@@ -127,7 +147,7 @@ public class MakeUVCircle
 			case AxisDirection.ZMINUS: oppositeDirection = AxisDirection.ZPLUS; break;
 			case AxisDirection.ZPLUS: oppositeDirection = AxisDirection.ZMINUS; break;
 			}
-			MakeOneCircleSideHelper( dimensions, oppositeDirection, sectors, verts, tris, uvs);
+			MakeOneCircleSideHelper( dimensions, oppositeDirection, sectors, verts, tris, uvs, CyclicRadiusModifiers);
 		}
 
 		mesh.vertices = verts.ToArray ();

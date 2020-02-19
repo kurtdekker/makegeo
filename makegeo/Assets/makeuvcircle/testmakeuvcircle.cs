@@ -85,5 +85,11 @@ public class testmakeuvcircle : MonoBehaviour
 		go.transform.position = Vector3.up * 4.0f;
 		go.AddComponent<SpinMeY> ();
 		n++;
+
+		// a nice simple five-pointed star
+		go = MakeUVCircle.Create(Vector3.one, AxisDirection.ZMINUS, 10, CyclicRadiusModifiers: new float[] { 1.0f, 0.5f } );
+		go.GetComponent<MeshRenderer>().material = materials[n % materials.Length];
+		go.transform.position = Vector3.left * 3.4f + Vector3.up * 1.6f;
+		n++;
 	}
 }
