@@ -41,7 +41,7 @@ public class makesimpletriangle : MonoBehaviour
 {
 	public Material materialToUse;
 
-	GameObject MakeTriangleByHand()
+	GameObject MakeTriangleByHand( bool AddBackface = false)
 	{
 		// place to hold temporary stuff as we build our things
 		List<Vector3> verts = new List<Vector3>();
@@ -64,9 +64,12 @@ public class makesimpletriangle : MonoBehaviour
 		tris.Add( 2);
 
 		// if you like, add a backface by winding the other way
-		tris.Add( 2);
-		tris.Add( 1);
-		tris.Add( 0);
+		if (AddBackface)
+		{
+			tris.Add( 2);
+			tris.Add( 1);
+			tris.Add( 0);
+		}
 
 		// transfer temporary variables into mesh
 		Mesh mesh = new Mesh();
@@ -99,13 +102,20 @@ public class makesimpletriangle : MonoBehaviour
 	{
 		// doing it all by hand
 		var t1 = MakeTriangleByHand();
+		// and one with a backface
+		var t2 = MakeTriangleByHand( AddBackface: true);
 
-		// slide it to the left so we can make something else
+		// slide them to the left so we can make something else
 		for (float distance = 0; distance >= -2; distance -= Time.deltaTime)
 		{
-			t1.transform.Translate( Vector3.left * Time.deltaTime);
+			t1.transform.Translate( new Vector3( -1, -0.7f, 0) * Time.deltaTime);
+			t2.transform.Translate( new Vector3( -1,  0.7f, 0) * Time.deltaTime);
 			yield return null;
 		}
+
+		// tack on a spin-in-place script
+		SpinMeY.Attach( t1, RateOfSpin: 150);
+		SpinMeY.Attach( t2, RateOfSpin: 90);
 
 		// coming soon: example using UnityEngine.UI.VertexHelper() class
 	}
