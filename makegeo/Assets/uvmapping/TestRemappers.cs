@@ -56,17 +56,38 @@ public class TestRemappers : MonoBehaviour
 
 	IEnumerator Start ()
 	{
-		var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		List<GameObject> all = new List<GameObject>();
 
-		SpinMeY.Attach(go);
+		{
+			var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			go.transform.position = Vector3.right * -1.3f;
+			all.Add(go);
+			go = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+			go.transform.position = Vector3.right * 0.0f;
+			all.Add(go);
+			go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			go.transform.position = Vector3.right * 1.3f;
+			all.Add(go);
+		}
+
+		foreach( var go in all)
+		{
+			SpinMeY.Attach(go);
+		}
 
 		yield return WaitForInput();
 
-		go.GetComponent<Renderer>().material = MaterialFactory.Instance.abcd;
+		foreach( var go in all)
+		{
+			go.GetComponent<Renderer>().material = MaterialFactory.Instance.abcd;
+		}
 
 		yield return WaitForInput();
 
-		UVRemappers.ApplyCylindrical(go,Vector3.zero);
+		foreach( var go in all)
+		{
+			UVRemappers.ApplyCylindrical(go,Vector3.zero);
+		}
 
 		yield return WaitForInput();
 	}
