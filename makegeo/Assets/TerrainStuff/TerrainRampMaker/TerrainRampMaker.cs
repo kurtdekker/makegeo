@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -233,6 +233,8 @@ public class TerrainRampMaker : MonoBehaviour
 
 				Vector3 left = a + lateral.normalized * n1.RampWidth;
 				Vector3 right = a - lateral.normalized * n1.RampWidth;
+
+				// TODO: add above to the ramp geometry mesh
 			}
 		}
 	}
