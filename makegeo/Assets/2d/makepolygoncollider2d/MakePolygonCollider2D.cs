@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -121,7 +121,7 @@ public static class MakeCollider2D
 		MeshFilter mf = go.AddComponent<MeshFilter>();
 		mf.mesh = mesh;
 
-		MeshRenderer mr = go.AddComponent<MeshRenderer>();
+		go.AddComponent<MeshRenderer>();
 
 		return go;
 	}
