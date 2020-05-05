@@ -1,7 +1,7 @@
 ﻿// code originally from this Unity3D website:
 // https://docs.unity3d.com/ScriptReference/Mesh.CombineMeshes.html
 //
-// improved by Kurt Dekker @kurtdekker
+// Improved by Kurt Dekker @kurtdekker
 // 
 // Usage:
 // - make a blank object
@@ -21,34 +21,41 @@ public class ExampleCombinerImproved : MonoBehaviour
 	void Start()
 	{
 		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
-		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		List<CombineInstance> combines = new List<CombineInstance>();
 
+		// KurtFixed: handle materials... I mean, they're kind of important!
 		List<Material> materials = new List<Material>();
 
 		for (int i = 0; i < meshFilters.Length; i++)
 		{
-			// we gotta ignore ourselves or our count would be off!
+			// KurtFixed: we gotta ignore ourselves or our count would be off!
 			if (meshFilters[i] == GetComponent<MeshFilter>())
 			{
 				continue;
 			}
 
-			combine[i].mesh = meshFilters[i].sharedMesh;
-			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-			meshFilters[i].gameObject.SetActive(false);
-
-			// tally up the materials
+			// KurtFixed: tally up the materials, since each mesh could have multiple
 			var mr = meshFilters[i].GetComponent<MeshRenderer>();
 			for (int j = 0; j < mr.materials.Length; j++)
 			{
+				var combine = new CombineInstance();
+
+				combine.mesh = meshFilters[i].sharedMesh;
+				combine.subMeshIndex = j;
+
+				combine.transform = meshFilters[i].transform.localToWorldMatrix;
+				meshFilters[i].gameObject.SetActive(false);
+
+				combines.Add(combine);
+
 				materials.Add( mr.materials[j]);
 			}
 		}
 		transform.GetComponent<MeshFilter>().mesh = new Mesh();
-		transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine, false);
+		transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combines.ToArray(), false);
 		transform.gameObject.SetActive(true);
 
-		// inject the original materials
+		// KurtFixed: inject the original materials
 		gameObject.GetComponent<MeshRenderer>().materials = materials.ToArray();
 	}
 }
