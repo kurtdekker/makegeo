@@ -39,11 +39,19 @@ using UnityEngine;
 
 public class CheeseWASDMover : MonoBehaviour
 {
-	const float EyeHeight = 1.5f;
+	public enum CheeseWASDViewType
+	{
+		FirstPerson,
+		IsometricView,
+		ThirdPerson,
+	}
+
+	CheeseWASDViewType viewType;
+
+	const float FPSEyeHeight = 1.5f;
+	const float FPSUpDownGazeLimit = 60.0f;
 
 	const float MoveSpeed = 30.0f;
-
-	const float UpDownLimit = 60.0f;
 
 	const float LateralMouse = 500.0f;
 	const float VerticalMouse = 400.0f;
@@ -58,9 +66,11 @@ public class CheeseWASDMover : MonoBehaviour
 	// in case anyone wants to know how we're moving, such as for tossing weapons
 	public Vector3 LastVelocity { get; private set; }
 
-	public static CheeseWASDMover Create( Camera cam, Vector3 position, float heading)
+	public static CheeseWASDMover Create( Camera cam, Vector3 position, float heading, CheeseWASDViewType viewType)
 	{
 		var cheese = new GameObject("CheeseWASDMover.Create()").AddComponent<CheeseWASDMover>();
+
+		cheese.viewType = viewType;
 
 		cheese.transform.position = position;
 		cheese.heading = heading;
@@ -68,11 +78,20 @@ public class CheeseWASDMover : MonoBehaviour
 
 		cheese.CamAnchor = new GameObject("CamAnchor").transform;
 		cheese.CamAnchor.SetParent( cheese.transform);
-		cheese.CamAnchor.localPosition = Vector3.up * EyeHeight;
+		cheese.CamAnchor.localPosition = Vector3.up * FPSEyeHeight;
 		cheese.CamAnchor.localRotation = Quaternion.identity;
 
-		cam.transform.SetParent( cheese.CamAnchor);
-		cam.transform.localPosition = Vector3.zero;
+		switch( viewType)
+		{
+		default :
+			throw new System.NotImplementedException( "Only have FirstPerson implemented so far.");
+
+		case CheeseWASDViewType.FirstPerson :
+			cam.transform.SetParent( cheese.CamAnchor);
+			cam.transform.localPosition = Vector3.zero;
+			break;
+		}
+
 		cheese.UpdateCameraFacing();
 
 		return cheese;
@@ -91,8 +110,8 @@ public class CheeseWASDMover : MonoBehaviour
 		heading += mx * Time.deltaTime;
 		UpDown += my * Time.deltaTime;
 
-		if (UpDown < -UpDownLimit) UpDown = -UpDownLimit;
-		if (UpDown >  UpDownLimit) UpDown =  UpDownLimit;
+		if (UpDown < -FPSUpDownGazeLimit) UpDown = -FPSUpDownGazeLimit;
+		if (UpDown >  FPSUpDownGazeLimit) UpDown =  FPSUpDownGazeLimit;
 	}
 
 	void UpdateMotion()

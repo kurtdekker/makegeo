@@ -55,7 +55,7 @@ public class TestTerrainDamager : MonoBehaviour
 	{
 		var camToUse = Camera.main;
 
-		var mover = CheeseWASDMover.Create( camToUse, new Vector3( 10, 0, 10), 50);
+		var mover = CheeseWASDMover.Create( camToUse, new Vector3( 10, 0, 10), 50, CheeseWASDMover.CheeseWASDViewType.FirstPerson);
 
 		wgt = WeaponGrenadeTosser.Attach( camToUse.gameObject,
 			() => {
