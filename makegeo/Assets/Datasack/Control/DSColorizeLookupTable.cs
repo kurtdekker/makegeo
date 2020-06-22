@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -41,6 +41,10 @@ public class DSColorizeLookupTable : MonoBehaviour
 {
 	public	Datasack	dataSack;
 
+	[Header( "Enable: becomes two-state based on Datasack matching IndexValue")]
+	public	bool		MatchIndexValue;
+	public	int			IndexValueToMatch;
+
 	public	Color[]		ColorTable = new Color[] { Color.black, Color.white };
 
 	private	DSColorableAbstraction _colorable;
@@ -57,7 +61,15 @@ public class DSColorizeLookupTable : MonoBehaviour
 	{
 		if (colorable)
 		{
-			colorable.SetColor( ColorTable[ ds.iValue]);
+			int index = ds.iValue;
+
+			if (MatchIndexValue)
+			{
+				bool matching = (index == IndexValueToMatch);
+				index = matching ? 1 : 0;
+			}
+
+			colorable.SetColor( ColorTable[ index]);
 		}
 	}
 
