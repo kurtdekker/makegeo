@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -33,66 +33,55 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public partial class Datasack
+public class DSUserIntentKeyUpDown : MonoBehaviour
 {
-	public	int		iValue
+	[Tooltip("Defaults to UserIntent datasack if none supplied.")]
+	public	Datasack	dataSack;
+
+	[Tooltip( "List of keycodes you want tracked as positive values")]
+	public	KeyCode[]	KeysToTrackPositive;
+
+	[Tooltip( "List of keycodes you want tracked as negative values")]
+	public	KeyCode[]	KeysToTrackNegative;
+
+	void	Reset()
 	{
-		get
-		{
-			int i = 0;
-			int.TryParse (Value, out i);
-			return i;
-		}
-		set
-		{
-			Value = value.ToString();
-		}
+		KeysToTrackPositive = new KeyCode[] {
+			KeyCode.UpArrow,
+		};
+
+		KeysToTrackNegative = new KeyCode[] {
+			KeyCode.DownArrow,
+		};
 	}
 
-	public	float	fValue
+	void	Update()
 	{
-		get
-		{
-			return DatasackFormatting.FloatFromHexString( Value);
-		}
-		set
-		{
-			Value = DatasackFormatting.FloatToHexString( value);
-		}
-	}
+		float result = 0;
 
-	public	double	dValue
-	{
-		get
+		foreach( var key in KeysToTrackPositive)
 		{
-			return DatasackFormatting.DoubleFromHexString( Value);
+			if (Input.GetKey( key))
+			{
+				result = 1;
+				break;
+			}
 		}
-		set
-		{
-			Value = DatasackFormatting.DoubleToHexString( value);
-		}
-	}
 
-	// CAUTION: nonzero integer is true... a string "true" does NOT count as true!!!
-	public	bool	bValue
-	{
-		get
+		foreach( var key in KeysToTrackNegative)
 		{
-			return iValue != 0;
+			if (Input.GetKey( key))
+			{
+				result = -1;
+				break;
+			}
 		}
-		set
-		{
-			iValue = value ? 1 : 0;
-		}
-	}
 
-	public	void	bToggle()
-	{
-		bValue = !bValue;
+		dataSack.fValueIfDifferent = result;
 	}
 }

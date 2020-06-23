@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -33,66 +33,51 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public partial class Datasack
+public class DSTextDisplayStringFormatted : MonoBehaviour
 {
-	public	int		iValue
+	public	Datasack	dataSack;
+
+	public	Datasack	formattingDatasack;
+
+	private DSTextAbstraction _textAbstraction;
+	private DSTextAbstraction textAbstraction
 	{
 		get
 		{
-			int i = 0;
-			int.TryParse (Value, out i);
-			return i;
-		}
-		set
-		{
-			Value = value.ToString();
+			if (!_textAbstraction) _textAbstraction = DSTextAbstraction.Attach(this);
+			return _textAbstraction;
 		}
 	}
 
-	public	float	fValue
+	void	OnChangedData( Datasack ds)
 	{
-		get
+		if (!System.String.IsNullOrEmpty(formattingDatasack.Value))
 		{
-			return DatasackFormatting.FloatFromHexString( Value);
+			textAbstraction.SetText( System.String.Format (formattingDatasack.Value, ds.Value));
+			return;
 		}
-		set
-		{
-			Value = DatasackFormatting.FloatToHexString( value);
-		}
+		textAbstraction.SetText( ds.Value);
 	}
 
-	public	double	dValue
+	void OnChangedFormatting( Datasack fmt)
 	{
-		get
-		{
-			return DatasackFormatting.DoubleFromHexString( Value);
-		}
-		set
-		{
-			Value = DatasackFormatting.DoubleToHexString( value);
-		}
+		OnChangedData( dataSack);
 	}
 
-	// CAUTION: nonzero integer is true... a string "true" does NOT count as true!!!
-	public	bool	bValue
+	void	OnEnable()
 	{
-		get
-		{
-			return iValue != 0;
-		}
-		set
-		{
-			iValue = value ? 1 : 0;
-		}
+		dataSack.OnChanged += OnChangedData;
+		formattingDatasack.OnChanged += OnChangedFormatting;
+		OnChangedData( dataSack);
 	}
-
-	public	void	bToggle()
+	void	OnDisable()
 	{
-		bValue = !bValue;
+		dataSack.OnChanged -= OnChangedData;	
+		formattingDatasack.OnChanged -= OnChangedFormatting;
 	}
 }

@@ -1,9 +1,9 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
-*/
 
-/*
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+
+	http://www.twitter.com/kurtdekker
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are
@@ -46,21 +46,31 @@ class MeshMakerAndSaver
 {
 	static Mesh CreateSimpleSquare()
 	{
-		Mesh m = new Mesh();
-		m.vertices = new Vector3[] {
+		Mesh mesh = new Mesh();
+		mesh.vertices = new Vector3[] {
 			new Vector3( 0, 0, 0),
 			new Vector3( 1, 0, 0),
 			new Vector3( 1, 1, 0),
 			new Vector3( 0, 1, 0),
 		};
-		m.triangles = new int[] {
+		mesh.uv = new Vector2[] {
+			new Vector2( 0, 0),
+			new Vector2( 1, 0),
+			new Vector2( 1, 1),
+			new Vector2( 0, 1),
+		};
+		mesh.triangles = new int[] {
+			// front side
 			0, 2, 1,
 			0, 3, 2,
+			// back side
+			0, 1, 2,
+			0, 2, 3,
 		};
-		m.RecalculateNormals();
-		m.RecalculateBounds();
+		mesh.RecalculateNormals();
+		mesh.RecalculateBounds();
 
-		return m;
+		return mesh;
 	}
 
 	[MenuItem("Assets/Create Procedural Mesh")]
@@ -72,14 +82,14 @@ class MeshMakerAndSaver
 		if (filePath == "") return;
 
 		GameObject go = null;
-		Mesh m = null;
 
-		m = CreateSimpleSquare();
+		Mesh mesh= CreateSimpleSquare();
 
-		go = MakeUVSphere.Create( Vector3.one / 2, 16, 16);
-		m = go.GetComponent<MeshFilter>().sharedMesh;
+		// enable if you want to produce a sphere to save:
+		//go = MakeUVSphere.Create( Vector3.one / 2, 16, 16);
+		//mesh = go.GetComponent<MeshFilter>().sharedMesh;
 
-		AssetDatabase.CreateAsset( m, filePath);
+		AssetDatabase.CreateAsset( mesh, filePath);
 
 		GameObject.DestroyImmediate(go);
 	}
