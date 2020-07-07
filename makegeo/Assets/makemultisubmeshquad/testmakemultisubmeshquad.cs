@@ -38,7 +38,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class testmakemultimeshquad : MonoBehaviour
+public class testmakemultisubmeshquad : MonoBehaviour
 {
 	public Material mtl0;
 	public Material mtl1;
