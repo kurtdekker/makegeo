@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -55,20 +55,20 @@ public class testmakeuvsphere : MonoBehaviour
 		GameObject go = MakeUVSphere.Create (Vector3.one, 10, 10);
 		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
 		go.transform.position = Vector3.left * 1.4f;
-		go.AddComponent<SpinMeY> ();
+		SpinMeY.Attach(go);
 		n++;
 
 		// and now one that looks good
 		go = MakeUVSphere.Create (Vector3.one, 24, 24);
 		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
 		go.transform.position = Vector3.right * 1.4f;
-		go.AddComponent<SpinMeY> ();
+		SpinMeY.Attach(go);
 		n++;
 
 		// finally a weird squished one - Aussie rules football anyone?
 		go = MakeUVSphere.Create (new Vector3( 0.6f, 1.2f, 1.0f), 32, 32);
 		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
 		go.transform.position = Vector3.up * 2.2f;
-		go.AddComponent<SpinMeY> ();
+		SpinMeY.Attach(go);
 	}
 }
