@@ -78,11 +78,40 @@ public partial class Datasack
 			return s;
 		}
 
-		void CreateStaticGetterExpression( ref string s, Datasack ds, string variableName)
+		void CreateStaticGetterExpression( ref string s, string indentation, Datasack ds, string variableName)
 		{
-			s += "\tpublic static Datasack " + IdentifierSafeString( ds.name) +
+			bool InsertExtraLineAfterwards = false;
+			if (!string.IsNullOrEmpty( ds.Comments))
+			{
+				InsertExtraLineAfterwards = true;
+
+				s += "\n";
+				s += indentation + "\t// .Comments field from Datasack:\n";
+
+				foreach( var comment in ds.Comments.Split(
+					new string[] { System.Environment.NewLine},
+					StringSplitOptions.RemoveEmptyEntries))
+				{
+					s += indentation + "\t//\t" + comment + "\n";
+				}
+			}
+
+			if (ds.Save)
+			{
+				InsertExtraLineAfterwards = true;
+
+				s += "\n";
+				s += indentation + "\t// Persistent (has .Save field checked in Datasack):\n";
+			}
+
+			s += indentation + "\tpublic static Datasack " + IdentifierSafeString( ds.name) +
 				" { get { return DSM.I.Get( \"" +
 				variableName  + "\"); } }\n";
+
+			if (InsertExtraLineAfterwards)
+			{
+				s += "\n";
+			}
 		}
 
 		void GenerateCode()
@@ -196,9 +225,8 @@ public partial class Datasack
 
 				foreach( var ds in SplitByDirectory[dirName])
 				{
-					s += indentation;
 					string variableName = pathPrefix + ds.name;
-					CreateStaticGetterExpression( ref s, ds, variableName);
+					CreateStaticGetterExpression( ref s, indentation, ds, variableName);
 					ds.FullName = variableName;
 				}
 

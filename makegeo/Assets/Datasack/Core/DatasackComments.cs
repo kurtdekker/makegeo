@@ -33,57 +33,16 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DSColorizeLookupTable : MonoBehaviour
+public partial class Datasack
 {
-	public	Datasack	dataSack;
-
-	[Header( "Enable: becomes two-state based on Datasack matching IndexValue")]
-	public	bool		MatchIndexValue;
-	public	int			IndexValueToMatch;
-	public	bool		UseSiblingIndex;
-
-	public	Color[]		ColorTable = new Color[] { Color.gray, Color.white };
-
-	private	DSColorableAbstraction _colorable;
-	private	DSColorableAbstraction colorable
-	{
-		get
-		{
-			if (!_colorable) _colorable = DSColorableAbstraction.Attach( this);
-			return _colorable;
-		}
-	}
-
-	void	OnChanged( Datasack ds)
-	{
-		if (colorable)
-		{
-			int index = ds.iValue;
-
-			if (MatchIndexValue)
-			{
-				int ActualIndexToCompare = IndexValueToMatch;
-				if (UseSiblingIndex) ActualIndexToCompare = transform.GetSiblingIndex();
-
-				bool matching = (index == ActualIndexToCompare);
-				index = matching ? 1 : 0;
-			}
-
-			colorable.SetColor( ColorTable[ index]);
-		}
-	}
-
-	void	OnEnable()
-	{
-		dataSack.OnChanged += OnChanged;	
-		OnChanged(dataSack);
-	}
-	void	OnDisable()
-	{
-		dataSack.OnChanged -= OnChanged;	
-	}
+	// This field can be used to cause comments to be injected into the
+	// DSMCodeGen.cs file. I suppose you could really use it for any
+	// predefined values you want to for your own purposes as well.
+	[Multiline]
+	public	string	Comments;
 }
