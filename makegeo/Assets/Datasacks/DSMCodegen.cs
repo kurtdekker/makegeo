@@ -25,7 +25,10 @@ public partial class DSM
 	}
 
 // Datasacks from directory 'Assets/TerrainStuff/TerrainDamager/UI/Datasacks'
+
+	// Persistent (has .Save field checked in Datasack):
 	public static Datasack SelectedWeapon { get { return DSM.I.Get( "SelectedWeapon"); } }
+
 }
 
 // Total of 6 datasacks found and processed.
