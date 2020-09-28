@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -39,10 +39,36 @@ using UnityEngine;
 
 public class SpinMeZ : MonoBehaviour
 {
-	public float RateOfSpin = 100.0f;
+	public const float DefaultSpinRate = 100.0f;
+
+	public float InitialAngle;
+	public float RateOfSpin;
+
+	float angle;
+
+	public static SpinMeZ Attach( GameObject go,
+		float InitialAngle = 0,
+		float RateOfSpin = DefaultSpinRate)
+	{
+		var spinmey = go.AddComponent<SpinMeZ>();
+		spinmey.InitialAngle = InitialAngle;
+		spinmey.RateOfSpin = RateOfSpin;
+		return spinmey;
+	}
+
+	void Reset()
+	{
+		RateOfSpin = DefaultSpinRate;
+	}
+
+	void Start()
+	{
+		angle = InitialAngle;
+	}
 
 	void Update ()
 	{
-		transform.rotation = Quaternion.Euler (0, 0, Time.time * RateOfSpin);
+		angle += RateOfSpin * Time.deltaTime;
+		transform.rotation = Quaternion.Euler (0, 0, angle);
 	}
 }
