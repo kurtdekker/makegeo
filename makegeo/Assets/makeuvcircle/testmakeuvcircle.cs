@@ -55,35 +55,35 @@ public class testmakeuvcircle : MonoBehaviour
 		GameObject go = MakeUVCircle.Create (Vector3.one, AxisDirection.ZMINUS, 10);
 		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
 		go.transform.position = Vector3.left * 1.4f;
-		go.AddComponent<SpinMeY> ();
+		SpinMeY.Attach(go);
 		n++;
 
 		// and now one that looks good
 		go = MakeUVCircle.Create (Vector3.one, AxisDirection.ZPLUS, 32);
 		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
 		go.transform.position = Vector3.right * 1.4f;
-		go.AddComponent<SpinMeY> ();
+		SpinMeY.Attach(go);
 		n++;
 
 		// and finally a SUPER-fine one, coincidentally also double-sided
 		go = MakeUVCircle.Create (Vector3.one, AxisDirection.ZMINUS, 1024, true);
 		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
 		go.transform.position = Vector3.up * 1.4f;
-		go.AddComponent<SpinMeY> ().RateOfSpin *= 0.3f;
+		SpinMeY.Attach(go);
 		n++;
 
 		// a flat one, double-sided
 		go = MakeUVCircle.Create (Vector3.one, AxisDirection.YPLUS, 32, true);
 		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
 		go.transform.position = Vector3.down * 1.0f;
-		go.AddComponent<SpinMeZ> ();
+		SpinMeZ.Attach(go);
 		n++;
 
 		// an inverted one high where we can see it
 		go = MakeUVCircle.Create (Vector3.one, AxisDirection.YMINUS, 32);
 		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
 		go.transform.position = Vector3.up * 4.0f;
-		go.AddComponent<SpinMeY> ();
+		SpinMeY.Attach(go);
 		n++;
 
 		// a nice simple five-pointed star
