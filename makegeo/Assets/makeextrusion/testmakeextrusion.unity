@@ -150,10 +150,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fd8e5db65de34b45bfa7b2ecab9f755, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materials:
-  - {fileID: 2100000, guid: 98beb34ee067d48469717c4c4d8460b3, type: 2}
-  - {fileID: 2100000, guid: 0d70afbc00be247e39c21ef3abff5b2c, type: 2}
-  - {fileID: 2100000, guid: c341c883aaabf458c9607e607d6f5596, type: 2}
+  FrontMaterial: {fileID: 2100000, guid: 98beb34ee067d48469717c4c4d8460b3, type: 2}
+  BackMaterial: {fileID: 2100000, guid: c341c883aaabf458c9607e607d6f5596, type: 2}
+  SideMaterial: {fileID: 2100000, guid: 0d70afbc00be247e39c21ef3abff5b2c, type: 2}
 --- !u!1 &1236708235
 GameObject:
   m_ObjectHideFlags: 0

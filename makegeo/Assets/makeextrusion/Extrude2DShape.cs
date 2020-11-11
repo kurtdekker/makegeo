@@ -59,6 +59,10 @@ public static class Extrude2DShape
 
 		var extrudeDirection = Vector3.forward;
 
+		List<int> FrontTris = new List<int>();
+		List<int> BackTris = new List<int>();
+		List<int> SideTris = new List<int>();
+
 		using (var vh = new VertexHelper())
 		{
 			if (offset != 0)
@@ -82,7 +86,7 @@ public static class Extrude2DShape
 					}
 					for (int i = 0; i < triangles.Length; i += 3)
 					{
-						vh.AddTriangle(
+						FrontTris.Add3(
 							n + triangles[i + 0],
 							n + triangles[i + 1],
 							n + triangles[i + 2]);
@@ -100,7 +104,7 @@ public static class Extrude2DShape
 					}
 					for (int i = 0; i < triangles.Length; i += 3)
 					{
-						vh.AddTriangle(
+						BackTris.Add3(
 							n + triangles[i + 0],
 							n + triangles[i + 2],
 							n + triangles[i + 1]);
@@ -144,8 +148,8 @@ public static class Extrude2DShape
 					vtx.uv0 = new Vector2( masterU, 0);
 					vh.AddVert( vtx);
 
-					vh.AddTriangle( n, n + 1, n + 2);
-					vh.AddTriangle( n, n + 2, n + 3);
+					SideTris.Add3( n, n + 1, n + 2);
+					SideTris.Add3( n, n + 2, n + 3);
 				}
 
 				prevTop = pointTop;
@@ -154,6 +158,11 @@ public static class Extrude2DShape
 			}
 
 			vh.FillMesh( mesh);
+
+			mesh.subMeshCount = 3;
+			mesh.SetTriangles( FrontTris, 0);
+			mesh.SetTriangles( BackTris, 1);
+			mesh.SetTriangles( SideTris, 2);
 		}
 
 		mesh.RecalculateBounds ();

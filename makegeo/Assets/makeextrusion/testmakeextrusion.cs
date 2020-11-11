@@ -39,7 +39,9 @@ using UnityEngine;
 
 public class testmakeextrusion : MonoBehaviour
 {
-	public Material[] materials;
+	public Material FrontMaterial;
+	public Material BackMaterial;
+	public Material SideMaterial;
 
 	void Start ()
 	{
@@ -79,7 +81,12 @@ public class testmakeextrusion : MonoBehaviour
 				1.0f,
 				offset: -0.5f,
 				triangles: triangles.ToArray());
-			go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
+			go.GetComponent<MeshRenderer> ().materials = new Material[]
+			{
+				FrontMaterial,
+				BackMaterial,
+				SideMaterial,
+			};
 			go.transform.position = Vector3.left * 1.4f;
 			 SpinMeY.Attach(go);
 			n++;
