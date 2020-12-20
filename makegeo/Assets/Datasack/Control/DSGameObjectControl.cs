@@ -40,7 +40,7 @@ using UnityEngine;
 public class DSGameObjectControl : MonoBehaviour
 {
 	[Header( "Controlling datasack:")]
-	[Tooltip( "This Datasack controls objects below.")]
+	[Tooltip( "This Datasack controls GameObjects below.")]
 	public	Datasack	dataSack;
 
 	[Header( "For simple boolean on/off control:")]

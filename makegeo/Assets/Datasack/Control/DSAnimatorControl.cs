@@ -33,47 +33,66 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#if UNITY_EDITOR
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
-// This is just a handy script to let you bulk-create
-// a large number of Datasacks, such as when you are
-// replicating a particular namespaced structure.
-//
-// To use:
-//	1. fill out the names in the array below
-//	2. update the destination path folder
-//	3. enable the [MenuItem...] decorator
-//	4. goto your Unity editor menu 'Assets' and run it
-
-public static class DatasackEditorUtils
+public class DSAnimatorControl : MonoBehaviour
 {
-	// 2. update the destination path folder (or just use this one)
-	const string DestinationFolderPath = "Assets/Datasack/Resources/Datasacks/";
+	[Tooltip( "Datasack that will control Animator property.")]
+	public	Datasack	dataSack;
 
-	// 3. uncomment this [MenuItem...] decorator
-//	[MenuItem( "Assets/Create bulk datasacks")]
-	static void CreateBulkDatasacks()
+	[Tooltip( "Animator: can be on another GameObject too.")]
+	public	Animator	animator;
+
+	[Tooltip( "What property type to set?")]
+	public	DSAnimatorPropertyType	propertyType;
+
+	[Tooltip( "Name of the property on the Animator.")]
+	public	string		propertyName;
+
+	void Reset()
 	{
-		// 1. fill out these names (or load them from a file?)	
-		string[] names = new string[] {
-			"DatasackName1",
-			"DatasackName2",
-			"DatasackName3",
-		};
+		animator = GetComponent<Animator>();
+		propertyType = DSAnimatorPropertyType.BOOL;
+		propertyName = "<Property Name>";
+	}
 
-		foreach( var nm in names)
+	void OnDatasackChanged( Datasack ds)
+	{
+		switch( propertyType)
 		{
-			var ds = ScriptableObject.CreateInstance<Datasack>();
-			ds.name = nm;
+		case DSAnimatorPropertyType.FLOAT :
+			animator.SetFloat( propertyName, ds.fValue);
+			break;
 
-			AssetDatabase.CreateAsset( ds, DestinationFolderPath + nm + ".asset");
+		case DSAnimatorPropertyType.INT :
+			animator.SetInteger( propertyName, ds.iValue);
+			break;
+
+		case DSAnimatorPropertyType.BOOL :
+			animator.SetBool( propertyName, ds.bValue);
+			break;
+
+		case DSAnimatorPropertyType.TRIGGER :
+			if (ds.bValue)
+			{
+				animator.SetTrigger( propertyName);
+			}
+			break;
+
+		default :
+			Debug.LogError( "DSAnimatorControl: unknown propertyType:" + propertyType);
+			break;
 		}
 	}
-}
 
-#endif
+	void OnEnable()
+	{
+		dataSack.OnChanged += OnDatasackChanged;
+	}
+	void OnDisable()
+	{
+		dataSack.OnChanged -= OnDatasackChanged;
+	}
+}

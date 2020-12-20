@@ -33,47 +33,57 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#if UNITY_EDITOR
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
-// This is just a handy script to let you bulk-create
-// a large number of Datasacks, such as when you are
-// replicating a particular namespaced structure.
-//
-// To use:
-//	1. fill out the names in the array below
-//	2. update the destination path folder
-//	3. enable the [MenuItem...] decorator
-//	4. goto your Unity editor menu 'Assets' and run it
-
-public static class DatasackEditorUtils
+public class DSMonoBehaviourControl : MonoBehaviour
 {
-	// 2. update the destination path folder (or just use this one)
-	const string DestinationFolderPath = "Assets/Datasack/Resources/Datasacks/";
+	[Header( "Controlling datasack:")]
+	[Tooltip( "This Datasack controls MonoBehaviour(s) below.")]
+	public	Datasack	dataSack;
 
-	// 3. uncomment this [MenuItem...] decorator
-//	[MenuItem( "Assets/Create bulk datasacks")]
-	static void CreateBulkDatasacks()
+	[Header( "NOTE: lock the inspector (top left corner) to", order = 10)]
+	[Header( "access MonoBehaviors in other GameObjects.", order = 11)]
+	[Header( "Or... open two or more Inspector windows!", order = 12)]
+
+	[Header( "For simple boolean on/off control:")]
+	[Tooltip( "MonoBehaviour to ENABLE when Datasack is poked TRUE (false poke will DISABLE!).")]
+	public	MonoBehaviour[]	ToEnable;
+
+	[Tooltip( "MonoBehaviour to DISABLE when Datasack is poked TRUE (false poke will ENABLE!).")]
+	public	MonoBehaviour[]	ToDisable;
+
+	void OnChanged( Datasack ds)
 	{
-		// 1. fill out these names (or load them from a file?)	
-		string[] names = new string[] {
-			"DatasackName1",
-			"DatasackName2",
-			"DatasackName3",
-		};
+		bool pokedTrue = ds.bValue;
 
-		foreach( var nm in names)
+		// boolean handling:
+		foreach( var mb in ToEnable)
 		{
-			var ds = ScriptableObject.CreateInstance<Datasack>();
-			ds.name = nm;
-
-			AssetDatabase.CreateAsset( ds, DestinationFolderPath + nm + ".asset");
+			if (mb)
+			{
+				mb.enabled = pokedTrue;
+			}
+		}
+		foreach( var mb in ToDisable)
+		{
+			if (mb)
+			{
+				mb.enabled = !pokedTrue;
+			}
 		}
 	}
-}
 
-#endif
+	void OnEnable()
+	{
+		dataSack.OnChanged += OnChanged;
+
+		dataSack.Poke();
+	}
+
+	void OnDisable()
+	{
+		dataSack.OnChanged -= OnChanged;
+	}
+}
