@@ -40,7 +40,7 @@ using UnityEngine;
 public static class MakeUVCapsule
 {
 	// dimensions is radial size in X,Y,Z (Y is polar axis)
-	//	NOTE: UVs will only look correct for unform scaling values (n,n,n)
+	//	NOTE: UVs will only look correct for uniform dimensional values (n,n,n)
 	// sectors are how many longitudinal dividers (full equatorial)
 	// meridians are how many latitudinal dividers (pole to pole)
 	// equatorialHeight is the flat central part height
@@ -80,6 +80,10 @@ public static class MakeUVCapsule
 			const int extraMeridians = 4;
 
 			int createEquator = extraMeridians - 1;
+
+			// total V distance along the curved portion (upper and lower hemispheres combined)
+			// see note about elliptical distance: this distorts with non-uniform dimensions.
+			float curvedVDistance = dimensions.x * Mathf.PI;
 
 			for (int j = 0; j <= meridians; j++)
 			{
