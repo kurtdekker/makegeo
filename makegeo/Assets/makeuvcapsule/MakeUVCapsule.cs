@@ -138,6 +138,14 @@ public static class MakeUVCapsule
 				verts.Add (sphericalPoint);
 
 				float v = sphericalPoint.y / (dimensions.y * 2 + equatorialHeight) + 0.5f;
+				if (sphericalPoint.y < -equatorialHeight / 2)
+				{
+					// todo: sphericize this V coordinate on the lower hemisphere
+				}
+				if (sphericalPoint.y >  equatorialHeight / 2)
+				{
+					// todo: sphericize this V coordinate on the upper hemisphere
+				}
 
 				Vector2 uvPoint = new Vector2 ((float)i / sectors, v);
 				uvs.Add (uvPoint);
