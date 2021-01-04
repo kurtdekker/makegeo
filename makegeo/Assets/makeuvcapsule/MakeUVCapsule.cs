@@ -43,7 +43,7 @@ public static class MakeUVCapsule
 	//	NOTE: UVs will only look correct for uniform dimensional values (n,n,n)
 	// sectors are how many longitudinal dividers (full equatorial)
 	// meridians are how many latitudinal dividers (pole to pole)
-	// equatorialHeight is the flat central part height
+	// equatorialHeight is the flat central part height (we call this the equator)
 	public static GameObject Create( Vector3 dimensions, int sectors, int meridians, float equatorialHeight)
 	{
 		GameObject go = new GameObject ("MakeUVCapsule.Create();");
@@ -57,24 +57,16 @@ public static class MakeUVCapsule
 
 		int equatorialMeridian = meridians / 2;
 
-		// this distance is how much of the V we spread over the curving
-		// part of the capsule, the top and the bottom hemispheres.
-		float curveVDistance = 2 * dimensions.x * Mathf.PI;
-
-		// this is the V distance to go from pole to pole: twice over
-		// the curveVDistance and the equatorialHeight in the middle.
-		float totalVDistance = curveVDistance * 2 + equatorialHeight;
-
 		for (int i = 0; i <= sectors; i++)
 		{
 			float longitude = (Mathf.PI * 2 * i) / sectors;
 
 			float verticalOffset = -equatorialHeight / 2;
 
-			// this sequences multiple times through:
-			//	- to draw the last band of verts on the lower hemisphere
-			//	- to draw the bottom band of verts on the equator
-			//	- to draw the top band of verts on the equator
+			// This sequences multiple times through on the equatorial meridian:
+			//	- the last band of verts on the lower hemisphere
+			//	- the bottom band of verts on the equator
+			//	- the top band of verts on the equator
 			//	- finally to continue to draw the first band of verts on the upper hemisphere
 
 			const int extraMeridians = 4;
@@ -137,15 +129,9 @@ public static class MakeUVCapsule
 
 				verts.Add (sphericalPoint);
 
+				// WARNING: this is a cheap and cheerful linear map of
+				// normalized local Y to the V texture coordinate
 				float v = sphericalPoint.y / (dimensions.y * 2 + equatorialHeight) + 0.5f;
-				if (sphericalPoint.y < -equatorialHeight / 2)
-				{
-					// todo: sphericize this V coordinate on the lower hemisphere
-				}
-				if (sphericalPoint.y >  equatorialHeight / 2)
-				{
-					// todo: sphericize this V coordinate on the upper hemisphere
-				}
 
 				Vector2 uvPoint = new Vector2 ((float)i / sectors, v);
 				uvs.Add (uvPoint);
