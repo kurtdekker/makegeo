@@ -40,6 +40,7 @@ using UnityEngine;
 public static class MakeUVCapsule
 {
 	// dimensions is radial size in X,Y,Z (Y is polar axis)
+	//	NOTE: UVs will only look correct for unform scaling values (n,n,n)
 	// sectors are how many longitudinal dividers (full equatorial)
 	// meridians are how many latitudinal dividers (pole to pole)
 	// equatorialHeight is the flat central part height
@@ -56,19 +57,72 @@ public static class MakeUVCapsule
 
 		int equatorialMeridian = meridians / 2;
 
+		// this distance is how much of the V we spread over the curving
+		// part of the capsule, the top and the bottom hemispheres.
+		float curveVDistance = 2 * dimensions.x * Mathf.PI;
+
+		// this is the V distance to go from pole to pole: twice over
+		// the curveVDistance and the equatorialHeight in the middle.
+		float totalVDistance = curveVDistance * 2 + equatorialHeight;
+
 		for (int i = 0; i <= sectors; i++)
 		{
 			float longitude = (Mathf.PI * 2 * i) / sectors;
 
 			float verticalOffset = -equatorialHeight / 2;
 
-			int createEquator = 2;
+			// this sequences multiple times through:
+			//	- to draw the last band of verts on the lower hemisphere
+			//	- to draw the bottom band of verts on the equator
+			//	- to draw the top band of verts on the equator
+			//	- finally to continue to draw the first band of verts on the upper hemisphere
+
+			const int extraMeridians = 4;
+
+			int createEquator = extraMeridians - 1;
 
 			for (int j = 0; j <= meridians; j++)
 			{
+				bool emitTriangles = true;
+
+				int effectiveJ = j;
+
+				if (j == equatorialMeridian)
+				{
+					if (createEquator > 0)
+					{
+						// last (topmost) band of verts on lower hemisphere
+						if (createEquator == 3)
+						{
+						}
+						// bottom band of verts on the equator band
+						if (createEquator == 2)
+						{
+							// don't want these zero-height polys as we transition
+							// from the lower hemisphere to the equatorial band.
+							emitTriangles = false;
+						}
+						// top band of verts on the equator band
+						if (createEquator == 1)
+						{
+							verticalOffset = -verticalOffset;
+						}
+
+						createEquator--;
+
+						j--;
+					}
+					else
+					{
+						// don't want these zero-height polys as we transition
+						// from the equatorial band to the upper hemisphere
+						emitTriangles = false;
+					}
+				}
+
 				int n = verts.Count;
 
-				float latitude = (Mathf.PI * j) / meridians - Mathf.PI / 2;
+				float latitude = (Mathf.PI * effectiveJ) / meridians - Mathf.PI / 2;
 
 				Vector3 sphericalPoint = new Vector3 (
 					Mathf.Cos (longitude) *
@@ -84,31 +138,19 @@ public static class MakeUVCapsule
 				Vector2 uvPoint = new Vector2 ((float)i / sectors, v);
 				uvs.Add (uvPoint);
 
-				if (i > 0 && j > 0)
+				if (emitTriangles)
 				{
-					int meridians2 = meridians + 2;
-
-					tris.Add (n);
-					tris.Add (n - meridians2 - 1);
-					tris.Add (n - meridians2);
-
-					tris.Add (n);
-					tris.Add (n - 1);
-					tris.Add (n - meridians2 - 1);
-				}
-
-				if (j == equatorialMeridian)
-				{
-					if (createEquator > 0)
+					if (i > 0 && j > 0)
 					{
-						createEquator--;
+						int effectiveMeridians = meridians + extraMeridians;
 
-						if (createEquator == 1)
-						{
-							verticalOffset = -verticalOffset;
-						}
+						tris.Add (n);
+						tris.Add (n - effectiveMeridians - 1);
+						tris.Add (n - effectiveMeridians);
 
-						j--;
+						tris.Add (n);
+						tris.Add (n - 1);
+						tris.Add (n - effectiveMeridians - 1);
 					}
 				}
 			}

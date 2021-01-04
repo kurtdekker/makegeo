@@ -53,19 +53,19 @@ public class testmakeuvcapsule : MonoBehaviour
 
 		GameObject go = MakeUVCapsule.Create (Vector3.one, 10, 10, 1);
 		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
-		go.transform.position = Vector3.left * 1.4f;
-		SpinMeY.Attach(go);
+		go.transform.position = Vector3.left * 2.4f;
+		SpinMeY.Attach(go).RateOfSpin = 25;
 		n++;
 
 		go = MakeUVCapsule.Create (Vector3.one, 24, 24, 2);
 		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
-		go.transform.position = Vector3.right * 1.4f;
-		SpinMeY.Attach(go);
+		go.transform.position = Vector3.right * 2.4f;
+		SpinMeY.Attach(go).RateOfSpin = 50;
 		n++;
 
 		go = MakeUVCapsule.Create (new Vector3( 0.6f, 1.2f, 1.0f), 32, 32, 3);
 		go.GetComponent<MeshRenderer> ().material = materials [n % materials.Length];
-		go.transform.position = Vector3.up * 2.2f;
-		SpinMeY.Attach(go);
+		go.transform.position = Vector3.up * 2.0f;
+		SpinMeY.Attach(go).RateOfSpin = 100;
 	}
 }
