@@ -1,0 +1,10 @@
+
+12:22 PM 1/4/2021
+
+These files are the test textures provided in Blender3D v2.91
+
+I claim no ownership of these files.
+
+The license is here:
+
+https://www.blender.org/about/license/
