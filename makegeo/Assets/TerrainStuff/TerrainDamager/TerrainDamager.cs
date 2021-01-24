@@ -50,8 +50,6 @@ public class TerrainDamager : MonoBehaviour
 	TerrainData terrainData;
 	float[,,] splatMaps;
 
-	int colorForDamage = 0;		// index into your terrain's textures; which one is "damage"
-
 	float TerrainVerticalScale
 	{
 		get
@@ -164,7 +162,7 @@ public class TerrainDamager : MonoBehaviour
 							{
 								for (int k = 0; k < splatMaps.GetLength(2); k++)
 								{
-									splatMaps[z,x,k] = (k == colorForDamage) ? 1.0f : 0.0f;
+									splatMaps[z,x,k] = (k == config.ColorForDamage) ? 1.0f : 0.0f;
 								}
 							}
 						}

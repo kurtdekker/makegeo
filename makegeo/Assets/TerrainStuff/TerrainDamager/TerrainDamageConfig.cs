@@ -60,6 +60,9 @@ public class TerrainDamageConfig : ScriptableObject
 	[Header( "Choose the procedural shape of the hole.")]
 	public ProceduralHoleShape HoleShape;
 
+	[Header( "Index into your terrain's textures; which one is 'damage'")]
+	public int ColorForDamage;
+
 	// future ideas:
 	//	___	support for predetermined geometric shapes: flat depressions, bowls, V-ditches
 	//	___	support a grayscale heightmap texture as the shape of the dent
