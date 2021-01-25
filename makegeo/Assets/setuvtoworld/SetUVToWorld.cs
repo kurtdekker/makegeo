@@ -92,6 +92,11 @@ public class SetUVToWorld : MonoBehaviour
 			Vector3[] verts = mf.mesh.vertices;
 			int[] tris = mf.mesh.triangles;
 
+			if (uvs.Length != verts.Length)
+			{
+				uvs = new Vector2[ verts.Length];
+			}
+
 			for (int i = 0; i < verts.Length; i++)
 			{
 				verts [i] = transform.TransformPoint (verts [i]);
