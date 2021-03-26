@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Heightmap: {fileID: 2800000, guid: 6d3f4593b03c24ce8897fcb8747fc948, type: 3}
-  Dimensions: {x: 10, y: 5, z: 10}
+  Dimensions: {x: 20, y: 2, z: 20}
   mtl: {fileID: 2100000, guid: 2804a23de8510422f98e6acd5c03ccd6, type: 2}
 --- !u!1 &1890812038
 GameObject:
