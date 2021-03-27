@@ -39,6 +39,7 @@ using UnityEngine;
 
 public class RotateUVs : MonoBehaviour
 {
+	[Header( "Fill this in with something so you can see it rotate.")]
 	public Material mtl;
 
 	[Header( "In UV space, the center around which we rotate.")]
@@ -61,16 +62,20 @@ public class RotateUVs : MonoBehaviour
 
 		filter = quad.GetComponent<MeshFilter>();
 		mesh = filter.mesh;
+		// pluck the original corner UVs out so we have them
 		originalUVs = new Vector2[ mesh.uv.Length];
 		System.Array.Copy( mesh.uv, originalUVs, originalUVs.Length);
 
+		// here's where we will be creating rotated coords each frame
 		rotatedUVs = new Vector2[ originalUVs.Length];
 
+		// give it something useful to look at 
 		quad.GetComponent<Renderer>().material = mtl;
 	}
 
 	void Update()
 	{
+		// around we go
 		angle += RateOfRotation * Time.deltaTime;
 
 		// rotate around Z, which is orthogonal to Vector2's X/Y
