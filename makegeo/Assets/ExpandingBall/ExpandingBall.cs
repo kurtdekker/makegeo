@@ -39,11 +39,98 @@ using UnityEngine;
 
 public class ExpandingBall : MonoBehaviour
 {
-	static IEnumerator ExplodeOutwards( GameObject go, float minScale, float maxScale, float time)
+	static IEnumerator ExplodeOutwards( GameObject unitSphere, float maxScale, float interval)
 	{
+		float minScale = 1.0f;
+
+		Collider c = unitSphere.GetComponent<Collider>();
+		bool savedColliderEnabled = false;
+		if (c)
+		{
+			savedColliderEnabled = c.enabled;
+			c.enabled = false;
+		}
+
+		float fraction = 0.0f;
+		float time = 0.0f;
+
+		MeshFilter mf = unitSphere.GetComponent<MeshFilter>();
+		Mesh mesh = mf.mesh;
+
+		Vector3[] OriginalVertices = new Vector3[ mesh.vertexCount];
+		System.Array.Copy( mesh.vertices, OriginalVertices, mesh.vertexCount);
+
+		Ray[] OriginalRays = new Ray[ mesh.vertexCount];
+		for (int i = 0; i < mesh.vertexCount; i++)
+		{
+			OriginalRays[i] = new Ray( unitSphere.transform.position, OriginalVertices[i]);
+		}
+
+		Vector3[] WorkVertices = new Vector3[ mesh.vertexCount];
+
+		do
+		{
+			time += Time.deltaTime;
+			fraction = time / interval;
+
+			float distance = Mathf.Lerp( minScale, maxScale, fraction);
+
+			for (int i = 0; i < OriginalVertices.Length; i++)
+			{
+				Ray ray = OriginalRays[i];
+
+				Vector3 worldPoint = Vector3.zero;
+
+				RaycastHit rch;
+				if (Physics.Raycast( ray, out rch, distance))
+				{
+					worldPoint = rch.point;
+				}
+				else
+				{
+					worldPoint = ray.GetPoint( distance);
+				}
+
+				Vector3 localPoint = unitSphere.transform.InverseTransformPoint( worldPoint);
+
+				WorkVertices[i] = localPoint;
+			}
+
+			mesh.vertices = WorkVertices;
+
+			mesh.RecalculateNormals();
+
+			mf.mesh = mesh;
+
+			yield return null;
+		}
+		while( fraction < 1.0f);
+
+		if (c) c.enabled = savedColliderEnabled;
+
 		yield return null;
 	}
-		
+
+	// running / testing the above
+
+	public UnityEngine.UI.Text TextSize;
+
+	void Start()
+	{
+		SetMaximumSize( 3);
+	}
+
+	float MaximumSize;
+
+	void SetMaximumSize(int sz)
+	{
+		MaximumSize = sz;
+
+		TextSize.text = "Size:" + MaximumSize; 
+	}
+
+	List<GameObject> balls = new List<GameObject>();
+
 	void Update ()
 	{
 		if (Input.GetMouseButtonDown(0))
@@ -52,15 +139,36 @@ public class ExpandingBall : MonoBehaviour
 			RaycastHit rch;
 			if (Physics.Raycast( ray, out rch, 1000))
 			{
-				Vector3 pos = rch.point;
+				GameObject ball = GameObject.CreatePrimitive( PrimitiveType.Sphere);
+
+				ball.transform.position = rch.point;
 
 				StartCoroutine( ExplodeOutwards(
-					GameObject.CreatePrimitive( PrimitiveType.Cube),
-					minScale: 1,
-					maxScale: 10,
-					time: 1.0f)
+					ball,
+					maxScale: MaximumSize,
+					interval: 1.0f)
 				);
+
+				balls.Add( ball);
 			}
+		}
+
+		for (int i = 2; i < 10; i++)
+		{
+			var kc = (KeyCode)(KeyCode.Alpha0 + i);
+			if (Input.GetKeyDown(kc))
+			{
+				SetMaximumSize( i);
+			}
+		}
+
+		if (Input.GetKeyDown(KeyCode.R))
+		{
+			foreach( var ball in balls)
+			{
+				Destroy(ball);
+			}
+			balls.Clear();
 		}
 	}
 }
