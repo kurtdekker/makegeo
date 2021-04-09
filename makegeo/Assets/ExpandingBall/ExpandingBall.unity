@@ -889,6 +889,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextSize: {fileID: 1069865926}
+  BallMaterial: {fileID: 2100000, guid: 043e0be75adfa40f4918dc83257eafd2, type: 2}
 --- !u!1 &1632823057
 GameObject:
   m_ObjectHideFlags: 0

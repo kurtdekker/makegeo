@@ -115,6 +115,8 @@ public class ExpandingBall : MonoBehaviour
 
 	public UnityEngine.UI.Text TextSize;
 
+	public Material BallMaterial;
+
 	void Start()
 	{
 		SetMaximumSize( 3);
@@ -142,6 +144,8 @@ public class ExpandingBall : MonoBehaviour
 				GameObject ball = GameObject.CreatePrimitive( PrimitiveType.Sphere);
 
 				ball.transform.position = rch.point;
+
+				ball.GetComponent<Renderer>().material = BallMaterial;
 
 				StartCoroutine( ExplodeOutwards(
 					ball,
