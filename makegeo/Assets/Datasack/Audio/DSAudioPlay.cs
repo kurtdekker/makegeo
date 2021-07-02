@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -38,6 +38,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class DSAudioPlay : MonoBehaviour
 {
 	public	Datasack	dataSack;
@@ -57,6 +61,8 @@ public class DSAudioPlay : MonoBehaviour
 
 	void	OnChanged( Datasack ds)
 	{
+		// NOTE: does nothing with ds!!
+
 		if (Strategy == PlayStrategy.ALLATONCE)
 		{
 			foreach( var az in azzs)
@@ -117,4 +123,26 @@ public class DSAudioPlay : MonoBehaviour
 	{
 		dataSack.OnChanged -= OnChanged;	
 	}
+
+#if UNITY_EDITOR
+	[CustomEditor( typeof( DSAudioPlay))]
+	public class DSAudioPlayEditor : Editor
+	{
+		public override void OnInspectorGUI()
+		{
+			var play = (DSAudioPlay)target;
+
+			DrawDefaultInspector();
+
+			EditorGUILayout.BeginVertical();
+
+			if (GUILayout.Button( " PLAY AUDIO "))
+			{
+				play.OnChanged(null);
+			}
+
+			EditorGUILayout.EndVertical();
+		}
+	}
+#endif
 }

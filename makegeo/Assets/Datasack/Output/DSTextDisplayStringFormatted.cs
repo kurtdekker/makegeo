@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -42,6 +42,7 @@ public class DSTextDisplayStringFormatted : MonoBehaviour
 {
 	public	Datasack	dataSack;
 
+	[Header("Provide using standard C# formatting syntax.")]
 	public	Datasack	formattingDatasack;
 
 	private DSTextAbstraction _textAbstraction;

@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -78,18 +78,24 @@ public class DSGameObjectControl : MonoBehaviour
 		bool pokedTrue = ds.bValue;
 
 		// boolean handling:
-		foreach( var go in ToEnable)
+		if (ToEnable != null)
 		{
-			if (go)
+			foreach( var go in ToEnable)
 			{
-				go.SetActive( pokedTrue);
+				if (go)
+				{
+					go.SetActive( pokedTrue);
+				}
 			}
 		}
-		foreach( var go in ToDisable)
+		if (ToDisable != null)
 		{
-			if (go)
+			foreach( var go in ToDisable)
 			{
-				go.SetActive( !pokedTrue);
+				if (go)
+				{
+					go.SetActive( !pokedTrue);
+				}
 			}
 		}
 
@@ -106,46 +112,55 @@ public class DSGameObjectControl : MonoBehaviour
 		}
 
 		// iValue integer list selections
-		for (int i = 0; i < IndexArray.Length; i++)
+		if (IndexArray != null)
 		{
-			var currentGameObject = IndexArray[i];
-			if (currentGameObject)
+			for (int i = 0; i < IndexArray.Length; i++)
 			{
-				// presume selection SelectionStrategy.SELECT_EXACTLY_ONE:
-				bool onoff = i == ds.iValue;
-
-				switch( selectionStrategy)
+				var currentGameObject = IndexArray[i];
+				if (currentGameObject)
 				{
-				case SelectionStrategy.SELECT_LESS_THAN :
-					onoff = i < ds.iValue;
-					break;
-				case SelectionStrategy.SELECT_LESS_THAN_OR_EQUAL :
-					onoff = i <= ds.iValue;
-					break;
-				case SelectionStrategy.SELECT_BY_GAMEOBJECT_NAME :
-					onoff = (ds.Value == currentGameObject.name);
-					break;
-				}
+					// presume selection SelectionStrategy.SELECT_EXACTLY_ONE:
+					bool onoff = i == ds.iValue;
 
-				if (InvertSelectionStrategy)
-				{
-					onoff = !onoff;
-				}
+					switch( selectionStrategy)
+					{
+					case SelectionStrategy.SELECT_LESS_THAN :
+						onoff = i < ds.iValue;
+						break;
+					case SelectionStrategy.SELECT_LESS_THAN_OR_EQUAL :
+						onoff = i <= ds.iValue;
+						break;
+					case SelectionStrategy.SELECT_BY_GAMEOBJECT_NAME :
+						onoff = (ds.Value == currentGameObject.name);
+						break;
+					}
 
-				currentGameObject.SetActive( onoff);
+					if (InvertSelectionStrategy)
+					{
+						onoff = !onoff;
+					}
+
+					currentGameObject.SetActive( onoff);
+				}
 			}
 		}
 	}
 
 	void OnEnable()
 	{
-		dataSack.OnChanged += OnChanged;
+		if (dataSack)
+		{
+			dataSack.OnChanged += OnChanged;
 
-		dataSack.Poke();
+			dataSack.Poke();
+		}
 	}
 
 	void OnDisable()
 	{
-		dataSack.OnChanged -= OnChanged;
+		if (dataSack)
+		{
+			dataSack.OnChanged -= OnChanged;
+		}
 	}
 }

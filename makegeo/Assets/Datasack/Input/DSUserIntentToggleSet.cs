@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2020 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -38,55 +38,52 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DSTextDisplayStringArray : MonoBehaviour
+[RequireComponent( typeof( Toggle))]
+public class DSUserIntentToggleSet : MonoBehaviour
 {
-	public	Datasack	dataSack;
+	[Tooltip("Defaults to UserIntent datasack if none supplied.")]
+	public Datasack dsUI;
 
-	[Multiline]
-	[Header("Optional; Standard C# formatting syntax.")]
-	public	string		FormatString;
+	[Tooltip("Leave blank to set Toggle GameObject name")]
+	public string ValueToSet;
 
-	private DSTextAbstraction _textAbstraction;
-	private DSTextAbstraction textAbstraction
+	public bool SignalOnTrue;
+	public bool SignalOnFalse;
+
+	private	Toggle toggle;
+
+	void Reset()
 	{
-		get
-		{
-			if (!_textAbstraction) _textAbstraction = DSTextAbstraction.Attach(this);
-			return _textAbstraction;
-		}
+		SignalOnTrue = true;
 	}
 
-	public	int			index;
-
-	[Header("Optional: used in lieu of above integer.")]
-	public	Datasack	indexDatasack;
-
-	void	OnChanged( Datasack ds)
+	void	OnToggleChanged( bool isOn)
 	{
-		int i = index;
+		var doSignal = false;
 
-		if (indexDatasack)
+		if (isOn && SignalOnTrue) doSignal = true;
+		if (!isOn && SignalOnFalse) doSignal = true;
+
+		if (doSignal)
 		{
-			i = indexDatasack.iValue;
-		}
+			var ds = DSM.UserIntent;
+			if (dsUI) ds = dsUI;
 
-		string display = ds.GetArrayValue( i);
+			string signalledOutput = gameObject.name;
+			if (ValueToSet != null && ValueToSet.Length > 0) signalledOutput = ValueToSet;
 
-		if (!System.String.IsNullOrEmpty(FormatString))
-		{
-			textAbstraction.SetText( System.String.Format (FormatString, display));
-			return;
+			ds.Value = signalledOutput;
 		}
-		textAbstraction.SetText( display);
 	}
 
 	void	OnEnable()
 	{
-		dataSack.OnChanged += OnChanged;
-		OnChanged( dataSack);
+		toggle = GetComponent<Toggle> ();
+
+		toggle.onValueChanged.AddListener (OnToggleChanged);
 	}
 	void	OnDisable()
 	{
-		dataSack.OnChanged -= OnChanged;	
+		toggle.onValueChanged.RemoveListener (OnToggleChanged);
 	}
 }

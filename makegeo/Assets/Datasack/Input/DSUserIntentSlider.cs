@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -43,15 +43,27 @@ public class DSUserIntentSlider : MonoBehaviour
 {
 	public Datasack dataSack;
 
+	public bool ForceIntegers;
+
 	private	Slider slider;
 
 	void	OnSliderChanged( float Value)
 	{
+		if (ForceIntegers)
+		{
+			dataSack.iValue = (int)Value;
+			return;
+		}
 		dataSack.fValue = Value;
 	}
 
 	void	OnDatasackChanged( Datasack ds)
 	{
+		if (ForceIntegers)
+		{
+			slider.value = ds.iValue;
+			return;
+		}
 		slider.value = ds.fValue;
 	}
 
@@ -59,7 +71,14 @@ public class DSUserIntentSlider : MonoBehaviour
 	{
 		slider = GetComponent<Slider> ();
 
-		slider.value = dataSack.fValue;
+		if (ForceIntegers)
+		{
+			slider.value = dataSack.iValue;
+		}
+		else
+		{
+			slider.value = dataSack.fValue;
+		}
 
 		slider.onValueChanged.AddListener (OnSliderChanged);
 

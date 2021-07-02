@@ -54,6 +54,19 @@ public partial class Datasack
 	bool DebugLogging;
 
 #if UNITY_EDITOR
+
+	string DisplayDebugOutput()
+	{
+		string part1 = "Datasack " + FullName + " is currently: '" + Value + "'";
+		string part2 = " <not parseable as float>";
+		try
+		{
+			part2 = "--> as float value = " + fValue;
+		}
+		catch { } 		// gotta catch 'em all: fairly harmless in a small context
+		return part1 + part2;
+	}
+
 	[CustomEditor(typeof(Datasack)), CanEditMultipleObjects]
 	public class DatasackEditor : Editor
 	{
@@ -334,14 +347,7 @@ public partial class Datasack
 			GUI.color = Color.cyan;
 			if (GUILayout.Button( "OUTPUT CURRENT VALUE"))
 			{
-				string part1 = "Datasack " + ds.FullName + " is currently: '" + ds.Value + "'";
-				string part2 = " <not parseable as float>";
-				try
-				{
-					part2 = "--> as float value = " + ds.fValue;
-				}
-				catch { } 		// gotta catch 'em all: fairly harmless in a small context
-				Debug.Log( part1 + part2);
+				Debug.Log( ds.DisplayDebugOutput());
 			}
 
 			GUILayout.Space(20);
