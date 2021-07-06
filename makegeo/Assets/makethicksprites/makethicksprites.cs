@@ -127,7 +127,7 @@ public class makethicksprites : MonoBehaviour
 					GUI.Label (
 						new Rect( X + x, y, w, h),
 						depths[i,j].ToString (),
-						OurStyles.LABELLJ (14));
+						OurStyles.LABELLJ (10));
 				}
 			}
 		}
