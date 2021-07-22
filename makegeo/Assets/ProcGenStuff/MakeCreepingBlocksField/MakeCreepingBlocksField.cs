@@ -15,7 +15,11 @@ public class MakeCreepingBlocksField : MonoBehaviour
 	// all things hang off this object
 	GameObject Parent;
 
+	// this is where we build them up
 	Dictionary<Vector2Int, GameObject> Field = new Dictionary<Vector2Int, GameObject>();
+
+	// we'll sprinkle a few slashes in here by hand to prohibit drawing here...
+	HashSet<Vector2Int> Prohibited = new HashSet<Vector2Int>();
 
 	const float BlockWidth = 0.95f;
 	const float BlockThickness = 0.2f;
@@ -62,7 +66,7 @@ public class MakeCreepingBlocksField : MonoBehaviour
 			int x = Random.Range(0, 2) * 2 - 1;
 			int y = Random.Range(0, 2) * 2 - 1;
 
-			// enforce only on axes
+			// enforce only on axes (not diagonal)
 			if (Random.Range(0, 2) == 0)
 			{
 				x = 0;
@@ -84,6 +88,12 @@ public class MakeCreepingBlocksField : MonoBehaviour
 				return false;
 			}
 
+			// and is this NOT on the prohibited list?
+			if (Prohibited.Contains( proposedPosition))
+			{
+				return false;
+			}
+
 			// nope, we can add it
 			AddBlock(x, y);
 
@@ -92,11 +102,38 @@ public class MakeCreepingBlocksField : MonoBehaviour
 
 		// starting block!
 		AddBlock(0, 0);
+
+		if (Field.Count == 0)
+		{
+			Debug.LogError( "Failed to have at least one block created to add stuff to!");
+			Debug.LogError( "Did you put the starting block on the 'no add' list?");
+		}
+
 		return true;
+	}
+
+	// get these prohibited ones defined however you like
+	void AddProhibitedBlocks()
+	{
+		// WARNING: keep this away from (0,0)!
+		Prohibited.Add( new Vector2Int( -3, 1));
+		Prohibited.Add( new Vector2Int( -4, 1));
+		Prohibited.Add( new Vector2Int( -5, 1));
+		Prohibited.Add( new Vector2Int( -5, 2));
+
+		Prohibited.Add( new Vector2Int( 1, 1));
+		Prohibited.Add( new Vector2Int( 2, 1));
+
+		Prohibited.Add( new Vector2Int( 2, -1));
+		Prohibited.Add( new Vector2Int( 2, -2));
+		Prohibited.Add( new Vector2Int( 2, -3));
+		Prohibited.Add( new Vector2Int( 3, -3));
 	}
 
 	IEnumerator Start()
 	{
+		AddProhibitedBlocks();
+
 		// remove this code if you put something in the above slot
 		WhatToMake = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		WhatToMake.transform.localScale = new Vector3(BlockWidth, BlockThickness, BlockWidth);
