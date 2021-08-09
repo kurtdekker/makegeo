@@ -41,31 +41,59 @@ public class TestUVTranslators : MonoBehaviour
 {
 	// randomly clones objects, remapping their colors via UV position.
 
+	// Remember: zero is always the lower left of UV
+
 	public GameObject Prefab;
 	public Rect SourceRect
-		// green in example ImphenziaPalette01-256-Gradient texture
+		// source green I chose in example ImphenziaPalette01-256-Gradient texture
 		= new Rect(7.0f / 8.0f, 6.0f / 8.0f, 1.0f / 8.0f, 1.0f / 8.0f)
 		;
 	public Rect DestRect;
 
+	// greens in example ImphenziaPalette01-256-Gradient texture
+	int[] KnownShadesOfGreenXY = new int[]
+	{
+		// more yellowy
+		5,6,
+		6,6,
+		7,6,
+
+		// intense ones
+		5,1,
+		6,1,
+		7,1,
+
+		// an occasional reddish fall tree
+		1, 5,
+		2, 5,
+	};
+
 	IEnumerator Start()
 	{
-		for (int i = 0; i < 100; i++)
+		int TreeCount = 100;
+
+		for (int i = 0; i < TreeCount; i++)
 		{
+			float fx = Mathf.Lerp( -25, 25, (i / (float)(TreeCount - 1)));
+				
 			var copy = Instantiate<GameObject>(Prefab, transform);
 			copy.transform.position = new Vector3(
-				Random.Range(-15.0f, 15.0f),
+				fx,
 				0,
-				Random.Range(-15.0f, 5.0f));
+				Random.Range(-15.0f, 15.0f));
 
 			// rotate the placed tree
 			float orientation = Random.Range(0.0f, 360.0f);
 			copy.transform.rotation = Quaternion.Euler(0, orientation, 0) * copy.transform.rotation;
 
-			// we'll pick a random rectangle
-			int x = Random.Range(0, 8);
-			int y = Random.Range(0, 8);
-			DestRect = new Rect(x / 8.0f, y / 8.0f, 1.0f / 8.0f, 1.0f / 8.0f);
+			// we'll pick a random shade of green (AND-ing with ~1 enforces only even chosen)
+			int n = Random.Range( 0, KnownShadesOfGreenXY.Length) & (~1);
+
+			DestRect = new Rect(
+				KnownShadesOfGreenXY[n + 0] / 8.0f,
+				KnownShadesOfGreenXY[n + 1] / 8.0f,
+				1.0f / 8.0f,
+				1.0f / 8.0f);
 
 			var rends = copy.GetComponentsInChildren<Renderer>();
 			foreach (var rend in rends)
