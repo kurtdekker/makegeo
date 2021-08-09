@@ -70,7 +70,7 @@ public static class UVTranslators
 				{
 					uv.x /= source.width;
 				}
-				if (source.height > 0) ;
+				if (source.height > 0)
 				{
 					uv.y /= source.height;
 				}
