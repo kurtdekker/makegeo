@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// @kurtdekker - breaking apart and assembling structures out of blocks.
+
 public class BuildingBlocks : MonoBehaviour
 {
 	public Transform Constructed;
 	public Transform DestructedArea;
 
-	bool Assembling;
+	public PhysicMaterial BlockPhysicMaterial;
+
+	bool Disassembling;
 
 	void Start ()
 	{
@@ -17,7 +21,7 @@ public class BuildingBlocks : MonoBehaviour
 			OriginalPositionAndRotation.Attach( child);
 		}
 
-		Assembling = false;
+		Disassembling = false;
 	}
 
 	IEnumerator FlingPieceCoRo( OriginalPositionAndRotation opar, Transform dest)
@@ -41,7 +45,9 @@ public class BuildingBlocks : MonoBehaviour
 
 		float distance = Vector3.Distance( opar.Position, destPosition);
 
-		float VerticalExaggeration = Random.Range( 0.5f, 2.0f);
+		float VerticalExaggeration = Random.Range( 0.4f, 1.0f);
+
+		Transform piece = opar.transform;
 
 		while( fraction < 1)
 		{
@@ -62,13 +68,24 @@ public class BuildingBlocks : MonoBehaviour
 
 			lastPosition = finalPosition;
 
-			opar.transform.position = finalPosition;
+			piece.position = finalPosition;
 
 			yield return null;
 		}
 
+		// if you fail to provide colliders, we need to add one because
+		// otherwise the Rigidbody won't have an inertial tensor or CG.
+		var col = piece.GetComponent<Collider>();
+		if (!col)
+		{
+			col = opar.transform.gameObject.AddComponent<BoxCollider>();
+		}
+		col.material = BlockPhysicMaterial;
+
 		// now add an RB and fling it!
-		var rb = opar.transform.gameObject.AddComponent<Rigidbody>();
+		var rb = piece.gameObject.AddComponent<Rigidbody>();
+
+		rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
 		Vector3 flingVelocity = lastMotion / Time.deltaTime;
 
@@ -81,9 +98,10 @@ public class BuildingBlocks : MonoBehaviour
 
 		for (float t = 0; t < WaitToKillPhysics; t += Time.deltaTime)
 		{
+			// accelerates demise when stopped
 			if (rb.velocity.magnitude < 0.01f)
 			{
-				break;
+				t += Time.deltaTime * 3.0f;
 			}
 			yield return null;
 		}
@@ -190,20 +208,20 @@ public class BuildingBlocks : MonoBehaviour
 
 		if (Input.GetKeyDown( KeyCode.Space))
 		{
-			Assembling = !Assembling;
+			Disassembling = !Disassembling;
 		}
 
 		if (pieceYetTimer <= 0)
 		{
 			pieceYetTimer += Random.Range( 0.1f, 0.25f);
 
-			if (Assembling)
+			if (Disassembling)
 			{
-				AssemblePiece( DestructedArea, Constructed);
+				DoFlingPiece( Constructed, DestructedArea);
 			}
 			else
 			{
-				DoFlingPiece( Constructed, DestructedArea);
+				AssemblePiece( DestructedArea, Constructed);
 			}
 		}
 	}
