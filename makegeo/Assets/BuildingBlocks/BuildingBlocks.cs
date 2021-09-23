@@ -74,8 +74,10 @@ public class BuildingBlocks : MonoBehaviour
 
 		rb.velocity = flingVelocity;
 
-		// only wait so long before we kill its physics
-		float WaitToKillPhysics = 1.0f;
+		rb.angularVelocity = Random.onUnitSphere * Random.Range( 0.5f, 4.0f);
+
+		// only wait so long before we kill its physics, even if it is midair
+		float WaitToKillPhysics = 3.0f;
 
 		for (float t = 0; t < WaitToKillPhysics; t += Time.deltaTime)
 		{
@@ -105,6 +107,79 @@ public class BuildingBlocks : MonoBehaviour
 		}
 	}
 
+	IEnumerator RestoreToRightfulPlace( OriginalPositionAndRotation opar, Transform dest)
+	{
+		float ArcInterval = Random.Range( 0.5f, 0.7f);
+
+		float fraction = 0;
+		float time = 0;
+
+		Transform piece = opar.transform;
+
+		// our destroyed disassembled "found" position, as we lie
+		Vector3 startPosition = piece.position;
+		Quaternion startRotation = piece.rotation;
+
+		float distance = Vector3.Distance( startPosition, opar.Position);
+
+		float VerticalExaggeration = Random.Range( 0.1f, 0.2f);
+
+		while( fraction < 1)
+		{
+			fraction = time / ArcInterval;
+			time += Time.deltaTime;
+
+			float angle = fraction * Mathf.PI;
+
+			float cosineTween = (-Mathf.Cos( angle) + 1) / 2;
+
+			Vector3 lateralPosition = Vector3.Lerp( startPosition, opar.Position, cosineTween);
+
+			float sineTween = Mathf.Sin( angle);
+
+			Vector3 finalPosition = lateralPosition + Vector3.up * (sineTween * distance * VerticalExaggeration);
+
+			Quaternion rotation = Quaternion.Slerp( startRotation, opar.Rotation, cosineTween);
+
+			piece.position = finalPosition;
+			piece.rotation = rotation;
+
+			yield return null;
+		}
+
+		piece.position = opar.Position;
+		piece.rotation = opar.Rotation;
+
+		piece.SetParent( dest);
+	}
+
+	void AssemblePiece( Transform source, Transform dest)
+	{
+		OriginalPositionAndRotation lowestOpar = null;
+
+		// find piece in source stack with lowest sequence
+		foreach( Transform piece in source)
+		{
+			var opar = piece.GetComponent<OriginalPositionAndRotation>();
+			if (opar)
+			{
+				if (lowestOpar == null || opar.Sequence < lowestOpar.Sequence)
+				{
+					lowestOpar = opar;
+				}
+			}
+		}
+
+		if (lowestOpar)
+		{
+			Transform piece = lowestOpar.transform;
+
+			piece.SetParent( null);
+
+			StartCoroutine( RestoreToRightfulPlace( lowestOpar, dest));
+		}
+	}
+
 	float pieceYetTimer;
 	void Update ()
 	{
@@ -122,10 +197,9 @@ public class BuildingBlocks : MonoBehaviour
 		{
 			pieceYetTimer += Random.Range( 0.1f, 0.25f);
 
-			pieceYetTimer += Random.Range( 0.5f, 1.0f);
-
 			if (Assembling)
 			{
+				AssemblePiece( DestructedArea, Constructed);
 			}
 			else
 			{
