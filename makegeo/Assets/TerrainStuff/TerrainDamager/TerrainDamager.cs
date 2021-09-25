@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -135,9 +135,17 @@ public class TerrainDamager : MonoBehaviour
 						case TerrainDamageConfig.ProceduralHoleShape.RECTANGULAR :
 							break;
 						case TerrainDamageConfig.ProceduralHoleShape.INVERTEDCONE :
-							int offCenter = dx * dx + dz * dz;
-							if (offCenter >= iHoleRadiusSquaredDivider) offCenter = iHoleRadiusSquaredDivider;
-							fraction = (iHoleRadiusSquaredDivider - offCenter) / (float)iHoleRadiusSquaredDivider;
+							{
+								int offCenter = dx * dx + dz * dz;
+								if (offCenter >= iHoleRadiusSquaredDivider) offCenter = iHoleRadiusSquaredDivider;
+								fraction = (iHoleRadiusSquaredDivider - offCenter) / (float)iHoleRadiusSquaredDivider;
+							}
+							break;
+						case TerrainDamageConfig.ProceduralHoleShape.CIRCULAR :
+							{
+								int offCenter = dx * dx + dz * dz;
+								fraction = (offCenter <= iHoleRadiusSquaredDivider / 2) ? 1.0f : 0.0f;
+							}
 							break;
 						}
 
@@ -162,7 +170,10 @@ public class TerrainDamager : MonoBehaviour
 							{
 								for (int k = 0; k < splatMaps.GetLength(2); k++)
 								{
-									splatMaps[z,x,k] = (k == config.ColorForDamage) ? 1.0f : 0.0f;
+									if (fraction > 0.5f)
+									{
+										splatMaps[z,x,k] = (k == config.ColorForDamage) ? 1.0f : 0.0f;
+									}
 								}
 							}
 						}

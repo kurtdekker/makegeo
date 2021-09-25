@@ -16,4 +16,5 @@ MonoBehaviour:
   MinDepth: 0.5
   MaxDepth: 0.8
   RemoveEarth: 1
-  HoleShape: 0
+  HoleShape: 2
+  ColorForDamage: 0
