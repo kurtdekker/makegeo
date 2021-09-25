@@ -41,25 +41,58 @@ public class DiggingPlayerBallRoller : MonoBehaviour
 {
 	public TerrainDamager Damager;
 
+	public Transform PlayerSpawn;
+
+	// we'll re-use this again and again for all our hole-blasting needs
 	TerrainDamageConfig config;
 
 	void Start()
 	{
 		config = new TerrainDamageConfig();
-		config.HoleShape = TerrainDamageConfig.ProceduralHoleShape.RECTANGULAR;
-		config.MinDepth = 0.49f;
-		config.MaxDepth = 0.51f;
-		config.MinRadius = 4.5f;
-		config.MaxRadius = 4.5f;
+	}
+
+	bool BlastedStartingHole;
+	void BlastStartingHole()
+	{
+		Vector3 spawnPosition = PlayerSpawn.position;
+
+		config.HoleShape = TerrainDamageConfig.ProceduralHoleShape.CIRCULAR;
+		config.MinDepth = 1.0f;
+		config.MaxDepth = 1.0f;
+		config.MinRadius = 20.0f;
+		config.MaxRadius = 20.0f;
 		config.RemoveEarth = true;
 		config.ColorForDamage = 1;
+
+		Damager.ApplyDamage( spawnPosition, config);
+
+		transform.position = spawnPosition;
 	}
 
 	void Update ()
 	{
+		if (!BlastedStartingHole)
+		{
+			BlastedStartingHole = true;
+			BlastStartingHole();
+		}
+
 		var dir = new Vector3( Input.GetAxis( "Horizontal"), 0, Input.GetAxis( "Vertical"));
 
 		transform.position += dir * 5 * Time.deltaTime;
+
+		BlastOngoingHole();
+	}
+
+	void BlastOngoingHole()
+	{
+		config.HoleShape = TerrainDamageConfig.ProceduralHoleShape.CIRCULAR;
+		config.MinDepth = 1.0f;
+		config.MaxDepth = 1.0f;
+		config.MinRadius = 5.0f;
+		config.MaxRadius = 5.0f;
+		config.RemoveEarth = true;
+		config.ColorForDamage = 1;
 
 		Damager.ApplyDamage( transform.position, config);
 	}
