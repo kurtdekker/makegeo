@@ -52,6 +52,7 @@ public class DiggingPlayerBallRoller : MonoBehaviour
 		config.MinRadius = 4.5f;
 		config.MaxRadius = 4.5f;
 		config.RemoveEarth = true;
+		config.ColorForDamage = 1;
 	}
 
 	void Update ()
