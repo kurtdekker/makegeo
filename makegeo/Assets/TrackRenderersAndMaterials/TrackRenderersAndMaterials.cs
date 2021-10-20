@@ -47,10 +47,12 @@ public class TrackRenderersAndMaterials : MonoBehaviour
 	{
 		Material[][] result = new Material[ Renderers.Length][];
 
+		// traverse each renderer...
 		for (int i = 0; i < Renderers.Length; i++)
 		{
 			var rend = Renderers[i];
 
+			// get the materials array out
 			var materials = rend.materials;
 
 			// I'm not 100% sure this copy process is required, given how
@@ -86,5 +88,8 @@ public class TrackRenderersAndMaterials : MonoBehaviour
 
 			Debug.Log( output);
 		}
+
+		// as long as you don't change the ordering of AllRenderers, it will
+		// one-to-one correspond to what is in jaggedMaterials.
 	}
 }
