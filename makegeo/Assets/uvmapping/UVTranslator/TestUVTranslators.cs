@@ -68,15 +68,39 @@ public class TestUVTranslators : MonoBehaviour
 		2, 5,
 	};
 
-	IEnumerator Start()
+	// this does the actual UV remaps above
+	void RandomizeColor( GameObject copy)
 	{
-		int TreeCount = 100;
+		// we'll pick a random shade of green (AND-ing with ~1 enforces only even chosen)
+		int n = Random.Range( 0, KnownShadesOfGreenXY.Length) & (~1);
+
+		DestRect = new Rect(
+			KnownShadesOfGreenXY[n + 0] / 8.0f,
+			KnownShadesOfGreenXY[n + 1] / 8.0f,
+			1.0f / 8.0f,
+			1.0f / 8.0f);
+
+		var rends = copy.GetComponentsInChildren<Renderer>();
+		foreach (var rend in rends)
+		{
+			var filter = rend.GetComponent<MeshFilter>();
+
+			var mesh = filter.mesh;
+
+			UVTranslators.RemapRectangular(mesh: mesh, source: SourceRect, dest: DestRect);
+		}
+	}
+
+	// irregular one-dimensional grid (strafe across)
+	IEnumerator RandomTreeSpeckling( Transform parent)
+	{
+		int TreeCount = 250;
 
 		for (int i = 0; i < TreeCount; i++)
 		{
 			float fx = Mathf.Lerp( -25, 25, (i / (float)(TreeCount - 1)));
 				
-			var copy = Instantiate<GameObject>(Prefab, transform);
+			var copy = Instantiate<GameObject>(Prefab, parent);
 			copy.transform.position = new Vector3(
 				fx,
 				0,
@@ -86,26 +110,107 @@ public class TestUVTranslators : MonoBehaviour
 			float orientation = Random.Range(0.0f, 360.0f);
 			copy.transform.rotation = Quaternion.Euler(0, orientation, 0) * copy.transform.rotation;
 
-			// we'll pick a random shade of green (AND-ing with ~1 enforces only even chosen)
-			int n = Random.Range( 0, KnownShadesOfGreenXY.Length) & (~1);
+			RandomizeColor( copy);
 
-			DestRect = new Rect(
-				KnownShadesOfGreenXY[n + 0] / 8.0f,
-				KnownShadesOfGreenXY[n + 1] / 8.0f,
-				1.0f / 8.0f,
-				1.0f / 8.0f);
+			yield return null;
+		}
+	}
 
-			var rends = copy.GetComponentsInChildren<Renderer>();
-			foreach (var rend in rends)
+	// perturbed 2-dimensional grid, with noise func
+	IEnumerator PerturbedGridWithNoise( Transform parent, System.Func<int,int,bool> NoiseCheck)
+	{
+		float spacing = 1.0f;
+
+		for (int j = -15; j < 15; j++)
+		{
+			for (int i = -25; i < 25; i++)
 			{
-				var filter = rend.GetComponent<MeshFilter>();
+				if (NoiseCheck( i, j))
+				{
+					var copy = Instantiate<GameObject>(Prefab, parent);
 
-				var mesh = filter.mesh;
+					float perturbX = Random.Range( -spacing * 0.35f, spacing * 0.35f);
+					float perturbZ = Random.Range( -spacing * 0.35f, spacing * 0.35f);
 
-				UVTranslators.RemapRectangular(mesh: mesh, source: SourceRect, dest: DestRect);
+					copy.transform.position = new Vector3(
+						i * spacing + perturbX,
+						0,
+						j * spacing + perturbZ);
+
+					// rotate the placed tree
+					float orientation = Random.Range(0.0f, 360.0f);
+					copy.transform.rotation = Quaternion.Euler(0, orientation, 0) * copy.transform.rotation;
+
+					RandomizeColor(copy);
+
+					yield return null;
+				}
 			}
+		}
+	}
 
-			yield return new WaitForSeconds(0.1f);
+	// we'll choose these once per run, to make the noise change
+	float x1Scale;
+	float y1Scale;
+	float x1Offset;
+	float y1Offset;
+	float MinimumDensity;
+	float MaximumDensity;
+	bool DensityFunction1( int x, int y)
+	{
+		float x1 = x * x1Scale + x1Offset;
+		float y1 = y * y1Scale + y1Offset;
+
+		var v = Random.value;
+		v *= (MaximumDensity - MinimumDensity);
+		v += MinimumDensity;
+
+		return v > Mathf.PerlinNoise( x1, y1);
+	}
+
+	void ChooseNoiseParams()
+	{
+		x1Scale = Random.Range( 10.0f, 20.0f);
+		y1Scale = x1Scale + Random.Range( -3.0f, 4.0f);
+
+		x1Scale = 1.0f / x1Scale;
+		y1Scale = 1.0f / y1Scale;
+
+		x1Offset = Random.Range( 0.0f, 1000.0f);
+		y1Offset = Random.Range( 0.0f, 1000.0f);
+
+		MinimumDensity = Random.Range( 0.0f, 0.2f);
+		MaximumDensity = Random.Range( 0.5f, 1.0f);
+	}
+
+	GameObject Forest1;
+	GameObject Forest2;
+
+	void Start()
+	{
+		ChooseNoiseParams();
+
+		Forest1 = new GameObject( "Forest1-RandomTreeSpeckling");
+		StartCoroutine( RandomTreeSpeckling(Forest1.transform));
+
+		Forest2 = new GameObject( "Forest2-PerturbedGridWithNoise");
+		StartCoroutine( PerturbedGridWithNoise(Forest2.transform, DensityFunction1));
+	}
+
+	void Update()
+	{
+		if (Input.GetKeyDown( KeyCode.Alpha1))
+		{
+			Forest1.SetActive( !Forest1.activeSelf);
+		}
+		if (Input.GetKeyDown( KeyCode.Alpha2))
+		{
+			Forest2.SetActive( !Forest2.activeSelf);
+		}
+		if (Input.GetKeyDown( KeyCode.R))
+		{
+			UnityEngine.SceneManagement.SceneManager.LoadScene(
+				UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
 		}
 	}
 }

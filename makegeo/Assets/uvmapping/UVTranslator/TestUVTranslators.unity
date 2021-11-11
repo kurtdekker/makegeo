@@ -570,7 +570,15 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: It's always nice to plant fresh trees and to colorize them randomly!
+  m_Text: 'It''s always nice to plant fresh trees and to colorize them randomly!
+
+    1- speckled across
+
+    2- perlin noised perturbed grid
+
+    Tap 1 and 2 to toggle each "batch" on or off.
+
+    Tap R to reload'
 --- !u!222 &1266029525
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -649,7 +657,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 30
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -674,7 +682,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1500523796}
   m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 25, z: -25}
+  m_LocalPosition: {x: 0, y: 54.02, z: -54.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
