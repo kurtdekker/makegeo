@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -79,6 +79,13 @@ public class TerrainPreAdjustment : MonoBehaviour
 		}
 
 		terrainData.SetHeights( 0, 0, heightmap);
+
+		// update the collider if present
+		var terrainCollider = GetComponent<TerrainCollider>();
+		if (terrainCollider)
+		{
+			terrainCollider.terrainData = terrainData;
+		}
 
 		transform.position += Vector3.up * -(adjust * terrainData.size.y);
 	}
