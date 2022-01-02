@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -33,8 +33,12 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// Uncomment this #define if you want TextMeshPro support.
-//#define USING_TEXTMESHPRO
+// To use TextMeshPro or legacy TextMesh, enable the appropriate preprocessor
+// directive(s) in the Scripting Define Symbols area of your Project's Player
+// Settings, one or both of these symbols:
+//
+//	USING_TEXTMESHPRO
+//	USING_LEGACYTEXTMESH
 
 using System.Collections;
 using System.Collections.Generic;
@@ -56,6 +60,10 @@ public class DSTextAbstraction : MonoBehaviour
 	private	TextMeshProUGUI	tmptextugui;
 #endif
 
+#if USING_LEGACYTEXTMESH
+	private TextMesh textMesh;
+#endif
+
 	// <WIP> observe and interoperate with other text-type objects here.
 
 	public	static	DSTextAbstraction	Attach( MonoBehaviour script)
@@ -74,6 +82,7 @@ public class DSTextAbstraction : MonoBehaviour
 		{
 			text = GetComponent<Text>();
 		}
+
 #if USING_TEXTMESHPRO
 		if (!tmptext)
 		{
@@ -82,6 +91,13 @@ public class DSTextAbstraction : MonoBehaviour
 		if (!tmptextugui)
 		{
 			tmptextugui = GetComponent<TextMeshProUGUI>();
+		}
+#endif
+
+#if USING_LEGACYTEXTMESH
+		if (!textMesh)
+		{
+			textMesh = GetComponent<TextMesh>();
 		}
 #endif
 	}
@@ -106,6 +122,13 @@ public class DSTextAbstraction : MonoBehaviour
 		if (tmptextugui)
 		{
 			return tmptextugui.text;
+		}
+#endif
+
+#if USING_LEGACYTEXTMESH
+		if (textMesh)
+		{
+			return textMesh.text;
 		}
 #endif
 
@@ -136,6 +159,14 @@ public class DSTextAbstraction : MonoBehaviour
 		if (tmptextugui)
 		{
 			tmptextugui.text = s;
+			return;
+		}
+#endif
+
+#if USING_LEGACYTEXTMESH
+		if (textMesh)
+		{
+			textMesh.text = s;
 			return;
 		}
 #endif

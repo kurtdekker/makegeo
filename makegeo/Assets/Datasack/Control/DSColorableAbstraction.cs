@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -39,6 +39,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // WARNING! Internal class: other Datasack scripts will add this as needed.
+// This is only to centralize the extendability of "things we can color"
 
 public class DSColorableAbstraction : MonoBehaviour
 {

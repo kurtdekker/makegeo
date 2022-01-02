@@ -33,71 +33,20 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// Purpose: uses a Datasack's floating point value to control the rotation
-// of a GameObject, either local or global. Has scale and base offsets.
+// Purpose: lets you control a single property name of an
+// animator with the quantity in this Datasack.
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DSRotationSetAxis : MonoBehaviour
+public class DSAnimationEvent : MonoBehaviour
 {
+	[Tooltip( "Datasack that will be Poke()d")]
 	public	Datasack	dataSack;
 
-	public	bool		LocalCoordinates;
-
-	public	DSAxis		Axis;
-
-	public	float		BaseValue;
-	public	float		Scale;
-
-	void Reset()
+	public void Poke()
 	{
-		Axis = DSAxis.Z;
-		BaseValue = 0.0f;
-		Scale = 360.0f;
-	}
-
-	void Start ()
-	{
-		OnChanged (dataSack);
-	}
-
-	void	OnChanged( Datasack ds)
-	{
-		float angle = BaseValue + dataSack.fValue * Scale;
-
-		Quaternion q = Quaternion.identity;
-
-		switch(Axis)
-		{
-		case DSAxis.X :
-			q = Quaternion.Euler( angle, 0, 0);
-			break;
-		case DSAxis.Y :
-			q = Quaternion.Euler( 0, angle, 0);
-			break;
-		case DSAxis.Z :
-			q = Quaternion.Euler( 0, 0, angle);
-			break;
-		}
-
-		if (LocalCoordinates)
-		{
-			transform.localRotation = q;
-		}
-		else
-		{
-			transform.rotation = q;
-		}
-	}
-
-	void	OnEnable()
-	{
-		dataSack.OnChanged += OnChanged;	
-	}
-	void	OnDisable()
-	{
-		dataSack.OnChanged -= OnChanged;	
+		dataSack.Poke();
 	}
 }

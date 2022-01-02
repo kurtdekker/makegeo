@@ -33,62 +33,44 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// Purpose: uses a Datasack's floating point value to control the rotation
-// of a GameObject, either local or global. Has scale and base offsets.
+// Purpose: place this on a GameObject (or hierarchy) with Renderers.
+// This will live-control which Material in an array is injected.
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DSRotationSetAxis : MonoBehaviour
+public class DSMaterialLookupTable : MonoBehaviour
 {
 	public	Datasack	dataSack;
 
-	public	bool		LocalCoordinates;
+	public	Material[]	MaterialTable;
 
-	public	DSAxis		Axis;
+	public	bool		AllChildRenderers;
 
-	public	float		BaseValue;
-	public	float		Scale;
-
-	void Reset()
-	{
-		Axis = DSAxis.Z;
-		BaseValue = 0.0f;
-		Scale = 360.0f;
-	}
-
-	void Start ()
+	void	Start()
 	{
 		OnChanged (dataSack);
 	}
 
 	void	OnChanged( Datasack ds)
 	{
-		float angle = BaseValue + dataSack.fValue * Scale;
+		Renderer[] rndrrs = null;
 
-		Quaternion q = Quaternion.identity;
-
-		switch(Axis)
+		if (AllChildRenderers)
 		{
-		case DSAxis.X :
-			q = Quaternion.Euler( angle, 0, 0);
-			break;
-		case DSAxis.Y :
-			q = Quaternion.Euler( 0, angle, 0);
-			break;
-		case DSAxis.Z :
-			q = Quaternion.Euler( 0, 0, angle);
-			break;
-		}
-
-		if (LocalCoordinates)
-		{
-			transform.localRotation = q;
+			rndrrs = GetComponentsInChildren<Renderer>();
 		}
 		else
 		{
-			transform.rotation = q;
+			rndrrs = new Renderer[] { GetComponent<Renderer>() };
+		}
+
+		int index = ds.iValue;
+
+		foreach( var rndrr in rndrrs)
+		{
+			rndrr.material = MaterialTable[index];
 		}
 	}
 

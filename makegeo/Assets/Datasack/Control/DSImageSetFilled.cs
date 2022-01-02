@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -44,6 +44,10 @@ public class DSImageSetFilled : MonoBehaviour
 
 	private	Image	image;
 
+	[Tooltip("What constitutes full deflection?")]
+	public float Full = 1.0f;
+	public	Datasack	dataSackFull;
+
 	void Start ()
 	{
 		OnChanged (dataSack);
@@ -51,7 +55,20 @@ public class DSImageSetFilled : MonoBehaviour
 
 	void	OnChanged( Datasack ds)
 	{
-		image.fillAmount = ds.fValue;
+		var value = ds.fValue;
+		if (Full > 0)
+		{
+			value /= Full;
+		}
+		if (dataSackFull)
+		{
+			var x = dataSackFull.fValue;
+			if (x > 0)
+			{
+				value /= x;
+			}
+		}
+		image.fillAmount = value;
 	}
 
 	void	OnEnable()

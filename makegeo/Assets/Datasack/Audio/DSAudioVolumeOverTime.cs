@@ -33,67 +33,96 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// Purpose: uses a Datasack's floating point value to control the rotation
-// of a GameObject, either local or global. Has scale and base offsets.
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class DSRotationSetAxis : MonoBehaviour
+// Purpose: for setting volumes (instantly from your perspective)
+// but having them traverse up/down gradually over time (fading)
+
+public class DSAudioVolumeOverTime : MonoBehaviour
 {
 	public	Datasack	dataSack;
 
-	public	bool		LocalCoordinates;
+	[Header("How rapidly it slews 100% span (0 == instant)")]
+	public float FadeUpRate;
+	public float FadeDownRate;
 
-	public	DSAxis		Axis;
+	public bool DisregardInitialVolume;
 
-	public	float		BaseValue;
-	public	float		Scale;
+	private AudioSource[] azzs;
+	private float[] initialVolumes;
 
-	void Reset()
+	// this gets moved slowly towards the datasack
+	float currentVolume;
+	// set by the datasack
+	float desiredVolume;
+
+	private void Reset()
 	{
-		Axis = DSAxis.Z;
-		BaseValue = 0.0f;
-		Scale = 360.0f;
+		// instantaneous
+		FadeUpRate = 0.0f;
+		// will slew full range in 1/2 a second
+		FadeDownRate = 2.0f;
 	}
 
 	void Start ()
 	{
 		OnChanged (dataSack);
+
+		currentVolume = desiredVolume;
+
+		SendCurrentVolumeToAudioSources();
 	}
 
-	void	OnChanged( Datasack ds)
+	void	SendCurrentVolumeToAudioSources()
 	{
-		float angle = BaseValue + dataSack.fValue * Scale;
-
-		Quaternion q = Quaternion.identity;
-
-		switch(Axis)
+		var volume = currentVolume;
+		for (int i = 0; i < azzs.Length; i++)
 		{
-		case DSAxis.X :
-			q = Quaternion.Euler( angle, 0, 0);
-			break;
-		case DSAxis.Y :
-			q = Quaternion.Euler( 0, angle, 0);
-			break;
-		case DSAxis.Z :
-			q = Quaternion.Euler( 0, 0, angle);
-			break;
+			var az = azzs[i];
+			az.volume = DisregardInitialVolume ? volume : volume * initialVolumes[i];
+		}
+	}
+
+	private void Update()
+	{
+		bool changed = false;
+
+		if (currentVolume < desiredVolume)
+		{
+			if (FadeUpRate <= 0) currentVolume = desiredVolume;
+
+			currentVolume = Mathf.MoveTowards(currentVolume, desiredVolume, FadeUpRate * Time.deltaTime);
+			changed = true;
+		}
+		if (currentVolume > desiredVolume)
+		{
+			if (FadeDownRate <= 0) currentVolume = desiredVolume;
+
+			currentVolume = Mathf.MoveTowards(currentVolume, desiredVolume, FadeDownRate * Time.deltaTime);
+			changed = true;
 		}
 
-		if (LocalCoordinates)
+		if (changed)
 		{
-			transform.localRotation = q;
+			SendCurrentVolumeToAudioSources();
 		}
-		else
-		{
-			transform.rotation = q;
-		}
+	}
+
+	void OnChanged(Datasack ds)
+	{
+		desiredVolume = ds.fValue;
 	}
 
 	void	OnEnable()
 	{
+		azzs = GetComponentsInChildren<AudioSource>();
+
+		initialVolumes = new float[azzs.Length];
+		for (int i = 0; i < azzs.Length; i++)
+		{
+			initialVolumes[i] = azzs[i].volume;
+		}
+
 		dataSack.OnChanged += OnChanged;	
 	}
 	void	OnDisable()

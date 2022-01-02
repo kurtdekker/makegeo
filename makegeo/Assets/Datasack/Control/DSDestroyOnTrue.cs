@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2018 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -32,6 +32,13 @@
 	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+// Purpose: observes a datasack and when the boolean (.bValue) matches
+// what is specified, destroys this object.
+//
+// WARNING: This may have odd edge cases with initialization timing,
+// so it may be better to use DSGameObjectControl and simply set
+// the given GameObject(s) active/inactive.
 
 using System.Collections;
 using System.Collections.Generic;
