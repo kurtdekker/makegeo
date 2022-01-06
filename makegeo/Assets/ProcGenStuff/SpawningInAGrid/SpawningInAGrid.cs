@@ -18,12 +18,17 @@ public class SpawningInAGrid : MonoBehaviour
 	[Header("You must provide what to spawn here:")]
 	public GameObject PrefabToSpawn;
 
+	[Header("Spacings on X and Y")]
+	public Vector2 Spacing;
+
 	void Reset()
 	{
-		Across = 10;
+		Across = 7;
 		Down = 5;
 
 		Count = 10;
+
+		Spacing = Vector2.one;
 	}
 
 	Vector3 CellToWorld( int x, int y)
@@ -32,7 +37,10 @@ public class SpawningInAGrid : MonoBehaviour
 		Vector3 position = new Vector3( x, y, 0);
 
 		// center it around (0,0,0)
-		position -= new Vector3( Across, Down) / 2;
+		position -= new Vector3( Across - 1, Down - 1) / 2;
+
+		position.x *= Spacing.x;
+		position.y *= Spacing.y;
 
 		return position;
 	}
