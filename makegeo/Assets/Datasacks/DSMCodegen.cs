@@ -14,6 +14,14 @@
 public partial class DSM
 {
 
+// Datasacks from directory 'Assets/ProcGenStuff/SpawningEvenlyAcross/Datasacks/SpawningEvenlyAcross'
+	public static partial class SpawningEvenlyAcross
+	{
+		public static Datasack DistributionStrategy { get { return DSM.I.Get( "SpawningEvenlyAcross/DistributionStrategy"); } }
+		public static Datasack DistributionStrategyText { get { return DSM.I.Get( "SpawningEvenlyAcross/DistributionStrategyText"); } }
+		public static Datasack ItemCount { get { return DSM.I.Get( "SpawningEvenlyAcross/ItemCount"); } }
+	}
+
 // Datasacks from directory 'Assets/TerrainStuff/TerrainByPerlinNoise/Datasacks/Perlin'
 	public static partial class Perlin
 	{
@@ -31,4 +39,4 @@ public partial class DSM
 
 }
 
-// Total of 6 datasacks found and processed.
+// Total of 9 datasacks found and processed.

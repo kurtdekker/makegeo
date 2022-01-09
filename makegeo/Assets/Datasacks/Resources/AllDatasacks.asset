@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Name: AllDatasacks
   m_EditorClassIdentifier: 
   Mappings:
+  - Fullname: SpawningEvenlyAcross/DistributionStrategy
+    Datasack: {fileID: 11400000, guid: 98dda4558f0e3498cbdf0dc8812e74df, type: 2}
+  - Fullname: SpawningEvenlyAcross/DistributionStrategyText
+    Datasack: {fileID: 11400000, guid: b208001b9dc754f5280b42fd8438b5ba, type: 2}
+  - Fullname: SpawningEvenlyAcross/ItemCount
+    Datasack: {fileID: 11400000, guid: 590b8decf24fb46e4880826055d0d410, type: 2}
   - Fullname: Perlin/VerticalScale
     Datasack: {fileID: 11400000, guid: 91d8b94a1e45b41fbbee3a28485630d8, type: 2}
   - Fullname: Perlin/XFrequency
