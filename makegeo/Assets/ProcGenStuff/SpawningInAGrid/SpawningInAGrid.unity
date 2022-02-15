@@ -291,12 +291,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93b476a1408a94567a4ef56934ab72f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Across: 7
-  Down: 5
+  Across: 9
+  Down: 7
   Count: 10
   PrefabToSpawn: {fileID: 1819098357570600, guid: cf539560e3c04442da7763cdb6f6e0f7,
     type: 2}
   Spacing: {x: 1, y: 1}
+  PlayerToSpawn: {fileID: 1819098357570600, guid: d9ebc5ba7718340c1a46c0da3803cecd,
+    type: 2}
+  AllowDiagonalMovement: 0
 --- !u!4 &2005383198
 Transform:
   m_ObjectHideFlags: 0

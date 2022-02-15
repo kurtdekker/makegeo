@@ -21,6 +21,11 @@ public class SpawningInAGrid : MonoBehaviour
 	[Header("Spacings on X and Y")]
 	public Vector2 Spacing;
 
+	[Header("Provide a player, if you want to move.")]
+	public GameObject PlayerToSpawn;
+
+	public bool AllowDiagonalMovement;
+
 	void Reset()
 	{
 		Across = 7;
@@ -88,8 +93,93 @@ public class SpawningInAGrid : MonoBehaviour
 		}
 	}
 
-	void Start ()
+	IEnumerator Start ()
 	{
 		FillBoard();
+
+		if (PlayerToSpawn)
+		{
+			// find a cell to start the player
+			int playerX = 0;
+			int playerY = 0;
+			do
+			{
+				playerX = Random.Range( 0, Across);
+				playerY = Random.Range( 0, Down);
+			}
+			while( TheBoard[playerX,playerY]);
+
+			GameObject PlayerInstance = Instantiate<GameObject>( PlayerToSpawn);
+			PlayerInstance.transform.position = CellToWorld( playerX, playerY);
+
+			// this is the main input-and-move loop
+			while( true)
+			{
+				// presume no movement
+				int xm = 0;
+				int ym = 0;
+
+				float h = Input.GetAxisRaw( "Horizontal");
+				float v = Input.GetAxisRaw( "Vertical");
+
+				const float threshhold = 0.2f;
+
+				const float Speed = 5.0f;
+
+				if (h < -threshhold) xm = -1;
+				if (h > +threshhold) xm = +1;
+				if (v < -threshhold) ym = -1;
+				if (v > +threshhold) ym = +1;
+
+				if (xm != 0 || ym != 0)
+				{
+					if (!AllowDiagonalMovement)
+					{
+						if (xm != 0) ym = 0;
+						if (ym != 0) xm = 0;
+					}
+
+					int newX = playerX + xm;
+					int newY = playerY + ym;
+
+					// validate the move
+					bool validMove = true;
+
+					if (newX < 0) validMove = false;
+					if (newX >= Across) validMove = false;
+					if (newY < 0) validMove = false;
+					if (newY >= Down) validMove = false;
+
+					if (validMove)
+					{
+						if (TheBoard[newX, newY])
+						{
+							validMove = false;
+						}
+					}
+
+					if (validMove)
+					{
+						playerX = newX;
+						playerY = newY;
+
+						Vector3 newPosition = CellToWorld( newX, newY);
+
+						while( Vector3.Distance( newPosition, PlayerInstance.transform.position) > 0.01f)
+						{
+							Vector3 interimPosition = Vector3.MoveTowards( PlayerInstance.transform.position, newPosition, Speed * Time.deltaTime);
+
+							PlayerInstance.transform.position = interimPosition;
+
+							yield return null;
+						}
+
+						PlayerInstance.transform.position = newPosition;
+					}
+				}
+
+				yield return null;
+			}
+		}
 	}
 }
