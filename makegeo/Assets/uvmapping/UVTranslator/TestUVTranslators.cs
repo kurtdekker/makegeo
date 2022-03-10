@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2022 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -50,6 +50,9 @@ public class TestUVTranslators : MonoBehaviour
 		;
 	public Rect DestRect;
 
+	public Transform LowerLeftCorner;
+	public Transform UpperRightCorner;
+
 	// greens in example ImphenziaPalette01-256-Gradient texture
 	int[] KnownShadesOfGreenXY = new int[]
 	{
@@ -91,20 +94,22 @@ public class TestUVTranslators : MonoBehaviour
 		}
 	}
 
-	// irregular one-dimensional grid (strafe across)
+	// Irregular one-dimensional grid (strafe across):
+	// The idea is that you traverse one axis smoothly (in this case the X axis)
+	// while choosing positions randomly in the other axis. This leads to perfect
+	// coverage in one axis, and yet still random coverage in the other.
 	IEnumerator RandomTreeSpeckling( Transform parent)
 	{
 		int TreeCount = 250;
 
 		for (int i = 0; i < TreeCount; i++)
 		{
-			float fx = Mathf.Lerp( -25, 25, (i / (float)(TreeCount - 1)));
+			float fx = Mathf.Lerp( LowerLeftCorner.position.x, UpperRightCorner.position.x, (i / (float)(TreeCount - 1)));
+				
+			float fz = Random.Range( LowerLeftCorner.position.z, UpperRightCorner.position.z);
 				
 			var copy = Instantiate<GameObject>(Prefab, parent);
-			copy.transform.position = new Vector3(
-				fx,
-				0,
-				Random.Range(-15.0f, 15.0f));
+			copy.transform.position = new Vector3( fx, 0, fz);
 
 			// rotate the placed tree
 			float orientation = Random.Range(0.0f, 360.0f);
@@ -121,9 +126,9 @@ public class TestUVTranslators : MonoBehaviour
 	{
 		float spacing = 1.0f;
 
-		for (int j = -15; j < 15; j++)
+		for (int j = (int)LowerLeftCorner.position.z; j <= UpperRightCorner.position.z; j++)
 		{
-			for (int i = -25; i < 25; i++)
+			for (int i = (int)LowerLeftCorner.position.x; i <= UpperRightCorner.position.x; i++)
 			{
 				if (NoiseCheck( i, j))
 				{
