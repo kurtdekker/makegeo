@@ -23,8 +23,8 @@ public class MakeLines2D : MonoBehaviour
 
 	const int MAXLINESEGMENTS = 1000;
 
-	const float MinWidth = 0.005f;
-	const float MaxWidth = 0.008f;
+	const float MinWidth = 0.01f;
+	const float MaxWidth = 0.015f;
 
 	class LineSegment
 	{
@@ -37,6 +37,7 @@ public class MakeLines2D : MonoBehaviour
 	// kept in perfect synchrony with the above, 4 verts per line
 	Vector3[] VertBuffer;
 	int[] TriBuffer;
+	Vector2[] UVBuffer;
 
 	MeshFilter mf;
 	Mesh mesh;
@@ -48,19 +49,25 @@ public class MakeLines2D : MonoBehaviour
 		{
 			var ls = new LineSegment();
 
+			// random endpoints
 			ls.p1 = new Vector2(
 				Mathf.Lerp( LL.x, UR.x, Random.value),
 				Mathf.Lerp( LL.x, UR.x, Random.value));
 			ls.p2 = new Vector2(
 				Mathf.Lerp( LL.x, UR.x, Random.value),
 				Mathf.Lerp( LL.x, UR.x, Random.value));
-			
+
+			// random endpoint velocities
 			ls.v1 = Random.insideUnitCircle.normalized *
 				Random.Range( MinSpeed, MaxSpeed) * (Random.Range( 0, 2) * 2 - 1);
 			ls.v2 = Random.insideUnitCircle.normalized *
 				Random.Range( MinSpeed, MaxSpeed) * (Random.Range( 0, 2) * 2 - 1);
 
+			// random width
 			ls.width = Random.Range(  MinWidth, MaxWidth);
+
+			// random color (via UV into source texture)
+			ls.uv = new Vector2( Random.value, Random.value);
 
 			LineSegments[i] = ls;
 		}
@@ -73,6 +80,7 @@ public class MakeLines2D : MonoBehaviour
 		mr.material = mtl;
 
 		VertBuffer = new Vector3[MAXLINESEGMENTS * 4];
+		UVBuffer = new Vector2[ MAXLINESEGMENTS * 4];
 
 		TriBuffer = new int[ MAXLINESEGMENTS * 2 * 3];
 
@@ -93,6 +101,28 @@ public class MakeLines2D : MonoBehaviour
 
 		mesh.vertices = VertBuffer;
 		mesh.triangles = TriBuffer;
+
+		UpdateLineSegments();
+		UpdateUVColors();
+	}
+
+	// only need this if the line colors change
+	void UpdateUVColors()
+	{
+		int un = 0;
+		for (int i = 0; i < MAXLINESEGMENTS; i++)
+		{
+			var ls = LineSegments[i];
+
+			var uv = ls.uv;
+
+			UVBuffer[ un++] = uv;
+			UVBuffer[ un++] = uv;
+			UVBuffer[ un++] = uv;
+			UVBuffer[ un++] = uv;
+		}
+
+		mesh.uv = UVBuffer;
 	}
 
 	void MoveClampBounce( ref Vector2 p, ref Vector2 v)
