@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2022 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -36,6 +36,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+// @kurtdekker
+// You can slap this on a single piece of geometry or on an
+// entire hierarchy. It will reassign world-space UVs to match
+// the three coordinate axes. The purpose is just to be able
+// to make evenly-textured placeholder 3D graphics.
 
 public class SetUVToWorld : MonoBehaviour
 {
