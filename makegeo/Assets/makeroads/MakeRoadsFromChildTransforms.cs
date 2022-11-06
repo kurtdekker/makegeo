@@ -41,18 +41,29 @@ public class MakeRoadsFromChildTransforms : MonoBehaviour
 {
 	public RoadConfiguration Config;
 
-	// maxLinearVertexSpacing: max allowable spacing in the direction of road travel
-	IEnumerable<PositionAndHeading> PointFeeder( float maxLinearVertexSpacing)
-	{
-		var children = new Transform[ transform.childCount];
+	public bool Looping;
 
-		for (int i = 0; i < transform.childCount; i++)
+	// maxLinearVertexSpacing: max allowable spacing in the direction of road travel
+	IEnumerable<PositionAndHeading> PointFeeder( float maxLinearVertexSpacing, bool looping = false)
+	{
+		int count = transform.childCount;
+		if (looping)
 		{
-			children[i] = transform.GetChild(i);
+			count++;
+		}
+		var children = new Transform[ count];
+
+		// pick up the transforms, including looping the last one
+		// if we added the +1 to count above.
+		for (int i = 0; i < count; i++)
+		{
+			int childNo = i % transform.childCount;
+			children[i] = transform.GetChild(childNo);
 		}
 
 		int point = 0;
 
+		// walk all the points in the roadway
 		while( point < children.Length)
 		{
 			if (point > 0)
@@ -70,8 +81,8 @@ public class MakeRoadsFromChildTransforms : MonoBehaviour
 				// TODO: one day this should be dynamic according to how sharply the local
 				// terrain slope is changing, eg, second derivative of dHeight / dDistance.
 				//
-				// This allow reduced geometry overall while maintaing ground
-				// contour fidelity.
+				// This woud allow reduced geometry overall while maintaing ground
+				// contour fidelity without impinging on the ground.
 				int steps = 1 + (int)(distance / maxLinearVertexSpacing);
 
 				int limit = steps;
@@ -94,6 +105,6 @@ public class MakeRoadsFromChildTransforms : MonoBehaviour
 
 	void Start()
 	{
-		MakeRoads.Create( Config, PointFeeder( maxLinearVertexSpacing: 2.0f));
+		MakeRoads.Create( Config, PointFeeder( maxLinearVertexSpacing: 2.0f, looping: Looping));
 	}
 }
