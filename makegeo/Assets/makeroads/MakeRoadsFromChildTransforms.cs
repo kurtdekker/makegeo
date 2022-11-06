@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2022 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -41,7 +41,8 @@ public class MakeRoadsFromChildTransforms : MonoBehaviour
 {
 	public RoadConfiguration Config;
 
-	IEnumerable<PositionAndHeading> PointFeeder( float MaxSpacing)
+	// maxLinearVertexSpacing: max allowable spacing in the direction of road travel
+	IEnumerable<PositionAndHeading> PointFeeder( float maxLinearVertexSpacing)
 	{
 		var children = new Transform[ transform.childCount];
 
@@ -64,7 +65,14 @@ public class MakeRoadsFromChildTransforms : MonoBehaviour
 				float heading1 = t1.rotation.eulerAngles.y;
 				float heading2 = t2.rotation.eulerAngles.y;
 
-				int steps = 1 + (int)(distance / MaxSpacing);
+				// Compute steps required so we don't exceed maxLinearVertexSpacing
+				//
+				// TODO: one day this should be dynamic according to how sharply the local
+				// terrain slope is changing, eg, second derivative of dHeight / dDistance.
+				//
+				// This allow reduced geometry overall while maintaing ground
+				// contour fidelity.
+				int steps = 1 + (int)(distance / maxLinearVertexSpacing);
 
 				int limit = steps;
 				if (point == children.Length - 1) limit++;
@@ -86,6 +94,6 @@ public class MakeRoadsFromChildTransforms : MonoBehaviour
 
 	void Start()
 	{
-		MakeRoads.Create( Config, PointFeeder( 2.0f));
+		MakeRoads.Create( Config, PointFeeder( maxLinearVertexSpacing: 2.0f));
 	}
 }
