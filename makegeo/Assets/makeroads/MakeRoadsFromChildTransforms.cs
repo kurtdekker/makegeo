@@ -82,7 +82,7 @@ public class MakeRoadsFromChildTransforms : MonoBehaviour
 					float fraction = (float)i / steps;
 
 					Vector3 position = Vector3.Lerp( t1.position, t2.position, fraction);
-					float heading = Mathf.Lerp( heading1, heading2, fraction);
+					float heading = Mathf.LerpAngle( heading1, heading2, fraction);
 
 					yield return new PositionAndHeading( position, heading);
 				}
