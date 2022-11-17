@@ -379,6 +379,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config: {fileID: 11400000, guid: dbc7951c17b274f14a1460aa04482fa2, type: 2}
+  Looping: 0
 --- !u!1 &1022766837
 GameObject:
   m_ObjectHideFlags: 0
@@ -586,7 +587,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2142721314}
   - component: {fileID: 2142721313}
-  - component: {fileID: 2142721312}
   - component: {fileID: 2142721311}
   - component: {fileID: 2142721310}
   m_Layer: 0
@@ -604,13 +604,6 @@ AudioListener:
   m_GameObject: {fileID: 2142721309}
   m_Enabled: 1
 --- !u!124 &2142721311
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2142721309}
-  m_Enabled: 1
---- !u!92 &2142721312
 Behaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
