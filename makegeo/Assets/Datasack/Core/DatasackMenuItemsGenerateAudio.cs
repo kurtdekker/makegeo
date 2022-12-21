@@ -1,4 +1,4 @@
-﻿/*
+/*
 	The following license supersedes all notices in the source code.
 
 	Copyright (c) 2022 Kurt Dekker/PLBM Games All rights reserved.
@@ -33,87 +33,67 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
-public class DSSetValue : MonoBehaviour
+public static partial class DatasackMenuItems
 {
-	public Datasack targetDatasack;
-
-	[Header( "Value to put into above datasack.")]
-	public string valueToSet;
-
-	[Header( "Optional alternate source of value to set.")]
-	public Datasack sourceDatasack;
-
-	[Header( "When to actually set the above value.")]
-	public bool SetDuringAwake;
-	public bool SetDuringStart;
-
-	public bool SetDuringOnEnable;
-	public bool SetDuringOnDisable;
-
-	[Header("Clears datasack when this GameObject is disabled.")]
-	public bool ClearDuringOnDisable;
-
-	void Reset()
+	// To use: select all the AudioClip(s) you want first, then hit this
+	[MenuItem("Assets/GenerateAudioDatasacks")]
+	static void GenerateAudioDatasacks()
 	{
-		SetDuringStart = true;
-		SetDuringAwake = false;
-
-		SetDuringOnEnable = false;
-		SetDuringOnDisable = false;
-	}
-
-	void Awake()
-	{
-		if (SetDuringAwake)
+		foreach (var asset in Selection.objects)
 		{
-			DoTheSet();
-		}
-	}
+			var clip = asset as AudioClip;
 
-	void Start()
-	{
-		if (SetDuringStart)
-		{
-			DoTheSet();
-		}
-	}
+			// open the AudioClip asset
+			if (clip)
+			{
+				// get its name
+				var nm = clip.name;
 
-	void OnEnable()
-	{
-		if (SetDuringOnEnable)
-		{
-			DoTheSet();
-		}
-	}
+				Debug.Log("Processing asset named '" + nm + "'...");
 
-	void OnDisable()
-	{
-		if (SetDuringOnDisable)
-		{
-			DoTheSet();
+				var path = AssetDatabase.GetAssetPath(clip);
+
+				Debug.Log( "path = '" + path + "'");
+
+				var directory = System.IO.Path.GetDirectoryName( path);
+
+				// make a Datasack by that name
+				var ds = ScriptableObject.CreateInstance<Datasack>();
+				ds.name = nm;
+				var nmAsset = nm + ".asset";
+				var dsPath = System.IO.Path.Combine( directory, nmAsset);
+				AssetDatabase.CreateAsset( ds, dsPath);
+
+				// make a GameObject with:
+				//	- AudioSource
+				//	- hook up the AudioClip
+				//	- add a DSAudioPlay
+				//	- connect the Datasack
+				var go = new GameObject( nm);
+				var azz = go.AddComponent<AudioSource>();
+				azz.clip = clip;
+				azz.bypassListenerEffects = true;
+				azz.playOnAwake = false;
+				var play = go.AddComponent<DSAudioPlay>();
+				play.dataSack = ds;
+
+				// TODO:
+				// dirty the scene
+				// trigger a codegen directly!
+			}
+			else
+			{
+				Debug.LogError( "Warning: asset '" + asset.name + "' was NOT an AudioClip!");
+			}
 		}
 
-		if (ClearDuringOnDisable)
-		{
-			targetDatasack.Clear();
-		}
-	}
-
-	string GetValueToSet()
-	{
-		if (sourceDatasack)
-		{
-			return sourceDatasack.Value;
-		}
-		return valueToSet;
-	}
-
-	void DoTheSet()
-	{
-		targetDatasack.Value = GetValueToSet();
+		AssetDatabase.Refresh();
 	}
 }
+#endif

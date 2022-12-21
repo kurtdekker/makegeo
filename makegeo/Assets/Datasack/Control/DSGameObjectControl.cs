@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2021 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2022 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -43,12 +43,15 @@ public class DSGameObjectControl : MonoBehaviour
 	[Tooltip( "This Datasack controls GameObjects below.")]
 	public	Datasack	dataSack;
 
-	[Header( "For simple boolean on/off control:")]
+	[Header( "For simple boolean on/off control (.bValue):")]
 	[Tooltip( "GameObjects to ENABLE when Datasack is poked TRUE (false poke will DISABLE!).")]
 	public	GameObject[]	ToEnable;
 
 	[Tooltip( "GameObjects to DISABLE when Datasack is poked TRUE (false poke will ENABLE!).")]
 	public	GameObject[]	ToDisable;
+
+	[Header("Use !.IsNullOrEmpty() instead of .bValue")]
+	public bool UseNotIsNullOrEmpty;
 
 	[Header( "For .iValue numeric control of GameObjects (by int), OR")]
 	[Header( "for .Value name control of GameObjects (by string):")]
@@ -75,7 +78,16 @@ public class DSGameObjectControl : MonoBehaviour
 
 	void OnChanged( Datasack ds)
 	{
-		bool pokedTrue = ds.bValue;
+		bool pokedTrue = false;
+
+		if (UseNotIsNullOrEmpty)
+		{
+			pokedTrue = !System.String.IsNullOrEmpty(ds.Value);
+		}
+		else
+		{
+			pokedTrue = ds.bValue;
+		}
 
 		// boolean handling:
 		if (ToEnable != null)

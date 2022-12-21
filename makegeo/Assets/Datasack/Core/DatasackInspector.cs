@@ -336,6 +336,13 @@ public partial class Datasack
 
 			GUILayout.Space(20);
 
+			if (GUILayout.Button( "RUNTIME INCREMENT"))
+			{
+				ds.iValue++;
+			}
+
+			GUILayout.Space(20);
+
 			GUI.color = Color.green;
 			if (GUILayout.Button( "RESET TO INITIAL VALUE"))
 			{
