@@ -37,51 +37,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class testmakequadplane : MonoBehaviour
+public static class Make1x1Quad
 {
-    public Material mtl;
+	public static GameObject MakeIt( Material mtl)
+	{
+		var go = new GameObject("Make1x1Quad.MakeIt();");
 
-    void Start()
-    {
-        // some sample quad planes of various sizes and descriptions
+		var mesh = new Mesh();
+		mesh.vertices = new Vector3[] {
+			new Vector3( -0.5f, -0.5f),
+			new Vector3( -0.5f, +0.5f),
+			new Vector3( +0.5f, +0.5f),
+			new Vector3( +0.5f, -0.5f),
+		};
+		mesh.uv = new Vector2[] {
+			new Vector2( 0.0f, 0.0f),
+			new Vector2( 0.0f, 1.0f),
+			new Vector2( 1.0f, 1.0f),
+			new Vector2( 1.0f, 0.0f),
+		};
+		mesh.triangles = new int[] {
+			0, 1, 2,
+			0, 2, 3,
+		};
 
-        {
-            var mqp = new QuadPlaneDef(2, 2);
-            GameObject go = MakeQuadPlane.Create(mqp);
-            go.transform.position = new Vector3(-3, 0, 0);
-            go.GetComponent<MeshRenderer>().material = mtl;
-        }
+		mesh.RecalculateBounds();
+		mesh.RecalculateNormals();
 
-        {
-            var mqp = new QuadPlaneDef(4, 10, new Vector3( 3.0f, 1.0f, 4.0f));
+		var mf = go.AddComponent<MeshFilter>();
+		mf.mesh = mesh;
 
-            // we'll back this one's texture coordinates a bit tighter
-            mqp.UVScale = Vector2.one * 3.0f;
+		var mr = go.AddComponent<MeshRenderer>();
+		mr.material = mtl;
 
-            GameObject go = MakeQuadPlane.Create(mqp);
-            go.transform.position = new Vector3( 0, 0, 0);
-            go.GetComponent<MeshRenderer>().material = mtl;
-        }
-
-        {
-            var mqp = new QuadPlaneDef(40, 80, new Vector3(3.2f, 0.15f, 6.2f));
-
-            // we'll make this one "interesting" with intermingling sine waves
-            mqp.HeightFunction = (v2) =>
-            {
-                // these constants control how fast the
-                // sine wave repeats in each axis
-                return Mathf.Sin( v2.x * 5.0f) + Mathf.Sin( v2.x * 2.0f + v2.y * 15.0f);
-            };
-
-            GameObject go = MakeQuadPlane.Create(mqp);
-            go.transform.position = new Vector3(4, 0, 0);
-            go.GetComponent<MeshRenderer>().material = mtl;
-        }
-
-		{
-			var go = Make1x1Quad.MakeIt(mtl);
-			go.transform.position = new Vector3( -2, 0, 2);
-		}
-    }
+		return go;
+	}
 }
