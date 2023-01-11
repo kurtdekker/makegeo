@@ -70,6 +70,11 @@ public class Bitmap2Grid : MonoBehaviour
 				{
 					var copy = Instantiate<GameObject>( prefab, parent);
 					copy.transform.localPosition = ComputePosition( i, j);
+
+					// demonstration of putting integer cell coorinates
+					GridCoordinates coordinates = copy.AddComponent<GridCoordinates>();
+					coordinates.CellX = i;
+					coordinates.CellY = j;
 				}
 			}
 		}
