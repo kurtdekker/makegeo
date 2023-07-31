@@ -681,7 +681,11 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Click / Drag to add pixels of dirt
+  m_Text: 'Left Click / Drag to add pixels of dirt
+
+    Right Click to blow holes in it.
+
+'
 --- !u!222 &1793544589
 CanvasRenderer:
   m_ObjectHideFlags: 0

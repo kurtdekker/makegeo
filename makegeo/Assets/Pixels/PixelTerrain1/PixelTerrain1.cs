@@ -62,25 +62,48 @@ public class PixelTerrain1 : MonoBehaviour
 
 	void UpdateClicking()
 	{
-		if (Input.GetMouseButton(0))
+		Vector3 mousePosition = Input.mousePosition;
+
+		Camera cam = Camera.main;
+
+		Ray ray = cam.ScreenPointToRay( mousePosition);
+		RaycastHit hit;
+
+		if (Physics.Raycast( ray: ray, hitInfo: out hit))
 		{
-			Vector3 mousePosition = Input.mousePosition;
+			Vector2 texel = hit.textureCoord;
 
-			Camera cam = Camera.main;
+			int x = (int)(texel.x * Size);
+			int y = (int)(texel.y * Size);
 
-			Ray ray = cam.ScreenPointToRay( mousePosition);
-			RaycastHit hit;
+			int offset = x + y * Size;
 
-			if (Physics.Raycast( ray: ray, hitInfo: out hit))
+			// add dirt?
+			if (Input.GetMouseButton(0))
 			{
-				Vector2 texel = hit.textureCoord;
-
-				int x = (int)(texel.x * Size);
-				int y = (int)(texel.y * Size);
-
-				int offset = x + y * Size;
-
 				workPixels[offset] = ColorDirt;
+			}
+
+			// blow hole?
+			if (Input.GetMouseButtonDown(1))
+			{
+				for (int j = -2; j <= 2; j++)
+				{
+					for (int i = -2; i <= 2; i++)
+					{
+						int m = x + i;
+						int n = y + j;
+
+						if (m >= 0 && m < Size)
+						{
+							if (n >= 0 && n < Size)
+							{
+								offset = m + n * Size;
+								workPixels[offset] = ColorNothing;
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -92,6 +115,9 @@ public class PixelTerrain1 : MonoBehaviour
 		{
 			for (int x = 0; x < Size; x++)
 			{
+				// random stagger
+				if (Random.value > 0.2f) continue;
+
 				int offset = x + y * Size;
 
 				Color c = workPixels[ offset];
