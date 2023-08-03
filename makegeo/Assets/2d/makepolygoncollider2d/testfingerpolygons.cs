@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2023 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -87,7 +87,16 @@ public class testfingerpolygons : MonoBehaviour
 
 	void UpdateReadFingerCreatePoints()
 	{
-		Vector2 fingerPos = Input.mousePosition;
+		var touches = MicroTouch.GatherMicroTouches();
+
+		if (touches.Length < 1)
+		{
+			return;
+		}
+
+		var mt = touches[0];
+
+		Vector2 fingerPos = mt.position;
 
 		// NOTE: this works because we're using an orthographic camera.
 		// Per Unity's camera setup, orthoSize is half the screen height.
@@ -99,7 +108,7 @@ public class testfingerpolygons : MonoBehaviour
 		worldFingerPosition = (fingerPos * CameraOrthoSize) / (Screen.height / 2);
 		worldFingerPosition += CameraCenterAxis;
 
-		if (Input.GetMouseButtonDown(0))
+		if (mt.phase == TouchPhase.Began)
 		{
 			fingerDown = true;
 			lastWorldPosition = worldFingerPosition;
@@ -111,7 +120,7 @@ public class testfingerpolygons : MonoBehaviour
 
 		if (fingerDown)
 		{
-			if (Input.GetMouseButton(0))
+			if (mt.phase.isDown())
 			{
 				float distance = Vector2.Distance( fingerPos, lastWorldPosition);
 
@@ -123,7 +132,7 @@ public class testfingerpolygons : MonoBehaviour
 			}
 			else
 			{
-				if (Input.GetMouseButtonUp(0))
+				if (mt.phase.cameUp())
 				{
 					if (Points.Count > 2)
 					{
