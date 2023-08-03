@@ -2,6 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// @kurtdekker
+// to use in the simplest form:
+//	- make a blank scene with camera / light
+//	- drop this script on a blank GameObject
+//	- press PLAY
+//
+// Everything else is optional. See comments / headers
+//
+// Works for mobile touch or mouse (see MicroTouch class).
+
 public class ClickToAddCubes : MonoBehaviour
 {
 	[Header( "Provide or we'll guess.")]
