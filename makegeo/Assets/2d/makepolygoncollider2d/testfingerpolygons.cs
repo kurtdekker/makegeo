@@ -47,8 +47,8 @@ public class testfingerpolygons : MonoBehaviour
 	public LineRenderer LR;
 
 	bool fingerDown;
+	Vector2 lastFingerPosition;
 
-	Vector2 lastWorldPosition;
 	Vector2 worldFingerPosition;
 
 	List<Vector2> Points;
@@ -111,7 +111,8 @@ public class testfingerpolygons : MonoBehaviour
 		if (mt.phase == TouchPhase.Began)
 		{
 			fingerDown = true;
-			lastWorldPosition = worldFingerPosition;
+
+			lastFingerPosition = fingerPos;
 
 			Points = new List<Vector2>();
 
@@ -122,12 +123,12 @@ public class testfingerpolygons : MonoBehaviour
 		{
 			if (mt.phase.isDown())
 			{
-				float distance = Vector2.Distance( fingerPos, lastWorldPosition);
+				float distance = Vector2.Distance( fingerPos, lastFingerPosition);
 
 				if (distance > MinDistanceToConsiderAnEdge)
 				{
 					Points.Add( worldFingerPosition);
-					lastWorldPosition = fingerPos;
+					lastFingerPosition = fingerPos;
 				}
 			}
 			else
