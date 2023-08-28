@@ -1,7 +1,7 @@
 ﻿/*
 	The following license supersedes all notices in the source code.
 
-	Copyright (c) 2019 Kurt Dekker/PLBM Games All rights reserved.
+	Copyright (c) 2023 Kurt Dekker/PLBM Games All rights reserved.
 
 	http://www.twitter.com/kurtdekker
 
@@ -42,6 +42,9 @@ public class Ballistic3D : MonoBehaviour
 
 	public Vector3 gravity;
 
+	public float drag;
+
+	// helper method for if you prefer to attach this at runtime, eg, like for firing a projectile.
 	public static Ballistic3D Attach( GameObject go, Vector3 velocity, Vector3 gravity)
 	{
 		Ballistic3D b3d = go.AddComponent<Ballistic3D>();
@@ -52,8 +55,11 @@ public class Ballistic3D : MonoBehaviour
 
 	void Update ()
 	{
-		transform.position += velocity * Time.deltaTime;
-
 		velocity += gravity * Time.deltaTime;
+
+		velocity -= velocity * drag * Time.deltaTime;
+
+		// use Rigidbody.MovePosition() if you are using physics!!!
+		transform.position += velocity * Time.deltaTime;
 	}
 }
