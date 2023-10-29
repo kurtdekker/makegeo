@@ -6,8 +6,10 @@ using UnityEngine;
 
 public static partial class MakeStuff
 {
-	// This is a horribly-designed function with nearly-fully-interchangeable arguments.
-	// You have been warned: USE NAMED ARGUMENTS HERE!
+	// This is a horribly-designed function with
+	// nearly-fully-interchangeable arguments.
+	//
+	//  USE NAMED ARGUMENTS when you call this!
 	public static GameObject MakeSpiralStairs(
 		int count = 36,
 		float stepHeight = 0.1f,
