@@ -13,10 +13,10 @@ public static partial class MakeStuff
 	public static GameObject MakeSpiralStairs(
 		int count = 36,
 		float stepHeight = 0.1f,
-		float degreesPerStep = 10,
-		float depth = 0.3f,
+		float degreesPerStep = 10,		// this times count is total spiral
+		float depth = 0.3f,				// depth in the direction your foot lands
 		float radius = 2,
-		float inwardRadius = 0.2f,		// overlap at the core
+		float inwardRadius = 0.2f,		// overlap at the core; negative to make an empty core
 		int direction = +1				// +1: turn right going up, -1: turn left going up
 	)			
 	{
@@ -45,10 +45,10 @@ public static partial class MakeStuff
 				(radius - inwardRadius) / 2,
 				stepHeight / 2, 0);
 
-			// set rotation at the root
+			// set rotation at the root, swinging the stair around
 			stepRoot.transform.rotation = Quaternion.Euler( 0, angle, 0);
 
-			// and up we go!!
+			// and around we go!!
 			angle += degreesPerStep * direction;
 		}
 
