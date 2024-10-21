@@ -47,8 +47,8 @@ public class Dominoes : MonoBehaviour
 		// they should probably be slippery too
 		PhysicMaterial pm = new PhysicMaterial("Domino");
 		pm.bounciness = 0.1f;
-		pm.staticFriction = 0.1f;
-		pm.dynamicFriction = 0.1f;
+		pm.staticFriction = 0.5f;
+		pm.dynamicFriction = 0.2f;
 		pm.bounceCombine = PhysicMaterialCombine.Average;
 		pm.frictionCombine = PhysicMaterialCombine.Minimum;
 
@@ -83,6 +83,8 @@ public class Dominoes : MonoBehaviour
 		{
 			GameObject domino = GameObject.CreatePrimitive( PrimitiveType.Cube);
 			domino.name = "Domino #" + (i + 1);
+
+			domino.GetComponent<Collider>().sharedMaterial = pm;
 
 			domino.transform.localScale = new Vector3( width, height, thickness);
 
