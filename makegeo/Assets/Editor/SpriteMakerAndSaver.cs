@@ -43,7 +43,7 @@ using UnityEditor;
 
 class SpriteMakerAndSaver
 {
-	[MenuItem("Assets/Create Sprite Asset")]
+	[MenuItem("Assets/MakeGeo/Create Sprite Asset")]
 	static void Create () 
 	{
 		string saveFilePath = 
